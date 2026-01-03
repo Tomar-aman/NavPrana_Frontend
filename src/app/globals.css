@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #265926;
+    --color-secondary: #cfdbbd;
+    --color-gradient-warm: #eef1ea;
+    --color-foreground: #212c21;
+    --color-muted-foreground: #789178;
+    --color-accent: #f0c442;
+    --color-primary-foreground: #d6ded3;
+    --color-border: #969799;
+    --gradient-gradient: linear-gradient(80deg,
+            rgba(38, 89, 38, 1) 0%,
+            rgba(38, 89, 38, 1) 10%,
+            rgba(200, 175, 60, 1) 75%);
+}
+
+/* Gradient Text Utility */
+.text-gradient {
+    background: var(--gradient-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
