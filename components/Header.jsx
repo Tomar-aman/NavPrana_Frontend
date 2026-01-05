@@ -1,21 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingCart, Menu, X, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-
 import LogoImage from "@/assets/Gemini_Generated_Image_hqebpzhqebpzhqeb-removebg-preview.png";
-import { getAuthToken, removeAuthToken } from "@/utils/authToken";
+import { getAuthToken } from "@/utils/authToken";
+import { useProfile } from "@/Context/ProfileContext";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { profile } = useProfile();
 
-  const router = useRouter();
+  // ✅ helper function (missing earlier)
+  const capitalize = (text = "") =>
+    text.charAt(0).toUpperCase() + text.slice(1);
 
   // 🔐 CHECK LOGIN STATUS
   useEffect(() => {
@@ -23,17 +23,8 @@ const Header = () => {
     setIsLoggedIn(!!token);
   }, []);
 
-  const handleLogout = () => {
-    removeAuthToken();
-    setIsLoggedIn(false);
-    setIsProfileOpen(false);
-
-    toast.success("Logged out successfully");
-    router.push("/auth");
-  };
-
   return (
-    <header className="bg-white border-b border-gray-300 sticky top-0 z-50">
+    <header className="bg-white backdrop-blur-sm border-b border-gray-300 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-2">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -47,7 +38,7 @@ const Header = () => {
             />
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link href="/">Home</Link>
             <Link href="/products">Our Products</Link>
@@ -56,74 +47,65 @@ const Header = () => {
             <Link href="/contact">Contact</Link>
           </nav>
 
-          {/* Right Section */}
+          {/* Cart + Profile + Mobile Menu */}
           <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link href="/cart">
               <button className="relative">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   0
                 </span>
               </button>
             </Link>
 
-            {/* Profile */}
+            {/* Auth Button */}
             <div className="relative">
-              <button
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center justify-center w-9 h-9 rounded-full border hover:bg-gray-100"
-              >
-                <User className="h-5 w-5" />
-              </button>
-
-              {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-44 bg-white border rounded-lg shadow-lg">
-                  {!isLoggedIn && (
-                    <>
-                      <Link
-                        href="/auth"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                        onClick={() => setIsProfileOpen(false)}
-                      >
-                        Login
-                      </Link>
-                      <Link
-                        href="/register"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                        onClick={() => setIsProfileOpen(false)}
-                      >
-                        Register
-                      </Link>
-                    </>
-                  )}
-
-                  {isLoggedIn && (
-                    <>
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                        onClick={() => setIsProfileOpen(false)}
-                      >
-                        My Profile
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
-                      >
-                        Logout
-                      </button>
-                    </>
-                  )}
-                </div>
+              {!isLoggedIn ? (
+                <Link
+                  href="/auth"
+                  className="flex items-center justify-center h-9 px-4 border rounded-sm hover:bg-gray-100 transition"
+                >
+                  Login
+                </Link>
+              ) : (
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-gray-100"
+                >
+                  <User className="h-4 w-4" />
+                  <span className="font-medium">
+                    {capitalize(profile?.first_name)}
+                  </span>
+                </Link>
               )}
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Button */}
             <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X /> : <Menu />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div
+        className={`md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 transition-all duration-300 overflow-hidden ${
+          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-4 py-3 flex flex-col space-y-3">
+          <Link href="/">Home</Link>
+          <Link href="/products">Products</Link>
+          <Link href="/health-benefits">Health Benefits</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
+          <Link href="/profile">Profile</Link>
         </div>
       </div>
     </header>

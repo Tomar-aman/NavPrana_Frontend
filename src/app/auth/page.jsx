@@ -11,12 +11,16 @@ import { verifyAPI } from "@/services/auth/verifyOTP";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import { setAuthToken } from "@/utils/authToken";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/Context/AuthContext";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
+  const { setUser } = useAuth();
+  const router = useRouter();
 
   const [signinForm, setSigninForm] = useState({
     email: "",
@@ -34,20 +38,27 @@ const Page = () => {
   const handleSignIn = async () => {
     try {
       const data = await loginApi(signinForm);
-      console.log(data);
-      toast.success(data.message);
-      // 🔥 SAVE TOKEN IN COOKIE
-      if (res.data?.access) {
-        setAuthToken(res.data.access);
+
+      toast.success(data.message || "Login successful");
+      setUser(data);
+      // 🔥 SAVE TOKEN IN COOKIE (if loginApi does not already do it)
+      if (data?.access) {
+        setAuthToken(data.access);
       }
+
+      // ✅ NAVIGATE TO HOME
+      router.push("/");
+
       setSigninForm({
         email: "",
         password: "",
       });
     } catch (err) {
       console.log(err);
+      toast.error(err?.response?.data?.message || "Login failed");
     }
   };
+
   const handleSignUp = async () => {
     const { firstName, lastName, email, phone, password } = signupForm;
     try {
@@ -63,6 +74,7 @@ const Page = () => {
       setSignupEmail(email);
       setShowOtpModal(true);
       toast.success(data);
+      router.push("/");
       console.log(data);
       // ✅ CLEAR SIGNUP FORM
       setSignupForm({
