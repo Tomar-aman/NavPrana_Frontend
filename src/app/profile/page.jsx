@@ -17,10 +17,12 @@ import {
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import { useProfile } from "@/Context/ProfileContext";
+import { useAuth } from "@/Context/AuthContext";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
+  const { logout } = useAuth();
   const { profile } = useProfile();
   console.log("Profile in Page.jsx:", profile);
   // 🔹 Mock user data (replace with Context / API)
@@ -321,12 +323,14 @@ const Page = () => {
                 </div>
 
                 {/* Logout Button */}
-                <Link href="/auth">
-                  <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-red-300 text-red-600 font-medium hover:bg-red-50 transition">
-                    <LogOut size={18} />
-                    Logout
-                  </button>
-                </Link>
+
+                <button
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-red-300 text-red-600 font-medium hover:bg-red-50 transition"
+                  onClick={logout}
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
               </div>
             </div>
           )}
