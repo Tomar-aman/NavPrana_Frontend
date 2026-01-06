@@ -6,7 +6,7 @@ const TOKEN_KEY = "access_token";
 export const setAuthToken = (token) => {
   Cookies.set(TOKEN_KEY, token, {
     expires: 1, // 1 day
-    secure: false, // true in production (https)
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 };

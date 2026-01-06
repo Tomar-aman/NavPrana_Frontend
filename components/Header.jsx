@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ShoppingCart,
   Menu,
@@ -13,26 +13,24 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import LogoImage from "@/assets/Gemini_Generated_Image_hqebpzhqebpzhqeb-removebg-preview.png";
-import { getAuthToken } from "@/utils/authToken";
-import { useProfile } from "@/Context/ProfileContext";
-import { useAuth } from "@/Context/AuthContext";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { logoutUser } from "@/store/authSlice";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const { profile } = useProfile();
-  const { logout } = useAuth();
-  // ✅ helper function (missing earlier)
-  const capitalize = (text = "") =>
-    text.charAt(0).toUpperCase() + text.slice(1);
+  const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token);
+  const profile = useAppSelector((state) => state.profile.data);
+  const isLoggedIn = Boolean(token);
 
-  // 🔐 CHECK LOGIN STATUS
-  useEffect(() => {
-    const token = getAuthToken();
-    setIsLoggedIn(!!token);
-  }, []);
+  const capitalize = (text = "") => text.charAt(0).toUpperCase() + text.slice(1);
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    setIsProfileOpen(false);
+  };
 
   return (
     <header className="bg-white backdrop-blur-sm border-b border-gray-300 sticky top-0 z-50">
@@ -89,7 +87,7 @@ const Header = () => {
                     {capitalize(profile?.first_name)}
                   </button>
 
-                  {/* 🔽 DROPDOWN */}
+                  {/*  DROPDOWN */}
                   {isProfileOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-md">
                       <Link
@@ -114,7 +112,7 @@ const Header = () => {
                       </Link>
 
                       <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600"
                       >
                         <LogOut size={16} /> Logout
@@ -139,9 +137,8 @@ const Header = () => {
 
       {/* Mobile Navigation */}
       <div
-        className={`md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 transition-all duration-300 overflow-hidden ${
-          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`md:hidden absolute top-full left-0 w-full bg-white border-t border-gray-200 transition-all duration-300 overflow-hidden ${isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="px-4 py-3 flex flex-col space-y-3">
           <Link href="/">Home</Link>

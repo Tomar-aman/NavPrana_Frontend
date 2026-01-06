@@ -2,25 +2,25 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import Header from "@/../components/Header";
-import Footer from "@/../components/Footer";
+import Header from "../../../components/Header";
+import Footer from "../../../components/Footer";
 import { signUp } from "@/services/auth/signUp";
-import { loginApi } from "@/services/auth/login";
 import VerifyOtpModal from "./VerifyOtpModal";
 import { verifyAPI } from "@/services/auth/verifyOTP";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
-import { setAuthToken } from "@/utils/authToken";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/Context/AuthContext";
+import { useAppDispatch } from "@/store/hooks";
+import { loginUser } from "@/store/authSlice";
+import { getErrorMessage } from "@/services/httpError";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
-  const { setUser } = useAuth();
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const [signinForm, setSigninForm] = useState({
     email: "",
@@ -37,25 +37,12 @@ const Page = () => {
 
   const handleSignIn = async () => {
     try {
-      const data = await loginApi(signinForm);
-
-      toast.success(data.message || "Login successful");
-      setUser(data);
-      // 🔥 SAVE TOKEN IN COOKIE (if loginApi does not already do it)
-      if (data?.access) {
-        setAuthToken(data.access);
-      }
-
-      // ✅ NAVIGATE TO HOME
+      await dispatch(loginUser(signinForm)).unwrap();
+      toast.success("Login successful");
       router.push("/");
-
-      setSigninForm({
-        email: "",
-        password: "",
-      });
+      setSigninForm({ email: "", password: "" });
     } catch (err) {
-      console.log(err);
-      toast.error(err?.response?.data?.message || "Login failed");
+      toast.error(getErrorMessage(err, "Login failed"));
     }
   };
 
@@ -74,7 +61,6 @@ const Page = () => {
       setSignupEmail(email);
       setShowOtpModal(true);
       toast.success(data);
-      console.log(data);
       // ✅ CLEAR SIGNUP FORM
       setSignupForm({
         firstName: "",
@@ -84,8 +70,7 @@ const Page = () => {
         password: "",
       });
     } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data || "Signup failed");
+      toast.error(getErrorMessage(err, "Signup failed"));
     }
   };
 
@@ -96,12 +81,11 @@ const Page = () => {
         otp,
       });
 
-      console.log(data);
       setShowOtpModal(false);
       setActiveTab("signin");
       router.push("/");
     } catch (err) {
-      console.log("Invalid OTP");
+      toast.error(getErrorMessage(err, "Invalid OTP"));
     }
   };
 
@@ -115,21 +99,19 @@ const Page = () => {
           <div className="grid grid-cols-2 border border-gray-400 rounded-lg overflow-hidden mb-8">
             <button
               onClick={() => setActiveTab("signin")}
-              className={`py-2 font-medium transition ${
-                activeTab === "signin"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-background text-foreground hover:bg-muted"
-              }`}
+              className={`py-2 font-medium transition ${activeTab === "signin"
+                ? "bg-primary text-primary-foreground"
+                : "bg-background text-foreground hover:bg-muted"
+                }`}
             >
               Sign In
             </button>
             <button
               onClick={() => setActiveTab("signup")}
-              className={`py-2 font-medium transition ${
-                activeTab === "signup"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-background text-foreground hover:bg-muted"
-              }`}
+              className={`py-2 font-medium transition ${activeTab === "signup"
+                ? "bg-primary text-primary-foreground"
+                : "bg-background text-foreground hover:bg-muted"
+                }`}
             >
               Sign Up
             </button>
