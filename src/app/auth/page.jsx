@@ -74,7 +74,6 @@ const Page = () => {
       setSignupEmail(email);
       setShowOtpModal(true);
       toast.success(data);
-      router.push("/");
       console.log(data);
       // ✅ CLEAR SIGNUP FORM
       setSignupForm({
@@ -100,6 +99,7 @@ const Page = () => {
       console.log(data);
       setShowOtpModal(false);
       setActiveTab("signin");
+      router.push("/");
     } catch (err) {
       console.log("Invalid OTP");
     }

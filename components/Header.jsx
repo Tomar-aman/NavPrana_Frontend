@@ -1,18 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShoppingCart, Menu, X, User } from "lucide-react";
+import {
+  ShoppingCart,
+  Menu,
+  X,
+  User,
+  LogOut,
+  Settings,
+  Package,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import LogoImage from "@/assets/Gemini_Generated_Image_hqebpzhqebpzhqeb-removebg-preview.png";
 import { getAuthToken } from "@/utils/authToken";
 import { useProfile } from "@/Context/ProfileContext";
+import { useAuth } from "@/Context/AuthContext";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { profile } = useProfile();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  const { profile } = useProfile();
+  const { logout } = useAuth();
   // ✅ helper function (missing earlier)
   const capitalize = (text = "") =>
     text.charAt(0).toUpperCase() + text.slice(1);
@@ -69,15 +80,48 @@ const Header = () => {
                   Login
                 </Link>
               ) : (
-                <Link
-                  href="/profile"
-                  className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-gray-100"
-                >
-                  <User className="h-4 w-4" />
-                  <span className="font-medium">
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100"
+                  >
+                    <User className="h-4 w-4" />
                     {capitalize(profile?.first_name)}
-                  </span>
-                </Link>
+                  </button>
+
+                  {/* 🔽 DROPDOWN */}
+                  {isProfileOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-md">
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                      >
+                        <User size={16} /> My Profile
+                      </Link>
+
+                      <Link
+                        href="/orders"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                      >
+                        <Package size={16} /> My Orders
+                      </Link>
+
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
+                      >
+                        <Settings size={16} /> Settings
+                      </Link>
+
+                      <button
+                        onClick={logout}
+                        className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600"
+                      >
+                        <LogOut size={16} /> Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 

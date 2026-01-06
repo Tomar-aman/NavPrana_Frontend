@@ -13,18 +13,44 @@ import {
   Camera,
   Calendar,
   ShieldAlert,
+  KeyRound,
+  ChevronRight,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import { useProfile } from "@/Context/ProfileContext";
 import { useAuth } from "@/Context/AuthContext";
+import { changePassword } from "@/services/auth/change-password";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const { logout } = useAuth();
   const { profile } = useProfile();
-  console.log("Profile in Page.jsx:", profile);
+
+  const handleChangePassword = async () => {
+    try {
+      const data = await changePassword({
+        old_password: oldPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      });
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // 🔹 Mock user data (replace with Context / API)
   const user = {
     name: "John Doe",
@@ -296,12 +322,28 @@ const Page = () => {
               </div>
 
               <div className="flex justify-between items-center border p-4 rounded-lg">
-                <div>
-                  <p className="font-medium">Change Password</p>
-                  <p className="text-sm text-gray-500">Update your password</p>
+                {/* LEFT SIDE */}
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-gray-100 text-gray-700">
+                    <KeyRound size={20} />
+                  </div>
+
+                  <div>
+                    <p className="font-medium">Change Password</p>
+                    <p className="text-sm text-gray-500">
+                      Update your password
+                    </p>
+                  </div>
                 </div>
-                <button className="border px-4 py-2 rounded-lg hover:bg-gray-100">
-                  Update
+
+                {/* RIGHT SIDE BUTTON */}
+                <button
+                  onClick={() => setShowPasswordModal(true)}
+                  className="flex items-center gap-2 border px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+                  title="Update Password"
+                >
+                  <span className="hidden sm:inline text-sm">Update</span>
+                  <ChevronRight size={18} />
                 </button>
               </div>
 
@@ -335,6 +377,123 @@ const Page = () => {
             </div>
           )}
         </div>
+        {showPasswordModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white w-full max-w-md rounded-xl p-6 shadow-lg">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Change Password</h2>
+              </div>
+
+              {/* Form */}
+              <form className="space-y-4">
+                {/* Old Password */}
+                <div>
+                  <label className="text-sm font-medium">Old Password</label>
+
+                  <div className="relative mt-1">
+                    <input
+                      type={showOldPassword ? "text" : "password"}
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Enter old password"
+                      className="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showOldPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* New Password */}
+                <div>
+                  <label className="text-sm font-medium">New Password</label>
+
+                  <div className="relative mt-1">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      className="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="text-sm font-medium">
+                    Confirm Password
+                  </label>
+
+                  <div className="relative mt-1">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      className="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-black"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordModal(false)}
+                    className="px-4 py-2 border rounded-lg hover:bg-gray-100 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 cursor-pointer"
+                    onClick={handleChangePassword}
+                  >
+                    Update Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

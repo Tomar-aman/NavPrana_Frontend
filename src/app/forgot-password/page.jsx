@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
-
 import { forgotPasswordOTP } from "@/services/auth/forgot-password-otp";
 import { forgotPasswordOTPVerify } from "@/services/auth/forgot-password-otp-verify";
 import { forgotPassword } from "@/services/auth/forgot-password";
 import ResetPasswordModal from "./ResetPasswordModal";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Header from "../../../components/Header";
+import Footer from "../../../components/Footer";
 
 const Page = () => {
   const [step, setStep] = useState(1); // 1=email, 2=otp
@@ -16,7 +18,7 @@ const Page = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
-
+  const router = useRouter();
   // 🔹 Send OTP
   const onSubmitEmail = async () => {
     if (!email) {
@@ -83,6 +85,7 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
+      {/* <Header /> */}
       <header className="bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between md:px-15">
           <Link
@@ -173,6 +176,7 @@ const Page = () => {
         onClose={() => setShowResetModal(false)}
         onSubmit={onSubmitPasswordReset}
       />
+      {/* <Footer /> */}
     </div>
   );
 };

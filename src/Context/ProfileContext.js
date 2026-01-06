@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { getProfile } from "@/services/profile/get-profile";
-import { getAuthToken } from "@/utils/authToken";
+import { getAuthToken, removeAuthToken } from "@/utils/authToken";
 
 const ProfileContext = createContext(null);
 
@@ -10,29 +10,31 @@ export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔁 Load profile on refresh
+  // 🔁 Load profile (used on refresh + manual call)
+  const loadProfile = async () => {
+    const token = getAuthToken();
+
+    if (!token) {
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const data = await getProfile();
+      setProfile(data);
+    } catch (error) {
+      console.error("Failed to load profile", error);
+      removeAuthToken();
+      setProfile(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔁 Load on app mount (refresh)
   useEffect(() => {
-    const loadProfile = async () => {
-      const token = getAuthToken();
-
-      // ❌ If no token, no profile
-      if (!token) {
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const data = await getProfile();
-        setProfile(data);
-      } catch (error) {
-        console.error("Failed to load profile", error);
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadProfile();
   }, []);
 
@@ -40,7 +42,9 @@ export const ProfileProvider = ({ children }) => {
     <ProfileContext.Provider
       value={{
         profile,
-        setProfile,
+        setProfile, // 🔥 set after login
+        loadProfile, // 🔥 manual refresh
+
         loading,
         isLoggedIn: !!profile,
       }}
@@ -51,4 +55,10 @@ export const ProfileProvider = ({ children }) => {
 };
 
 // 🔥 Custom hook
-export const useProfile = () => useContext(ProfileContext);
+export const useProfile = () => {
+  const context = useContext(ProfileContext);
+  if (!context) {
+    throw new Error("useProfile must be used inside ProfileProvider");
+  }
+  return context;
+};
