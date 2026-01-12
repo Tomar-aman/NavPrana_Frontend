@@ -1,7 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { getProfile } from "@/services/profile/get-profile";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import { getProfileAPI } from "@/services/profile/get-profile";
 import { getAuthToken, removeAuthToken } from "@/utils/authToken";
 
 const ProfileContext = createContext(null);
@@ -10,8 +16,8 @@ export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔁 Load profile (used on refresh + manual call)
-  const loadProfile = async () => {
+  // 👤 Load profile
+  const loadProfile = useCallback(async () => {
     const token = getAuthToken();
 
     if (!token) {
@@ -22,7 +28,8 @@ export const ProfileProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const data = await getProfile();
+
+      const data = await getProfileAPI();
       setProfile(data);
     } catch (error) {
       console.error("Failed to load profile", error);
@@ -31,22 +38,24 @@ export const ProfileProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // 🔁 Load on app mount (refresh)
+  // 🔁 Load on app refresh
   useEffect(() => {
     loadProfile();
-  }, []);
+  }, [loadProfile]);
 
   return (
     <ProfileContext.Provider
       value={{
         profile,
-        setProfile, // 🔥 set after login
-        loadProfile, // 🔥 manual refresh
 
         loading,
         isLoggedIn: !!profile,
+
+        // exposed helpers
+        setProfile,
+        loadProfile,
       }}
     >
       {children}

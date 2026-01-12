@@ -3,21 +3,29 @@
 import { useState } from "react";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
-import { forgotPasswordOTP } from "@/services/auth/forgot-password-otp";
-import { forgotPasswordOTPVerify } from "@/services/auth/forgot-password-otp-verify";
-import { forgotPassword } from "@/services/auth/forgot-password";
+
 import ResetPasswordModal from "./ResetPasswordModal";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  resetPassword,
+  resetPasswordState,
+  sendForgotOtp,
+  verifyForgotOtp,
+} from "@/redux/features/passwordSlice";
 
 const Page = () => {
-  const [step, setStep] = useState(1); // 1=email, 2=otp
+  // const [step, setStep] = useState(1); // 1=email, 2=otp
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
+  const dispatch = useDispatch();
+  const { step } = useSelector((state) => state.password);
+
   const router = useRouter();
   // 🔹 Send OTP
   const onSubmitEmail = async () => {
@@ -27,18 +35,13 @@ const Page = () => {
     }
 
     try {
-      setLoading(true);
-      const res = await forgotPasswordOTP({ email });
-      toast.success(res?.message || "OTP sent successfully");
-      setStep(2);
+      await dispatch(sendForgotOtp({ email })).unwrap();
+      toast.success("OTP sent successfully");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Failed to send OTP");
-    } finally {
-      setLoading(false);
+      toast.error(err);
     }
   };
 
-  // 🔹 Verify OTP
   const onSubmitOTP = async () => {
     if (otp.length !== 6) {
       toast.warn("Enter valid 6-digit OTP");
@@ -46,46 +49,34 @@ const Page = () => {
     }
 
     try {
-      setLoading(true);
-      const res = await forgotPasswordOTPVerify({ email, otp });
-      toast.success(res?.message || "OTP verified");
+      await dispatch(verifyForgotOtp({ email, otp })).unwrap();
+      toast.success("OTP verified");
       setShowResetModal(true);
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Invalid OTP");
-    } finally {
-      setLoading(false);
+      toast.error(err);
     }
   };
 
-  // 🔹 Reset Password
   const onSubmitPasswordReset = async (password, confirmPassword) => {
     try {
-      setLoading(true);
-      const res = await forgotPassword({
-        email,
-        password,
-        confirm_password: confirmPassword,
-      });
+      await dispatch(
+        resetPassword({ email, password, confirm_password: confirmPassword })
+      ).unwrap();
 
-      toast.success(res?.message || "Password reset successful");
+      toast.success("Password reset successful");
 
-      // reset everything
+      dispatch(resetPasswordState());
       setShowResetModal(false);
-      setStep(1);
-      setEmail("");
-      setOtp("");
-      navigate("/auth");
+      router.push("/auth");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Password reset failed");
-    } finally {
-      setLoading(false);
+      toast.error(err);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
-      {/* <Header /> */}
+      <Header />
       <header className="bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between md:px-15">
           <Link
@@ -176,7 +167,7 @@ const Page = () => {
         onClose={() => setShowResetModal(false)}
         onSubmit={onSubmitPasswordReset}
       />
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };

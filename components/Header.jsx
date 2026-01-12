@@ -16,21 +16,38 @@ import LogoImage from "@/assets/Gemini_Generated_Image_hqebpzhqebpzhqeb-removebg
 import { getAuthToken } from "@/utils/authToken";
 import { useProfile } from "@/Context/ProfileContext";
 import { useAuth } from "@/Context/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/redux/features/authSlice";
+import { getProfile } from "@/redux/features/profileSlice";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const token = getAuthToken();
+  // const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { data: profile, loading } = useSelector((state) => state.profile);
 
-  const { profile } = useProfile();
-  const { logout } = useAuth();
   // ✅ helper function (missing earlier)
+  useEffect(() => {
+    if (!profile) {
+      dispatch(getProfile());
+    }
+  }, []);
+
+  const handleLogout = () => {
+    dispatch(logout()); // 1️⃣ clear redux + token
+    router.replace("/auth"); // 2️⃣ redirect to login
+  };
+
   const capitalize = (text = "") =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
   // 🔐 CHECK LOGIN STATUS
   useEffect(() => {
-    const token = getAuthToken();
     setIsLoggedIn(!!token);
   }, []);
 
@@ -114,7 +131,7 @@ const Header = () => {
                       </Link>
 
                       <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600"
                       >
                         <LogOut size={16} /> Logout

@@ -4,23 +4,21 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import Header from "@/../components/Header";
 import Footer from "@/../components/Footer";
-import { signUp } from "@/services/auth/signUp";
-import { loginApi } from "@/services/auth/login";
 import VerifyOtpModal from "./VerifyOtpModal";
-import { verifyAPI } from "@/services/auth/verifyOTP";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
-import { setAuthToken } from "@/utils/authToken";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/Context/AuthContext";
+import { useDispatch } from "react-redux";
+import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
-  const { setUser } = useAuth();
+  const dispatch = useDispatch();
   const router = useRouter();
+  // const { loadProfile } = useProfile();
 
   const [signinForm, setSigninForm] = useState({
     email: "",
@@ -37,73 +35,120 @@ const Page = () => {
 
   const handleSignIn = async () => {
     try {
-      const data = await loginApi(signinForm);
-
-      toast.success(data.message || "Login successful");
-      setUser(data);
-      // 🔥 SAVE TOKEN IN COOKIE (if loginApi does not already do it)
-      if (data?.access) {
-        setAuthToken(data.access);
-      }
-
-      // ✅ NAVIGATE TO HOME
+      await dispatch(loginUser(signinForm)).unwrap();
+      toast.success("Login successful");
       router.push("/");
-
-      setSigninForm({
-        email: "",
-        password: "",
-      });
     } catch (err) {
-      console.log(err);
-      toast.error(err?.response?.data?.message || "Login failed");
+      toast.error(err);
     }
   };
+  // const handleSignIn = async () => {
+  //   try {
+  //     const data = await loginApi(signinForm);
+  //     // await loadProfile(); // 🔥 THIS LINE FIXES EVERYTHING
+  //     toast.success(data.message || "Login successful");
+  //     setUser(data);
+  //     // 🔥 SAVE TOKEN IN COOKIE (if loginApi does not already do it)
+  //     if (data?.access) {
+  //       setAuthToken(data.access);
+  //     }
+
+  //     // ✅ NAVIGATE TO HOME
+  //     router.push("/");
+
+  //     setSigninForm({
+  //       email: "",
+  //       password: "",
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error(err?.response?.data?.message || "Login failed");
+  //   }
+  // };
+
+  // const handleSignUp = async () => {
+  //   const { firstName, lastName, email, phone, password } = signupForm;
+  //   try {
+  //     const data = await signUp({
+  //       first_name: firstName,
+  //       last_name: lastName,
+  //       email,
+  //       phone_number: phone,
+  //       password,
+  //     });
+
+  //     // 🔥 Open OTP Modal
+  //     setSignupEmail(email);
+  //     setShowOtpModal(true);
+  //     toast.success(data);
+  //     console.log(data);
+  //     // ✅ CLEAR SIGNUP FORM
+  //     setSignupForm({
+  //       firstName: "",
+  //       lastName: "",
+  //       email: "",
+  //       phone: "",
+  //       password: "",
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error(err.response?.data || "Signup failed");
+  //   }
+  // };
 
   const handleSignUp = async () => {
-    const { firstName, lastName, email, phone, password } = signupForm;
     try {
-      const data = await signUp({
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone_number: phone,
-        password,
-      });
+      await dispatch(
+        signupUser({
+          first_name: signupForm.firstName,
+          last_name: signupForm.lastName,
+          email: signupForm.email,
+          phone_number: signupForm.phone,
+          password: signupForm.password,
+        })
+      ).unwrap();
 
-      // 🔥 Open OTP Modal
-      setSignupEmail(email);
+      setSignupEmail(signupForm.email);
       setShowOtpModal(true);
-      toast.success(data);
-      console.log(data);
-      // ✅ CLEAR SIGNUP FORM
-      setSignupForm({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
+      toast.success("OTP sent");
     } catch (err) {
-      console.log(err);
-      toast.error(err.response?.data || "Signup failed");
+      toast.error(err);
     }
   };
 
   const handleVerifyOtp = async (otp) => {
     try {
-      const data = await verifyAPI({
-        email: signupEmail,
-        otp,
-      });
+      await dispatch(
+        verifyOtp({
+          email: signupEmail,
+          otp,
+        })
+      ).unwrap();
 
-      console.log(data);
+      toast.success("Account verified");
       setShowOtpModal(false);
       setActiveTab("signin");
       router.push("/");
-    } catch (err) {
-      console.log("Invalid OTP");
+    } catch {
+      toast.error("Invalid OTP");
     }
   };
+
+  // const handleVerifyOtp = async (otp) => {
+  //   try {
+  //     const data = await verifyAPI({
+  //       email: signupEmail,
+  //       otp,
+  //     });
+
+  //     console.log(data);
+  //     setShowOtpModal(false);
+  //     setActiveTab("signin");
+  //     router.push("/");
+  //   } catch (err) {
+  //     console.log("Invalid OTP");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex flex-col">

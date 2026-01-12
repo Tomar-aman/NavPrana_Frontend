@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "@/Context/AuthContext";
 import { ProfileProvider } from "@/Context/ProfileContext";
+import ReduxProvider from "@/redux/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,23 +29,25 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <ProfileProvider>
-            {children}
+        <ReduxProvider>
+          <AuthProvider>
+            <ProfileProvider>
+              {children}
 
-            {/* 🔔 Global Toast Notifications */}
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              pauseOnHover
-              draggable
-              theme="light"
-            />
-          </ProfileProvider>
-        </AuthProvider>
+              {/* 🔔 Global Toast Notifications */}
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="light"
+              />
+            </ProfileProvider>
+          </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
