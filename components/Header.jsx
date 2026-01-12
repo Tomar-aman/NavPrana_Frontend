@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/features/authSlice";
 import { getProfile } from "@/redux/features/profileSlice";
 import { useRouter } from "next/navigation";
+import { getCart } from "@/redux/features/cartSlice";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,9 @@ const Header = () => {
   const token = getAuthToken();
   // const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { data: profile, loading } = useSelector((state) => state.profile);
-
+  const { items } = useSelector((state) => state.cart);
+  console.log(items.length);
+  const cartItemQuantity = items.length;
   // ✅ helper function (missing earlier)
   useEffect(() => {
     if (!profile) {
@@ -49,6 +52,7 @@ const Header = () => {
   // 🔐 CHECK LOGIN STATUS
   useEffect(() => {
     setIsLoggedIn(!!token);
+    dispatch(getCart());
   }, []);
 
   return (
@@ -82,7 +86,7 @@ const Header = () => {
               <button className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  0
+                  {cartItemQuantity}
                 </span>
               </button>
             </Link>

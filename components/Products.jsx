@@ -1,68 +1,46 @@
+"use client";
 import { ShoppingCart, Star, Truck, Shield, Heart } from "lucide-react";
 import gheeProductImage from "@/assets/ghee-product.jpg";
 import cookingGheeImage from "@/assets/cooking-with-ghee.jpg";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "@/redux/features/cartSlice";
+import { fetchProducts } from "@/redux/features/product";
+import { useEffect } from "react";
+const getFeaturedImage = (images = []) => {
+  return (
+    images.find((img) => img.is_feature)?.image ||
+    images[0]?.image ||
+    "/placeholder.png"
+  );
+};
 
 const Products = () => {
-  const products = [
-    {
-      id: 1,
-      name: "Premium Desi Ghee",
-      image: gheeProductImage,
-      price: "₹899",
-      originalPrice: "₹1,199",
-      size: "500ml",
-      description:
-        "Pure A2 ghee from grass-fed Gir cows, traditionally churned",
-      features: [
-        "100% Pure A2",
-        "Grass-Fed Cows",
-        "Traditional Churning",
-        "Lab Tested",
-      ],
-      rating: 4.9,
-      reviews: 1247,
-      badge: "Bestseller",
-    },
-    {
-      id: 2,
-      name: "Traditional Bilona Ghee",
-      image: cookingGheeImage,
-      price: "₹1,299",
-      originalPrice: "₹1,599",
-      size: "750ml",
-      description:
-        "Hand-churned using ancient bilona method, rich in nutrients",
-      features: [
-        "Bilona Method",
-        "Hand Churned",
-        "Rich Aroma",
-        "Premium Quality",
-      ],
-      rating: 4.8,
-      reviews: 896,
-      badge: "Premium",
-    },
-    {
-      id: 3,
-      name: "Organic Farm Ghee",
-      image: gheeProductImage,
-      price: "₹699",
-      originalPrice: "₹899",
-      size: "250ml",
-      description:
-        "Small batch organic ghee perfect for families trying first time",
-      features: [
-        "Organic Certified",
-        "Small Batch",
-        "Perfect Starter",
-        "Chemical Free",
-      ],
-      rating: 4.7,
-      reviews: 543,
-      badge: "New",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { list, loading, error } = useSelector((state) => state.product);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  console.log(list);
+
+  const handleAddToCart = (productId) => {
+    console.log(productId);
+    dispatch(
+      addToCart({
+        product: productId,
+        quantity: 1,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("Product added to cart");
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+  };
 
   return (
     <section id="products" className="py-20 bg-background md:px-15">
@@ -81,81 +59,67 @@ const Products = () => {
 
         {/* Product Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {products.map((product, index) => (
-            <div
-              key={product.id}
-              className="group overflow-hidden border-0 shadow-lg shadow-black/20 hover:shadow-2xl hover:shadow-black/40 transition-all duration-500 hover:-translate-y-2 bg-card/50 backdrop-blur-sm rounded-xl"
-              style={{ animationDelay: `${index * 0.2}s` }}
-            >
-              {/* Product Image */}
-              <div className="relative overflow-hidden">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                {/* Badge */}
-                <div className="absolute top-4 left-4">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-md text-xs font-medium ${
-                      product.badge === "Bestseller"
-                        ? "bg-primary text-primary-foreground"
-                        : product.badge === "Premium"
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-secondary text-secondary-foreground"
-                    }`}
-                  >
-                    {product.badge}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
+          {list.slice(0, 3).map((product) => {
+            const imageUrl = getFeaturedImage(product.images);
+            console.log(imageUrl);
+            return (
+              <div
+                key={product.id}
+                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
+              >
+                <div className="relative w-full h-64">
+                  <Image
+                    src={imageUrl}
+                    alt={product.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
 
-              {/* Product Details */}
-              <div className="p-6 space-y-4">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {product.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <div className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold rounded-full bg-primary text-primary-foreground">
+                    Save {product.discount_precent} %
+                  </div>
+
+                  <button className="absolute top-4 right-4 p-2 rounded-sm bg-white/80 hover:bg-background">
+                    <Heart className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xl font-bold">{product.name}</h3>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-primary fill-primary" />
+                      <span className="text-sm font-medium">
+                        {product.average_rating}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {/* ({product.reviews}) */}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-muted-foreground text-sm mb-4">
                     {product.description}
                   </p>
-                </div>
 
-                {/* Features */}
-                <div className="flex flex-wrap gap-2">
-                  {product.features.slice(0, 2).map((feature, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-1 border border-primary/30 text-xs rounded-md text-foreground/80"
-                    >
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Rating */}
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-primary fill-current" />
-                    <span className="font-medium text-sm">
-                      {product.rating}
-                    </span>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {product.features.map((feature, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs"
+                      >
+                        {feature.feature}
+                      </span>
+                    ))}
                   </div>
-                  <span className="text-muted-foreground text-sm">
-                    ({product.reviews} reviews)
-                  </span>
-                </div>
 
-                {/* Price & Size */}
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
-                      <span className="text-2xl font-bold text-foreground">
+                      <span className="text-2xl font-bold text-primary">
                         {product.price}
                       </span>
                       <span className="text-sm text-muted-foreground line-through">
-                        {product.originalPrice}
+                        {product.max_price}
                       </span>
                     </div>
                     <span className="text-sm text-muted-foreground">
@@ -163,15 +127,17 @@ const Products = () => {
                     </span>
                   </div>
 
-                  {/* Custom Button */}
-                  <button className="px-6 py-2 rounded-md bg-primary text-white font-medium text-sm flex items-center group-hover:bg-primary/90 transition-colors">
-                    <ShoppingCart className="h-4 w-4 mr-2 group-hover:animate-bounce" />
+                  <button
+                    className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
+                    onClick={() => handleAddToCart(product.id)}
+                  >
+                    <ShoppingCart className="h-4 w-4 mr-2" />
                     Add to Cart
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Trust Indicators */}
