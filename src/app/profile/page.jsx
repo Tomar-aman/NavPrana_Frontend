@@ -17,8 +17,7 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
+
 import { sendAddress } from "@/services/profile/post-profile";
 import OrderTab from "../../../components/OrderTab";
 import SettingsTab from "../../../components/SettingsTab";
@@ -221,8 +220,6 @@ const Page = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
-
       <main className="flex-1 py-10 px-4">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* ================= PROFILE HEADER ================= */}
@@ -413,7 +410,7 @@ const Page = () => {
 
                   <button
                     onClick={() => setShowAddressModal(true)}
-                    className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition"
+                    className="flex items-center gap-2 border border-dashed border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary/10 transition cursor-pointer"
                   >
                     <Plus size={16} /> Add Address
                   </button>
@@ -548,8 +545,6 @@ const Page = () => {
           />
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };

@@ -123,7 +123,7 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
-      <header className="bg-background/95 backdrop-blur-sm border-b border-border">
+      {/* <header className="bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between md:px-15">
           <Link
             href="/"
@@ -135,7 +135,7 @@ const Page = () => {
           <h1 className="text-3xl font-bold text-gradient">Health Benefits</h1>
           <div></div>
         </div>
-      </header>
+      </header> */}
 
       <main className="container bg-primary/5 mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}

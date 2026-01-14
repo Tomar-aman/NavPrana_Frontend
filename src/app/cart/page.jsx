@@ -5,12 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
-
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { getCart, updateCart, deleteCart } from "@/redux/features/cartSlice";
+import { useRouter } from "next/navigation";
 
 /* 🔹 Get featured image safely */
 const getFeaturedImage = (images = []) => {
@@ -23,7 +21,7 @@ const getFeaturedImage = (images = []) => {
 
 const Page = () => {
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const { list: products } = useSelector((state) => state.product);
   const { items: cartItems, loading } = useSelector((state) => state.cart);
 
@@ -81,9 +79,7 @@ const Page = () => {
   const total = subtotal + shipping;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
+    <div className="flex flex-col">
       <main className="flex-1 py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
@@ -211,7 +207,10 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <button className="w-full mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center justify-center gap-2 cursor-pointer">
+                  <button
+                    className="w-full mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center justify-center gap-2 cursor-pointer"
+                    onClick={() => router.push("/checkout")}
+                  >
                     Proceed to Checkout
                     <ArrowRight className="h-4 w-4" />
                   </button>
@@ -227,8 +226,6 @@ const Page = () => {
           )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

@@ -7,8 +7,7 @@ import { toast } from "react-toastify";
 import ResetPasswordModal from "./ResetPasswordModal";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetPassword,
@@ -75,21 +74,6 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      {/* Header */}
-      <Header />
-      <header className="bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-6 flex items-center justify-between md:px-15">
-          <Link
-            href="/auth"
-            className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Login</span>
-          </Link>
-          {/* <h1 className="text-3xl font-bold text-gradient">Health Benefits</h1> */}
-          <div></div>
-        </div>
-      </header>
       <main className="flex items-center justify-center min-h-[80vh] px-4">
         <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6">
           <h2 className="text-2xl font-bold text-center mb-2">
@@ -167,7 +151,6 @@ const Page = () => {
         onClose={() => setShowResetModal(false)}
         onSubmit={onSubmitPasswordReset}
       />
-      <Footer />
     </div>
   );
 };

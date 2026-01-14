@@ -83,7 +83,7 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link href="/cart">
-              <button className="relative">
+              <button className="relative cursor-pointer">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemQuantity}
@@ -104,7 +104,7 @@ const Header = () => {
                 <div className="relative">
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100"
+                    className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100 cursor-pointer"
                   >
                     <User className="h-4 w-4" />
                     {capitalize(profile?.first_name)}

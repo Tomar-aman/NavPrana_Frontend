@@ -4,6 +4,8 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "@/Context/AuthContext";
 import { ProfileProvider } from "@/Context/ProfileContext";
 import ReduxProvider from "@/redux/provider";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +34,7 @@ export default function RootLayout({ children }) {
         <ReduxProvider>
           <AuthProvider>
             <ProfileProvider>
+              <Header />
               {children}
 
               {/* 🔔 Global Toast Notifications */}
@@ -45,6 +48,7 @@ export default function RootLayout({ children }) {
                 draggable
                 theme="light"
               />
+              <Footer />
             </ProfileProvider>
           </AuthProvider>
         </ReduxProvider>

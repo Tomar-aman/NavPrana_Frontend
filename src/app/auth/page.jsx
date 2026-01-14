@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
-import Header from "@/../components/Header";
-import Footer from "@/../components/Footer";
 import VerifyOtpModal from "./VerifyOtpModal";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
@@ -42,59 +40,6 @@ const Page = () => {
       toast.error(err);
     }
   };
-  // const handleSignIn = async () => {
-  //   try {
-  //     const data = await loginApi(signinForm);
-  //     // await loadProfile(); // 🔥 THIS LINE FIXES EVERYTHING
-  //     toast.success(data.message || "Login successful");
-  //     setUser(data);
-  //     // 🔥 SAVE TOKEN IN COOKIE (if loginApi does not already do it)
-  //     if (data?.access) {
-  //       setAuthToken(data.access);
-  //     }
-
-  //     // ✅ NAVIGATE TO HOME
-  //     router.push("/");
-
-  //     setSigninForm({
-  //       email: "",
-  //       password: "",
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error(err?.response?.data?.message || "Login failed");
-  //   }
-  // };
-
-  // const handleSignUp = async () => {
-  //   const { firstName, lastName, email, phone, password } = signupForm;
-  //   try {
-  //     const data = await signUp({
-  //       first_name: firstName,
-  //       last_name: lastName,
-  //       email,
-  //       phone_number: phone,
-  //       password,
-  //     });
-
-  //     // 🔥 Open OTP Modal
-  //     setSignupEmail(email);
-  //     setShowOtpModal(true);
-  //     toast.success(data);
-  //     console.log(data);
-  //     // ✅ CLEAR SIGNUP FORM
-  //     setSignupForm({
-  //       firstName: "",
-  //       lastName: "",
-  //       email: "",
-  //       phone: "",
-  //       password: "",
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error(err.response?.data || "Signup failed");
-  //   }
-  // };
 
   const handleSignUp = async () => {
     try {
@@ -134,26 +79,8 @@ const Page = () => {
     }
   };
 
-  // const handleVerifyOtp = async (otp) => {
-  //   try {
-  //     const data = await verifyAPI({
-  //       email: signupEmail,
-  //       otp,
-  //     });
-
-  //     console.log(data);
-  //     setShowOtpModal(false);
-  //     setActiveTab("signin");
-  //     router.push("/");
-  //   } catch (err) {
-  //     console.log("Invalid OTP");
-  //   }
-  // };
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
+    <div className=" flex flex-col">
       <main className="flex-1 flex items-center justify-center py-16 px-4">
         <div className="w-full max-w-md">
           {/* Tabs */}
@@ -209,8 +136,6 @@ const Page = () => {
           onVerify={handleVerifyOtp}
         />
       </main>
-
-      <Footer />
     </div>
   );
 };

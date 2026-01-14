@@ -5,7 +5,7 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm border-b border-border">
+      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <Link
@@ -19,7 +19,7 @@ const Page = () => {
             <div></div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">

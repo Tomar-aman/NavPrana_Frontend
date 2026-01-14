@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowLeft, Phone, Mail, MapPin, Clock, Send } from "lucide-react";
-import Link from "next/link";
+import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { useState } from "react";
 
 const Page = () => {
@@ -56,7 +55,7 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 ">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm border-b border-border">
+      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-6 md:px-15">
           <div className="flex items-center justify-between">
             <Link
@@ -70,7 +69,7 @@ const Page = () => {
             <div></div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <main className="container mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
