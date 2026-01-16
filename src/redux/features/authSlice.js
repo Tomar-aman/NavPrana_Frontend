@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi } from "@/services/auth/login";
 import { signUp } from "@/services/auth/signUp";
 import { verifyAPI } from "@/services/auth/verifyOTP";
-import { setAuthToken, removeAuthToken } from "@/utils/authToken";
+import { setAuthToken, removeAuthToken, getAuthToken } from "@/utils/authToken";
 
 /* ================= LOGIN ================= */
 export const loginUser = createAsyncThunk(
@@ -10,8 +10,8 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const res = await loginApi(credentials);
-      console.log(res);
 
+      // Save token (cookie / localStorage)
       setAuthToken(res.access);
 
       return res;
@@ -28,7 +28,7 @@ export const signupUser = createAsyncThunk(
     try {
       return await signUp(data);
     } catch (err) {
-      return rejectWithValue(err?.response?.data || "Signup failed");
+      return rejectWithValue(err?.response?.data?.message || "Signup failed");
     }
   }
 );
@@ -45,21 +45,36 @@ export const verifyOtp = createAsyncThunk(
   }
 );
 
+/* ================= AUTH SLICE ================= */
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null, // 👈 USER DATA
-    token: null, // 👈 ACCESS TOKEN
+    user: null, // user profile
+    token: null, // access token
+    isAuthenticated: false, // auth flag
     loading: false,
     error: null,
-    isAuthenticated: false,
   },
 
   reducers: {
+    /* 🔹 Restore auth on page reload */
+    initializeAuth: (state) => {
+      const token = getAuthToken();
+      state.token = token;
+      state.isAuthenticated = !!token;
+    },
+
+    /* 🔹 Logout */
     logout: (state) => {
       state.user = null;
+      state.token = null;
       state.isAuthenticated = false;
       removeAuthToken();
+    },
+
+    /* 🔹 Clear auth error */
+    clearAuthError: (state) => {
+      state.error = null;
     },
   },
 
@@ -72,9 +87,9 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user || null;
+        state.token = action.payload.access;
         state.isAuthenticated = true;
-        state.token = action.payload.access; // ✅ SAVE TOKEN
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -84,6 +99,7 @@ const authSlice = createSlice({
       /* ---------- SIGNUP ---------- */
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(signupUser.fulfilled, (state) => {
         state.loading = false;
@@ -96,6 +112,7 @@ const authSlice = createSlice({
       /* ---------- VERIFY OTP ---------- */
       .addCase(verifyOtp.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(verifyOtp.fulfilled, (state) => {
         state.loading = false;
@@ -107,5 +124,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, initializeAuth, clearAuthError } = authSlice.actions;
+
 export default authSlice.reducer;

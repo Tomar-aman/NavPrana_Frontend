@@ -5,7 +5,6 @@ import {
   Clock,
   Loader2,
   RefreshCw,
-  Home,
   CheckCircle2,
   HomeIcon,
 } from "lucide-react";

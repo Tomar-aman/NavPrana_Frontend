@@ -6,6 +6,7 @@ import passwordReducer from "./features/passwordSlice";
 import productReducer from "./features/product";
 import cartReducer from "./features/cartSlice";
 import couponReducer from "./features/couponSlice";
+import orderReducer from "./features/createOrderSlice";
 export default combineReducers({
   auth: authReducer,
   address: addressReducer,
@@ -14,4 +15,5 @@ export default combineReducers({
   product: productReducer,
   cart: cartReducer,
   coupon: couponReducer,
+  order: orderReducer,
 });

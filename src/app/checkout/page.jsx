@@ -22,16 +22,19 @@ import { fetchProducts } from "@/redux/features/product";
 import { getCart } from "@/redux/features/cartSlice";
 import { applyCoupon } from "@/redux/features/couponSlice";
 import Image from "next/image";
+import { createOrder } from "@/redux/features/createOrderSlice";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const { list: address, loading } = useSelector((state) => state.address);
+  const { list: address } = useSelector((state) => state.address);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const { list: products } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
+  const { orderData } = useSelector((state) => state.order);
+
   const dispatch = useDispatch();
-  console.log(products);
-  console.log(cartItems);
+  const router = useRouter();
   useEffect(() => {
     dispatch(fetchAddresses());
     dispatch(fetchProducts());
@@ -59,11 +62,6 @@ const Page = () => {
     });
   }, [cartItems, products]);
 
-  /* ---------------- CART DATA (Mock) ---------------- */
-
-  /* ---------------- ADDRESS ---------------- */
-  const [selectedAddress, setSelectedAddress] = useState("home");
-
   /* ---------------- PAYMENT ---------------- */
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
@@ -72,7 +70,7 @@ const Page = () => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
 
-  const { couponData, error, success } = useSelector((state) => state.coupon);
+  const { couponData, success } = useSelector((state) => state.coupon);
   console.log(couponData);
   useEffect(() => {
     if (success && couponData) {
@@ -101,13 +99,35 @@ const Page = () => {
 
   const total = subtotal + shipping - discount;
 
-  /* ---------------- PLACE ORDER ---------------- */
-  const handlePlaceOrder = () => {
-    alert("Order Placed Successfully 🎉");
-  };
-
   const handleApplyCoupon = () => {
     dispatch(applyCoupon({ order_total: subtotal, coupon_code: couponCode }));
+  };
+
+  const handleCreateOrder = () => {
+    if (!selectedAddressId) {
+      alert("Please select address");
+      return;
+    }
+
+    if (!cartItems.length) {
+      alert("Cart is empty");
+      return;
+    }
+
+    const payload = {
+      products: cartItems.map((item) => ({
+        product_id: item.product,
+        quantity: item.quantity,
+      })),
+      coupon_code: couponCode || null,
+      address_id: selectedAddressId,
+      return_url: "http://localhost:3000/payment",
+    };
+
+    console.log("CREATE ORDER PAYLOAD 👉", payload);
+
+    dispatch(createOrder(payload)); // ✅ FIXED
+    router.push("/payment");
   };
 
   return (
@@ -374,7 +394,7 @@ const Page = () => {
 
             {/* Place Order */}
             <button
-              onClick={handlePlaceOrder}
+              onClick={() => handleCreateOrder()}
               className="mt-5 w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700"
             >
               Place Order • ₹{total}

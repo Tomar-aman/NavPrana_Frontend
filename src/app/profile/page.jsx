@@ -99,10 +99,26 @@ const Page = () => {
 
   const handleOnsubmitAddress = async () => {
     try {
-      const data = await sendAddress(formData);
-      console.log(data);
+      await sendAddress(formData);
+
+      // 🔥 IMPORTANT
+      dispatch(fetchAddresses());
+
+      toast.success("Address added successfully");
+      setShowAddressModal(false);
+
+      // reset form
+      setFormData({
+        address_line1: "",
+        address_line2: "",
+        city: "",
+        state: "",
+        postal_code: "",
+        country: "India",
+        is_default: false,
+      });
     } catch (err) {
-      console.log(err);
+      toast.error("Failed to add address");
     }
   };
 

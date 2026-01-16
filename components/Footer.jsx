@@ -1,5 +1,4 @@
 import {
-  Star,
   Mail,
   Phone,
   MapPin,
@@ -8,7 +7,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import LogoImage from "@/assets/Gemini_Generated_Image_hqebpzhqebpzhqeb-removebg-preview.png";
+import LogoImage from "@/assets/logo-ghee.svg";
 import Image from "next/image";
 
 const Footer = () => {

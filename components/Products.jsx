@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/redux/features/cartSlice";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 const getFeaturedImage = (images = []) => {
   return (
     images.find((img) => img.is_feature)?.image ||
