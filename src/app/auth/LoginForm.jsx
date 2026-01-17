@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 const LoginForm = memo(
-  ({ form, setForm, showPassword, setShowPassword, onSubmit }) => {
+  ({ form, setForm, showPassword, setShowPassword, onSubmit, loading }) => {
     return (
       <div className="border border-gray-400 rounded-xl shadow-sm bg-card p-6">
         <h2 className="text-2xl font-bold text-center mb-1">Welcome Back</h2>
@@ -91,8 +91,16 @@ const LoginForm = memo(
           <button
             className="w-full py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
             onClick={onSubmit}
+            disabled={loading}
           >
-            Sign In
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </div>
       </div>

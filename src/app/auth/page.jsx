@@ -14,6 +14,8 @@ const Page = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
+  const [signinLoading, setSigninLoading] = useState(false);
+
   const dispatch = useDispatch();
   const router = useRouter();
   // const { loadProfile } = useProfile();
@@ -35,9 +37,12 @@ const Page = () => {
     try {
       await dispatch(loginUser(signinForm)).unwrap();
       toast.success("Login successful");
+      setSigninLoading(true);
       router.push("/");
     } catch (err) {
       toast.error(err);
+    } finally {
+      setSigninLoading(false);
     }
   };
 
@@ -115,6 +120,7 @@ const Page = () => {
               showPassword={showPassword}
               setShowPassword={setShowPassword}
               onSubmit={handleSignIn}
+              loading={signinLoading}
             />
           )}
 

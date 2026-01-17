@@ -121,7 +121,7 @@ const Page = () => {
       })),
       coupon_code: couponCode || null,
       address_id: selectedAddressId,
-      return_url: "http://localhost:3000/payment",
+      return_url: "http://localhost:3000/payment-status",
     };
 
     console.log("CREATE ORDER PAYLOAD 👉", payload);

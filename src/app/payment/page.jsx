@@ -2,14 +2,20 @@
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 
 const PaymentPage = () => {
   const { orderData } = useSelector((state) => state.order);
+  const router = useRouter();
 
   useEffect(() => {
     if (!orderData?.payment_session_id) return;
 
-    // Load Cashfree SDK
+    // Save transaction_id for status page
+    if (orderData.transaction_id) {
+      sessionStorage.setItem("transaction_id", orderData.transaction_id);
+    }
+
     const script = document.createElement("script");
     script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
     script.async = true;
@@ -18,11 +24,19 @@ const PaymentPage = () => {
       if (!window.Cashfree) return;
 
       const cashfree = new window.Cashfree({
-        mode: "sandbox", // 🔴 production later
+        mode: "sandbox", // production later
       });
 
       cashfree.checkout({
         paymentSessionId: orderData.payment_session_id,
+
+        // ✅ THIS CALLBACK ALWAYS FIRES
+        onPayment: (data) => {
+          console.log("Cashfree payment response:", data);
+
+          // 🔁 Navigate AFTER payment completes
+          router.replace("/payment-status");
+        },
       });
     };
 
@@ -31,7 +45,7 @@ const PaymentPage = () => {
     return () => {
       document.body.removeChild(script);
     };
-  }, [orderData]);
+  }, [orderData, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
