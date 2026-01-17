@@ -173,7 +173,7 @@ const Header = () => {
                       </Link>
 
                       <Link
-                        href="/orders"
+                        href="/order"
                         className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
                       >
                         <Package size={16} /> My Orders
@@ -188,7 +188,7 @@ const Header = () => {
 
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50"
+                        className="w-full text-left flex cursor-pointer items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50"
                       >
                         <LogOut size={16} /> Logout
                       </button>

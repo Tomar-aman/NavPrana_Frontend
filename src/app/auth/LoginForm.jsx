@@ -2,10 +2,18 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 
 const LoginForm = memo(
-  ({ form, setForm, showPassword, setShowPassword, onSubmit, loading }) => {
+  ({
+    form,
+    setForm,
+    showPassword,
+    setShowPassword,
+    onSubmit,
+    loading,
+    error,
+  }) => {
     return (
       <div className="border border-gray-400 rounded-xl shadow-sm bg-card p-6">
         <h2 className="text-2xl font-bold text-center mb-1">Welcome Back</h2>
@@ -87,11 +95,19 @@ const LoginForm = memo(
             </Link>
           </div>
 
+          {error && (
+            <div className="bg-red-50 border border-red-500/30 text-red-600 text-sm rounded-lg px-3 py-2 mb-4">
+              {error}
+            </div>
+          )}
+
           {/* Button */}
           <button
-            className="w-full py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
             onClick={onSubmit}
             disabled={loading}
+            className="w-full py-2 rounded-lg bg-primary text-primary-foreground
+                       flex items-center justify-center gap-2
+                       disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>

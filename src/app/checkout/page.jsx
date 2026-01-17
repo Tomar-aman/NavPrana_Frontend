@@ -22,7 +22,7 @@ import { fetchProducts } from "@/redux/features/product";
 import { getCart } from "@/redux/features/cartSlice";
 import { applyCoupon } from "@/redux/features/couponSlice";
 import Image from "next/image";
-import { createOrder } from "@/redux/features/createOrderSlice";
+import { createOrder } from "@/redux/features/orderSlice";
 import { useRouter } from "next/navigation";
 
 const Page = () => {

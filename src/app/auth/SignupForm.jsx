@@ -1,11 +1,11 @@
 "use client";
 
 import { memo } from "react";
-import { Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 const SignupForm = memo(
-  ({ form, setForm, showPassword, setShowPassword, onSubmit }) => {
+  ({ form, setForm, showPassword, setShowPassword, onSubmit, loading }) => {
     return (
       <div className="border rounded-xl shadow-sm bg-card p-6">
         <h2 className="text-2xl font-bold text-center mb-1">Create Account</h2>
@@ -124,10 +124,20 @@ const SignupForm = memo(
 
           {/* Submit Button */}
           <button
-            className="w-full py-2 rounded-lg bg-primary text-primary-foreground font-medium"
             onClick={onSubmit}
+            disabled={loading}
+            className="w-full py-2 rounded-lg bg-primary text-primary-foreground
+                     flex items-center justify-center gap-2
+                     disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Create Account
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              "Sign Up"
+            )}
           </button>
 
           <p className="text-xs text-center text-muted-foreground">

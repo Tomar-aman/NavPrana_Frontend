@@ -15,6 +15,8 @@ const Page = () => {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
   const [signinLoading, setSigninLoading] = useState(false);
+  const [signupLoading, setSignupLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -34,20 +36,29 @@ const Page = () => {
   });
 
   const handleSignIn = async () => {
+    if (signinLoading) return; // ✅ extra safety
+
     try {
+      setSigninLoading(true); // ✅ FIRST LINE
+
       await dispatch(loginUser(signinForm)).unwrap();
+
       toast.success("Login successful");
-      setSigninLoading(true);
       router.push("/");
     } catch (err) {
-      toast.error(err);
+      // toast.error(err || "Login failed");
+      const message = err?.message || err?.error || "Invalid email or password";
+
+      setLoginError(message);
     } finally {
       setSigninLoading(false);
     }
   };
 
   const handleSignUp = async () => {
+    if (signupLoading) return;
     try {
+      setSignupLoading(true);
       await dispatch(
         signupUser({
           first_name: signupForm.firstName,
@@ -63,6 +74,8 @@ const Page = () => {
       toast.success("OTP sent");
     } catch (err) {
       toast.error(err);
+    } finally {
+      setSignupLoading(false);
     }
   };
 
@@ -121,6 +134,7 @@ const Page = () => {
               setShowPassword={setShowPassword}
               onSubmit={handleSignIn}
               loading={signinLoading}
+              error={loginError} // 👈 pass error
             />
           )}
 
@@ -132,6 +146,7 @@ const Page = () => {
               showPassword={showPassword}
               setShowPassword={setShowPassword}
               onSubmit={handleSignUp}
+              loading={signupLoading}
             />
           )}
         </div>
