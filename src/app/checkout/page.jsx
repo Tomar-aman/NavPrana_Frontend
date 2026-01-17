@@ -69,7 +69,7 @@ const Page = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
-
+  const baseURL = process.env.FRONTEND_URL || "http://localhost:3000";
   const { couponData, success } = useSelector((state) => state.coupon);
   console.log(couponData);
   useEffect(() => {
@@ -103,6 +103,33 @@ const Page = () => {
     dispatch(applyCoupon({ order_total: subtotal, coupon_code: couponCode }));
   };
 
+  // const handleCreateOrder = () => {
+  //   if (!selectedAddressId) {
+  //     alert("Please select address");
+  //     return;
+  //   }
+
+  //   if (!cartItems.length) {
+  //     alert("Cart is empty");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     products: cartItems.map((item) => ({
+  //       product_id: item.product,
+  //       quantity: item.quantity,
+  //     })),
+  //     coupon_code: couponCode || null,
+  //     address_id: selectedAddressId,
+  //     return_url: `${baseURL}/payment-status`,
+  //   };
+
+  //   console.log("CREATE ORDER PAYLOAD 👉", payload);
+
+  //   dispatch(createOrder(payload)); // ✅ FIXED
+  //   router.push("/payment");
+  // };
+
   const handleCreateOrder = () => {
     if (!selectedAddressId) {
       alert("Please select address");
@@ -114,19 +141,24 @@ const Page = () => {
       return;
     }
 
+    // ✅ Base payload (ALWAYS REQUIRED)
     const payload = {
       products: cartItems.map((item) => ({
         product_id: item.product,
         quantity: item.quantity,
       })),
-      coupon_code: couponCode || null,
       address_id: selectedAddressId,
-      return_url: "http://localhost:3000/payment-status",
+      return_url: `${baseURL}/payment-status`,
     };
+
+    // ✅ ONLY add coupon_code if user applied coupon
+    if (couponData?.coupon_code || couponCode) {
+      payload.coupon_code = couponCode;
+    }
 
     console.log("CREATE ORDER PAYLOAD 👉", payload);
 
-    dispatch(createOrder(payload)); // ✅ FIXED
+    dispatch(createOrder(payload));
     router.push("/payment");
   };
 
