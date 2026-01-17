@@ -13,12 +13,19 @@ const PaymentStatusPage = () => {
   const { paymentData, loading } = useSelector((state) => state.payment);
 
   useEffect(() => {
-    const transactionId = sessionStorage.getItem("transaction_id");
+    // ✅ sessionStorage only exists in browser
+    if (typeof window === "undefined") return;
 
+    const transactionId = sessionStorage.getItem("transaction_id");
     if (transactionId) {
       dispatch(paymentStatus(transactionId));
     }
   }, [dispatch]);
+
+  // 🔒 VERY IMPORTANT GUARD (FIXES BUILD ERROR)
+  if (loading || !paymentData) {
+    return <PaymentPending />;
+  }
 
   // ✅ SUCCESS
   if (
