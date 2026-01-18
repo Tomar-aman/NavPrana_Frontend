@@ -7,12 +7,13 @@ import { Package, Clock, Truck, CheckCircle2 } from "lucide-react";
  * status values supported:
  * "placed" | "processing" | "shipped" | "delivered"
  */
-const OrderProgress = ({ status = "shipped" }) => {
+const OrderProgress = ({ status }) => {
+  console.log(status);
   const steps = [
-    { key: "placed", label: "Order Placed", icon: Package },
-    { key: "processing", label: "Processing", icon: Clock },
-    { key: "shipped", label: "Shipped", icon: Truck },
-    { key: "delivered", label: "Delivered", icon: CheckCircle2 },
+    { key: "Placed", label: "Order Placed", icon: Package },
+    { key: "Processing", label: "Processing", icon: Clock },
+    { key: "Shipped", label: "Shipped", icon: Truck },
+    { key: "Delivered", label: "Delivered", icon: CheckCircle2 },
   ];
 
   const currentIndex = steps.findIndex((s) => s.key === status);

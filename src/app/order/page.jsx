@@ -175,13 +175,14 @@ const Page = () => {
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => setSelectedOrderId(order.id)}
+                  <Link
+                    href={`/order-details/${order.id}`}
+                    // onClick={() => setSelectedOrderId(order.id)}
                     className="flex items-center gap-1 text-sm border px-3 py-1 rounded cursor-pointer"
                   >
                     <Eye size={14} />
                     View
-                  </button>
+                  </Link>
                 </div>
 
                 <p className="text-sm text-gray-500 flex items-center gap-1">
@@ -208,12 +209,12 @@ const Page = () => {
           })
         )}
       </div>
-      {selectedOrderId && (
+      {/* {selectedOrderId && (
         <OrderDetails
           orderId={selectedOrderId}
           onClose={() => setSelectedOrderId(null)}
         />
-      )}
+      )} */}
     </div>
   );
 };
