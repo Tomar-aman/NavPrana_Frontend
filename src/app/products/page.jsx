@@ -16,6 +16,7 @@ import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 /* 🔹 Get featured image safely */
 const getFeaturedImage = (images = []) => {
   return (
@@ -32,7 +33,7 @@ const Page = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-
+  const router = useRouter();
   console.log(list);
 
   const handleAddToCart = (productId) => {
@@ -111,6 +112,7 @@ const Page = () => {
             return (
               <div
                 key={product.id}
+                onClick={() => router.push(`/product-details/${product.id}`)}
                 className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
                 <div className="relative w-full h-64">

@@ -545,10 +545,14 @@ export default function Page() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleDownload}
-              disabled={loading}
+              disabled={
+                loading ||
+                orderData?.status_display === "Cancelled" ||
+                orderData?.status_display === "Failed"
+              }
               className="px-4 py-2 rounded-lg flex items-center gap-2
-              disabled:opacity-50 disabled:cursor-not-allowed
-              bg-primary text-white justify-center"
+    disabled:opacity-50 disabled:cursor-not-allowed
+    bg-primary text-white justify-center"
             >
               <Download size={16} />
               {loading ? "Generating..." : "Download Invoice"}

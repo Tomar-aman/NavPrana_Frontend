@@ -36,9 +36,10 @@ export default function RootLayout({ children }) {
         <ReduxProvider>
           <AuthProvider>
             <ProfileProvider>
+              <GlobalUI />
               <Header />
               <AuthInitializer />
-              <GlobalUI />
+
               {children}
 
               {/* 🔔 Global Toast Notifications */}
