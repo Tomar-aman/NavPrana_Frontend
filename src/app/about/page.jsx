@@ -10,6 +10,8 @@ import {
   Award,
   Clock,
   MapPin,
+  Search,
+  Sprout, // Added Sprout to represent the broader food company vision
 } from "lucide-react";
 
 import organicFarmImage from "@/assets/organic-farm.jpg"; // replace with actual image
@@ -18,137 +20,121 @@ import traditionalCowImage from "@/assets/traditional-cow.jpg"; // replace with 
 const Page = () => {
   const values = [
     {
-      icon: Heart,
-      title: "Passion for Purity",
+      icon: Search,
+      title: "Chambal Origins",
       description:
-        "We are committed to bringing you the purest form of desi ghee, made with love and traditional care.",
+        "Rooted in the pristine, untouched lands of the Chambal valley in Madhya Pradesh.",
     },
     {
       icon: Leaf,
-      title: "Sustainable Practices",
+      title: "Absolutely Natural",
       description:
-        "Our farming methods respect nature and ensure the well-being of our cows and the environment.",
+        "No preservatives, no additives. Just pure, farm-fresh produce as nature intended.",
     },
     {
       icon: Users,
-      title: "Family Tradition",
+      title: "Community of Esah",
       description:
-        "Recipes and methods passed down through generations, preserving authentic taste and quality.",
+        "We empower the local farmers of Village Esah, preserving their traditional way of life.",
     },
     {
-      icon: Award,
-      title: "Quality Excellence",
+      icon: Sprout,
+      title: "Beyond Just Ghee",
       description:
-        "Every batch is carefully tested and meets the highest standards of purity and nutritional value.",
+        "Starting with Ghee, we are on a mission to bring a complete range of pure, organic food staples to your table.",
     },
   ];
 
   const timeline = [
     {
-      year: "1947",
-      title: "The Beginning",
+      year: "2024",
+      title: "The Discovery",
       description:
-        "Started as a small family farm with just 5 cows, focused on traditional ghee making methods.",
+        "During travels through the Chambal region, we discovered the untapped purity of Village Esah in Morena.",
     },
     {
-      year: "1975",
-      title: "Organic Transition",
+      year: "2025",
+      title: "The Foundation",
       description:
-        "Transitioned to 100% organic farming practices, becoming one of the first organic dairies in the region.",
+        "We spent months with farmers in Esah, Morena, setting up a supply chain that honors fair trade and quality.",
     },
     {
-      year: "1995",
-      title: "Bilona Method",
+      year: "Late 2025",
+      title: "NavPrana is Born",
       description:
-        "Adopted the traditional bilona method exclusively, ensuring the highest quality and authenticity.",
+        "NavPrana Organics was established as a clean food company, dedicated to bridging the gap between rural purity and urban needs.",
     },
     {
-      year: "2010",
-      title: "Certification",
+      year: "2026",
+      title: "The First Launch",
       description:
-        "Received organic certification and expanded to serve families across India.",
-    },
-    {
-      year: "2020",
-      title: "Digital Presence",
-      description:
-        "Launched online platform to connect directly with health-conscious families nationwide.",
+        "We introduce our flagship product: Pure Buffalo Ghee, bringing the authentic taste of Chambal to the world.",
     },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 ">
-      {/* Header */}
-      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-6 md:px-15">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Home</span>
-            </Link>
-            <h1 className="text-3xl font-bold text-gradient">About Us</h1>
-            <div></div>
-          </div>
-        </div>
-      </div> */}
-
       <main className="container bg-primary/5 mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Our <span className="text-gradient">Story</span>
+            Purity from the Heart of <span className="text-gradient">Chambal</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            For over 75 years, we have been dedicated to preserving the ancient
-            art of ghee making, bringing you the purest and most authentic desi
-            ghee from our family to yours.
+            NavPrana Organics is a clean food company on a mission.
+            Our journey begins with the golden elixir—Ghee—sourced directly from the
+            untouched ravines of Madhya Pradesh.
           </p>
         </section>
 
         {/* Story Section */}
         <section className="grid lg:grid-cols-2 gap-12 mb-16">
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold">From Humble Beginnings</h3>
+            <h3 className="text-3xl font-bold">Our Roots in Village Esah</h3>
             <p className="text-muted-foreground leading-relaxed">
-              It all started in 1947 when our founder, Raghunath Singh, began
-              making ghee using traditional methods passed down from his
-              ancestors. What started as a small operation with just five cows
-              has grown into a trusted brand that serves thousands of families
-              across India.
+              NavPrana Organics was born from a simple realization: the food on our city shelves
+              lacked the soul and purity of the village. As explorers at heart, we traveled
+              deep into the <strong>Chambal region of Morena, Madhya Pradesh</strong>, looking
+              for authentic sources of nutrition.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              We believe that the best ghee comes from happy, healthy cows
-              grazing on natural pastures. Our cows roam freely on organic
-              farms, feeding on pesticide-free grass and receiving the care and
-              respect they deserve.
+              We found our answer in <strong>Village Esah</strong>.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Every drop of our ghee is made using the traditional bilona method
-              - a time-honored process that involves hand-churning curd to
-              extract butter, which is then slowly heated to create pure, golden
-              ghee with an incomparable aroma and taste.
+              Here, amidst the rugged beauty of Chambal, farming isn't a business—it's a way of life.
+              The soil is rich, the air is clean, and the cattle graze freely on natural pastures.
+              We knew immediately that this was where NavPrana had to begin.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              While we are launching with our premium <strong>Buffalo Ghee</strong> as our first offering,
+              NavPrana is more than just a dairy brand. We are building a portfolio of organic food products
+              that bring the raw, unadulterated power of nature straight to your kitchen.
             </p>
           </div>
           <div className="space-y-4">
-            <Image
-              src={organicFarmImage}
-              alt="Our organic farm"
-              className="w-full h-64 object-cover rounded-lg"
-            />
-            <Image
-              src={traditionalCowImage}
-              alt="Traditional cows"
-              className="w-full h-64 object-cover rounded-lg"
-            />
+            <div className="relative h-64 w-full">
+              {/* Tip: Use an image of the Chambal landscape or village Esah here */}
+              <Image
+                src={organicFarmImage}
+                alt="Landscape of Morena, MP"
+                fill
+                className="object-cover rounded-lg"
+              />
+            </div>
+            <div className="relative h-64 w-full">
+              <Image
+                src={traditionalCowImage}
+                alt="Buffaloes in Chambal"
+                fill
+                className="object-cover rounded-lg"
+              />
+            </div>
           </div>
         </section>
 
         {/* Values */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-center mb-12">Our Values</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">Our Core Values</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
               <div
@@ -169,7 +155,7 @@ const Page = () => {
 
         {/* Timeline */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-center mb-12">Our Journey</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">Our Journey So Far</h3>
           <div className="space-y-8">
             {timeline.map((item, index) => (
               <div key={index} className="flex items-start space-x-6">
@@ -194,40 +180,39 @@ const Page = () => {
           </div>
         </section>
 
-        {/* Farm Info */}
+        {/* Farm Info - Pivot to Sourcing */}
         <section className="bg-card/30 rounded-3xl p-8 md:p-12 mb-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-3xl font-bold mb-6">Our Farm</h3>
+              <h3 className="text-3xl font-bold mb-6">Origin: Morena, M.P.</h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <MapPin className="h-5 w-5 text-primary" />
-                  <span>Located in the pristine valleys of Rajasthan</span>
+                  <span>Sourced from Village Esah, Morena (Chambal)</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Leaf className="h-5 w-5 text-primary" />
-                  <span>500+ acres of organic pastureland</span>
+                  <span>Known for pristine soil and natural farming</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Heart className="h-5 w-5 text-primary" />
-                  <span>200+ happy, healthy A2 cows</span>
+                  <span>Cruelty-free, free-grazing livestock</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Award className="h-5 w-5 text-primary" />
-                  <span>Certified organic by NPOP India</span>
+                  <span>Traditional Bilona Method used</span>
                 </div>
               </div>
             </div>
             <div className="space-y-4">
               <p className="text-muted-foreground leading-relaxed">
-                Our farm is nestled in the heart of Rajasthan, where the climate
-                and soil conditions are perfect for growing nutritious grass
-                that our cows love. We maintain the highest standards of animal
-                welfare and environmental sustainability.
+                The Chambal region in Madhya Pradesh is legendary for its raw, unpolluted environment.
+                In Village Esah, we found a community that still respects the rhythm of nature.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Every aspect of our operation is designed to produce the finest
-                quality ghee while respecting nature and traditional methods.
+                We are proud to bring the produce of this land to the world. While we start with
+                our signature Ghee, we are committed to expanding our range to include other
+                authentic food products from this rich soil.
               </p>
             </div>
           </div>
@@ -235,10 +220,10 @@ const Page = () => {
 
         {/* CTA Section */}
         <section className="text-center bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-3xl p-8 md:p-12">
-          <h3 className="text-3xl font-bold mb-4">Experience Our Legacy</h3>
+          <h3 className="text-3xl font-bold mb-4">Taste the Purity of Chambal</h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Taste the difference that 75 years of tradition and passion makes.
-            Try our premium desi ghee today.
+            Experience the first offering from NavPrana Organics.
+            Try our premium Ghee today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -251,7 +236,7 @@ const Page = () => {
               href="/contact"
               className="px-6 py-3 rounded-lg border border-primary text-primary hover:bg-primary/10 transition"
             >
-              Visit Our Farm
+              Contact Us
             </Link>
           </div>
         </section>

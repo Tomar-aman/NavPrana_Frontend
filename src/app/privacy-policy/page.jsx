@@ -6,7 +6,7 @@ const Page = () => {
           <div className="bg-card/30 rounded-3xl p-8 md:p-12">
             <div className="mb-8">
               <p className="text-muted-foreground">
-                Last updated: January 1, 2024
+                Last updated: January 26, 2026
               </p>
             </div>
 
@@ -14,7 +14,7 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Introduction</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  GoldGhee ("we," "our," or "us") respects your privacy and is
+                  NavPrana Organics ("we," "our," or "us") respects your privacy and is
                   committed to protecting your personal information. This
                   Privacy Policy explains how we collect, use, disclose, and
                   safeguard your information when you visit our website or make
@@ -185,7 +185,7 @@ const Page = () => {
                 </p>
               </section>
 
-              <section>
+              {/* <section>
                 <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   If you have any questions about this Privacy Policy or our
@@ -193,7 +193,7 @@ const Page = () => {
                 </p>
                 <div className="bg-background/50 rounded-lg p-4 space-y-2">
                   <p>
-                    <strong>Email:</strong> privacy@goldghee.com
+                    <strong>Email:</strong> privacy@navpranaorganics.com
                   </p>
                   <p>
                     <strong>Phone:</strong> +91 98765 43210
@@ -203,7 +203,7 @@ const Page = () => {
                     District Dholpur, Rajasthan 328021
                   </p>
                 </div>
-              </section>
+              </section> */}
             </div>
           </div>
         </div>

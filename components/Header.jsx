@@ -100,7 +100,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             {[
               { label: "Home", path: "/" },
-              { label: "Our Products", path: "/products" },
+              { label: "Products", path: "/products" },
               { label: "Health Benefits", path: "/health-benefits" },
               { label: "About", path: "/about" },
               { label: "Contact", path: "/contact" },
@@ -179,12 +179,12 @@ const Header = () => {
                         <Package size={16} /> My Orders
                       </Link>
 
-                      <Link
+                      {/* <Link
                         href="/settings"
                         className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
                       >
                         <Settings size={16} /> Settings
-                      </Link>
+                      </Link> */}
 
                       <button
                         onClick={handleLogout}

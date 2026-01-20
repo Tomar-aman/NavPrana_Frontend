@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
 const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
@@ -27,7 +28,7 @@ const Page = () => {
           <div className="bg-card/30 rounded-3xl p-8 md:p-12">
             <div className="mb-8">
               <p className="text-muted-foreground">
-                Last updated: January 1, 2024
+                Last updated: January 26, 2026
               </p>
             </div>
 
@@ -35,7 +36,7 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Agreement to Terms</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  By accessing and using the GoldGhee website, you accept and
+                  By accessing and using the NavPrana Organics website, you accept and
                   agree to be bound by the terms and provision of this
                   agreement. If you do not agree to abide by the above, please
                   do not use this service.
@@ -46,7 +47,7 @@ const Page = () => {
                 <h2 className="text-2xl font-bold mb-4">Use License</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   Permission is granted to temporarily download one copy of the
-                  materials on GoldGhee's website for personal, non-commercial
+                  materials on NavPrana Organics's website for personal, non-commercial
                   transitory viewing only. This is the grant of a license, not a
                   transfer of title, and under this license you may not:
                 </p>
@@ -67,7 +68,7 @@ const Page = () => {
                 </ul>
                 <p className="text-muted-foreground leading-relaxed mt-4">
                   This license shall automatically terminate if you violate any
-                  of these restrictions and may be terminated by GoldGhee at any
+                  of these restrictions and may be terminated by NavPrana Organics at any
                   time.
                 </p>
               </section>
@@ -190,8 +191,8 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Disclaimer</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  The materials on GoldGhee's website are provided on an 'as is'
-                  basis. GoldGhee makes no warranties, expressed or implied, and
+                  The materials on NavPrana Organics's website are provided on an 'as is'
+                  basis. NavPrana Organics makes no warranties, expressed or implied, and
                   hereby disclaims and negates all other warranties including
                   without limitation, implied warranties or conditions of
                   merchantability, fitness for a particular purpose, or
@@ -203,11 +204,11 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Limitations</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  In no event shall GoldGhee or its suppliers be liable for any
+                  In no event shall NavPrana Organics or its suppliers be liable for any
                   damages (including, without limitation, damages for loss of
                   data or profit, or due to business interruption) arising out
-                  of the use or inability to use the materials on GoldGhee's
-                  website, even if GoldGhee or its authorized representative has
+                  of the use or inability to use the materials on NavPrana Organics's
+                  website, even if NavPrana Organics or its authorized representative has
                   been notified orally or in writing of the possibility of such
                   damage.
                 </p>
@@ -233,7 +234,7 @@ const Page = () => {
                 </p>
               </section>
 
-              <section>
+              {/* <section>
                 <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   If you have any questions about these Terms of Service, please
@@ -241,7 +242,7 @@ const Page = () => {
                 </p>
                 <div className="bg-background/50 rounded-lg p-4 space-y-2">
                   <p>
-                    <strong>Email:</strong> legal@goldghee.com
+                    <strong>Email:</strong> legal@navpranaorganics.com
                   </p>
                   <p>
                     <strong>Phone:</strong> +91 98765 43210
@@ -251,7 +252,7 @@ const Page = () => {
                     District Dholpur, Rajasthan 328021
                   </p>
                 </div>
-              </section>
+              </section> */}
             </div>
           </div>
         </div>

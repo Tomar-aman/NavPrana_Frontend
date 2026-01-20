@@ -1,3 +1,4 @@
+"use client";
 import {
   Mail,
   Phone,
@@ -9,8 +10,27 @@ import {
 } from "lucide-react";
 import LogoImage from "@/assets/logo-ghee.svg";
 import Image from "next/image";
+import { use, useEffect, useState } from "react";
+import { getSocialMediaLinks } from "@/services/contact/get-social-media-links";
+
+const SOCIAL_ICON_MAP = {
+  facebook: Facebook,
+  instagram: Instagram,
+  twitter: Twitter,
+  youtube: Youtube,
+};
 
 const Footer = () => {
+  const [socialLinks, setSocialLinks] = useState([]);
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      const links = await getSocialMediaLinks();
+      setSocialLinks(links);
+    };
+    fetchLinks();
+  }, []);
+
   return (
     <footer className="bg-foreground text-white md:px-15">
       <div className="container mx-auto px-4 py-16">
@@ -28,14 +48,30 @@ const Footer = () => {
 
             {/* Social Icons */}
             <div className="flex space-x-4">
-              {[Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
-                <button
-                  key={idx}
-                  className="p-2 rounded-full text-background hover:text-primary hover:bg-background/10 transition-colors"
-                >
-                  <Icon className="h-5 w-5" />
-                </button>
-              ))}
+              {socialLinks.length > 0
+                ? socialLinks.map((item) => {
+                  const Icon = SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-full text-background hover:text-primary hover:bg-background/10 transition-colors"
+                      aria-label={item.platform_name}
+                    >
+                      {Icon ? <Icon className="h-5 w-5" /> : null}
+                    </a>
+                  );
+                })
+                : [Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
+                  <span
+                    key={idx}
+                    className="p-2 rounded-full text-background/40 bg-background/10"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                ))}
             </div>
           </div>
 
@@ -44,18 +80,18 @@ const Footer = () => {
             <h4 className="text-xl font-semibold">Quick Links</h4>
             <div className="space-y-3">
               {[
-                "Home",
-                "Our Products",
-                "Health Benefits",
-                "About Us",
-                "Contact",
+                { label: "Home", path: "/" },
+                { label: "Products", path: "/products" },
+                { label: "Health Benefits", path: "/health-benefits" },
+                { label: "About", path: "/about" },
+                { label: "Contact", path: "/contact" }
               ].map((link, idx) => (
                 <a
                   key={idx}
-                  href={`#${link.toLowerCase().replace(/\s+/g, "")}`}
+                  href={link.path}
                   className="block text-background/80 hover:text-primary transition-colors"
                 >
-                  {link}
+                  {link.label}
                 </a>
               ))}
             </div>
@@ -67,20 +103,20 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary" />
-                <span className="text-background/80">+91 98765 43210</span>
+                <span className="text-background/80">+91 7509531811</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-primary" />
-                <span className="text-background/80">hello@goldghee.com</span>
+                <span className="text-background/80">support@navprana.com</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-primary mt-1" />
                 <span className="text-background/80">
-                  123 Traditional Lane,
+                  L-232, Old H.B Colony,
                   <br />
-                  Heritage District,
+                  Morena, Madhya Pradesh,
                   <br />
-                  Mumbai, India 400001
+                  India 476001
                 </span>
               </div>
             </div>
@@ -131,12 +167,12 @@ const Footer = () => {
               >
                 Terms of Service
               </a>
-              <a
+              {/* <a
                 href="shipping-policy"
                 className="text-background/80 hover:text-primary transition-colors"
               >
                 Shipping Policy
-              </a>
+              </a> */}
             </div>
           </div>
         </div>
