@@ -8,6 +8,9 @@ import cartReducer from "./features/cartSlice";
 import couponReducer from "./features/couponSlice";
 import orderReducer from "./features/orderSlice";
 import paymentReducer from "./features/paymentSlice";
+import uiReducer from "./features/uiSlice";
+import invoiceReducer from "./features/invoiceSlice";
+
 export default combineReducers({
   auth: authReducer,
   address: addressReducer,
@@ -17,5 +20,7 @@ export default combineReducers({
   cart: cartReducer,
   coupon: couponReducer,
   order: orderReducer,
-  payment: paymentReducer, // ✅ REQUIRED
+  payment: paymentReducer,
+  ui: uiReducer,
+  invoice: invoiceReducer,
 });

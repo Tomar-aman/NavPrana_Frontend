@@ -7,6 +7,7 @@ import ReduxProvider from "@/redux/provider";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import AuthInitializer from "../../components/AuthInitializer";
+import GlobalUI from "../../components/GlobalUI";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
             <ProfileProvider>
               <Header />
               <AuthInitializer />
+              <GlobalUI />
               {children}
 
               {/* 🔔 Global Toast Notifications */}

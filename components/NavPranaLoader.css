@@ -1,0 +1,91 @@
+.loader-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4fff4;
+}
+
+.foliage-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.center-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2d5a27;
+    z-index: 10;
+    animation: breathe 3s infinite ease-in-out;
+}
+
+.leaf {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0;
+    animation: float-around 4s infinite ease-in-out;
+}
+
+.leaf-1 {
+    animation-delay: 0s;
+}
+
+.leaf-2 {
+    animation-delay: 0.66s;
+}
+
+.leaf-3 {
+    animation-delay: 1.33s;
+}
+
+.leaf-4 {
+    animation-delay: 2s;
+}
+
+.leaf-5 {
+    animation-delay: 2.66s;
+}
+
+.leaf-6 {
+    animation-delay: 3.33s;
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    }
+}
+
+@keyframes float-around {
+    0% {
+        transform: rotate(0deg) translateX(50px) rotate(0deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(360deg) translateX(50px) rotate(-360deg);
+        opacity: 0;
+    }
+}

@@ -14,7 +14,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
-import { addToCart } from "@/redux/features/cartSlice";
+import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { toast } from "react-toastify";
 /* 🔹 Get featured image safely */
 const getFeaturedImage = (images = []) => {
@@ -41,11 +41,12 @@ const Page = () => {
       addToCart({
         product: productId,
         quantity: 1,
-      })
+      }),
     )
       .unwrap()
       .then(() => {
         toast.success("Product added to cart");
+        dispatch(getCart());
       })
       .catch((err) => {
         toast.error(err);

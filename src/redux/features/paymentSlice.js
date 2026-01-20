@@ -9,13 +9,14 @@ export const paymentStatus = createAsyncThunk(
   async (transactionId, { rejectWithValue }) => {
     try {
       const res = await paymentStatusAPI(transactionId);
+      console.log("paymentStatusAPI response:", res);
       return res;
     } catch (error) {
       return rejectWithValue(
-        error?.response?.data || error.message || "Payment status failed"
+        error?.response?.data || error.message || "Payment status failed",
       );
     }
-  }
+  },
 );
 
 const paymentSlice = createSlice({
@@ -49,6 +50,7 @@ const paymentSlice = createSlice({
         state.success = true;
         state.paymentData = action.payload;
       })
+
       .addCase(paymentStatus.rejected, (state, action) => {
         state.loading = false;
         state.success = false;

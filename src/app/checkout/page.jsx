@@ -67,9 +67,19 @@ const Page = () => {
 
   /* ---------------- COUPON ---------------- */
   const [couponCode, setCouponCode] = useState("");
+  const [editAddressData, setEditAddressData] = useState(null);
+  const [formData, setFormData] = useState({
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "India",
+    is_default: false,
+  });
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
-  const baseURL = process.env.FRONTEND_URL || "http://localhost:3000";
+  // const baseURL = process.env.FRONTEND_URL || "http://localhost:3000";
   const { couponData, success } = useSelector((state) => state.coupon);
   console.log(couponData);
   useEffect(() => {
@@ -160,6 +170,31 @@ const Page = () => {
 
     dispatch(createOrder(payload));
     router.push("/payment");
+  };
+
+  const handleOnsubmitAddress = async () => {
+    try {
+      await sendAddress(formData);
+
+      // 🔥 IMPORTANT
+      dispatch(fetchAddresses());
+
+      toast.success("Address added successfully");
+      setShowAddressModal(false);
+
+      // reset form
+      setFormData({
+        address_line1: "",
+        address_line2: "",
+        city: "",
+        state: "",
+        postal_code: "",
+        country: "India",
+        is_default: false,
+      });
+    } catch (err) {
+      toast.error("Failed to add address");
+    }
   };
 
   return (
@@ -301,8 +336,8 @@ const Page = () => {
         p.disabled
           ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
           : paymentMethod === p.id
-          ? "border-green-600 bg-green-50 cursor-pointer"
-          : "border-gray-200 cursor-pointer"
+            ? "border-primary bg-green-50 cursor-pointer"
+            : "border-gray-200 cursor-pointer"
       }`}
                 >
                   <input
@@ -412,7 +447,7 @@ const Page = () => {
               </div>
 
               {appliedCoupon && (
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-primary">
                   <span>Discount</span>
                   <span>-₹{discount}</span>
                 </div>
@@ -427,7 +462,7 @@ const Page = () => {
             {/* Place Order */}
             <button
               onClick={() => handleCreateOrder()}
-              className="mt-5 w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700"
+              className="mt-5 w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90 cursor-pointer"
             >
               Place Order • ₹{total}
             </button>
@@ -451,7 +486,7 @@ const Page = () => {
             setFormData={setFormData}
             onClose={() => {
               setShowAddressModal(false);
-              //   setEditAddressData(null);
+              setEditAddressData(null);
             }}
             onSubmit={
               editAddressData ? handleUpdateAddress : handleOnsubmitAddress

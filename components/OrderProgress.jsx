@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Package, Clock, Truck, CheckCircle2 } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle2, XCircle } from "lucide-react";
 
 /**
- * status values supported:
- * "placed" | "processing" | "shipped" | "delivered"
+ * Supported status values:
+ * "Placed" | "Processing" | "Shipped" | "Delivered" | "Cancelled" | "Failed"
  */
 const OrderProgress = ({ status }) => {
-  console.log(status);
+  console.log("OrderProgress status:", status);
   const steps = [
     { key: "Placed", label: "Order Placed", icon: Package },
     { key: "Processing", label: "Processing", icon: Clock },
@@ -16,66 +16,80 @@ const OrderProgress = ({ status }) => {
     { key: "Delivered", label: "Delivered", icon: CheckCircle2 },
   ];
 
+  const isCancelled = status === "Cancelled";
+  const isFailed = status === "Failed";
+
   const currentIndex = steps.findIndex((s) => s.key === status);
+
+  // 🔒 Fallback for safety
+  const safeIndex = currentIndex === -1 ? 0 : currentIndex;
 
   return (
     <div className="relative w-full mt-8">
-      {/* Background Line */}
+      {/* BACKGROUND LINE */}
       <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200 rounded" />
 
-      {/* Active Line */}
-      <motion.div
-        className="absolute top-5 left-0 h-1 bg-green-600 rounded"
-        initial={{ width: 0 }}
-        animate={{
-          width: `${(currentIndex / (steps.length - 1)) * 100}%`,
-        }}
-        transition={{ duration: 1.0, ease: "easeInOut" }}
-      />
+      {/* ACTIVE LINE (only if not cancelled / failed) */}
+      {!isCancelled && !isFailed && (
+        <motion.div
+          className="absolute top-5 left-0 h-1 bg-green-600 rounded"
+          initial={{ width: 0 }}
+          animate={{
+            width: `${(safeIndex / (steps.length - 1)) * 100}%`,
+          }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        />
+      )}
 
-      {/* Steps */}
+      {/* STEPS */}
       <div className="relative flex justify-between">
         {steps.map((step, index) => {
-          const isCompleted = index <= currentIndex;
+          const isCompleted = !isCancelled && !isFailed && index <= safeIndex;
 
           return (
             <div key={step.key} className="flex flex-col items-center z-10">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
-                animate={{
-                  scale: isCompleted ? 1.1 : 1,
-                  opacity: 1,
-                }}
+                animate={{ scale: 1, opacity: 1 }}
                 transition={{
                   type: "spring",
                   stiffness: 300,
                   damping: 20,
-                  delay: index * 0.12,
+                  delay: index * 0.1,
                 }}
                 className={`w-11 h-11 rounded-full flex items-center justify-center border-2
                   ${
                     isCompleted
-                      ? "bg-green-600 border-green-600 text-white shadow-lg"
+                      ? "bg-green-600 border-green-600 text-white shadow-md"
                       : "bg-white border-gray-300 text-gray-400"
                   }`}
               >
                 <step.icon size={18} />
               </motion.div>
 
-              <motion.span
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.15 }}
+              <span
                 className={`text-xs mt-2 font-medium ${
                   isCompleted ? "text-green-700" : "text-gray-400"
                 }`}
               >
                 {step.label}
-              </motion.span>
+              </span>
             </div>
           );
         })}
       </div>
+
+      {/* CANCELLED / FAILED STATE */}
+      {(isCancelled || isFailed) && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-6 flex items-center justify-center gap-2 text-red-600 font-medium"
+        >
+          <XCircle size={20} />
+          {isCancelled ? "Order Cancelled" : "Payment Failed"}
+        </motion.div>
+      )}
     </div>
   );
 };

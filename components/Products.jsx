@@ -4,7 +4,7 @@ import gheeProductImage from "@/assets/ghee-product.jpg";
 import cookingGheeImage from "@/assets/cooking-with-ghee.jpg";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "@/redux/features/cartSlice";
+import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
@@ -32,12 +32,15 @@ const Products = () => {
       addToCart({
         product: productId,
         quantity: 1,
-      })
+      }),
     )
       .unwrap()
+
       .then(() => {
         toast.success("Product added to cart");
+        dispatch(getCart());
       })
+
       .catch((err) => {
         toast.error(err);
       });

@@ -15,10 +15,12 @@ import {
   XCircle,
   RefreshCw,
   Filter,
+  ArrowRight,
+  ShieldCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrder } from "@/redux/features/orderSlice";
-import OrderDetails from "../../../components/OrderDetailsModal";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -27,7 +29,6 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [open, setOpen] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const orders = orderList?.results || [];
 
@@ -50,6 +51,9 @@ const Page = () => {
     Shipped: "bg-blue-100 text-blue-700",
     Cancelled: "bg-red-100 text-red-700",
     Pending: "bg-gray-100 text-gray-700",
+    // ✅ NEW
+    Accepted: "bg-emerald-100 text-emerald-700",
+    Failed: "bg-red-100 text-red-700",
   };
 
   const statusIcon = {
@@ -58,6 +62,9 @@ const Page = () => {
     Shipped: Truck,
     Cancelled: XCircle,
     Pending: RefreshCw,
+    // ✅ NEW
+    Accepted: ShieldCheck,
+    Failed: AlertTriangle,
   };
 
   const statusOptions = [
@@ -66,6 +73,8 @@ const Page = () => {
     { value: "Delivered", label: "Delivered", icon: CheckCircle2 },
     { value: "Shipped", label: "Shipped", icon: Truck },
     { value: "Cancelled", label: "Cancelled", icon: XCircle },
+    { value: "Failed", label: "Failed", icon: AlertTriangle },
+    { value: "Accepted", label: "Accepted", icon: ShieldCheck },
   ];
 
   const currentStatus =
@@ -75,17 +84,15 @@ const Page = () => {
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch = order.id.toString().includes(searchQuery);
-
     const matchesStatus =
       statusFilter === "all" || order.status_display === statusFilter;
-
     return matchesSearch && matchesStatus;
   });
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Package className="text-primary" />
@@ -94,16 +101,16 @@ const Page = () => {
 
           <Link
             href="/products"
-            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded"
+            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg"
           >
             <ShoppingBag size={16} />
             Continue Shopping
           </Link>
         </div>
 
-        {/* Filters */}
+        {/* FILTERS */}
         <div className="bg-white p-4 rounded-lg border mb-6 flex gap-4">
-          {/* Search */}
+          {/* SEARCH */}
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 text-gray-400" size={16} />
             <input
@@ -114,7 +121,7 @@ const Page = () => {
             />
           </div>
 
-          {/* Status Dropdown */}
+          {/* STATUS FILTER */}
           <div className="relative w-48">
             <button
               onClick={() => setOpen((p) => !p)}
@@ -128,7 +135,7 @@ const Page = () => {
             </button>
 
             {open && (
-              <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow">
+              <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow cursor-pointer">
                 {statusOptions.map((option) => (
                   <button
                     key={option.value}
@@ -136,7 +143,7 @@ const Page = () => {
                       setStatusFilter(option.value);
                       setOpen(false);
                     }}
-                    className="w-full px-3 py-2 flex items-center gap-2 hover:bg-gray-100 text-left"
+                    className="w-full px-3 py-2 flex items-center gap-2 hover:bg-primary hover:text-white cursor-pointer text-left"
                   >
                     <option.icon size={16} />
                     {option.label}
@@ -147,7 +154,7 @@ const Page = () => {
           </div>
         </div>
 
-        {/* Orders */}
+        {/* ORDERS */}
         {fetchLoading ? (
           <p className="text-center text-gray-500">Loading orders...</p>
         ) : filteredOrders.length === 0 ? (
@@ -159,11 +166,14 @@ const Page = () => {
             return (
               <div
                 key={order.id}
-                className="bg-white border rounded-lg p-5 mb-4"
+                className="bg-white border rounded-xl p-5 mb-4"
               >
+                {/* TOP ROW */}
                 <div className="flex justify-between items-center mb-3">
                   <div className="flex items-center gap-3">
-                    <span className="font-bold">ORD{order.id}</span>
+                    <span className="font-bold text-primary">
+                      ORD - {order.id}
+                    </span>
 
                     <span
                       className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
@@ -175,46 +185,54 @@ const Page = () => {
                     </span>
                   </div>
 
-                  <Link
-                    href={`/order-details/${order.id}`}
-                    // onClick={() => setSelectedOrderId(order.id)}
-                    className="flex items-center gap-1 text-sm border px-3 py-1 rounded cursor-pointer"
-                  >
-                    <Eye size={14} />
-                    View
-                  </Link>
+                  {/* TOTAL PRICE */}
+                  <p className="font-bold text-lg text-primary">
+                    ₹{order.final_amount}
+                  </p>
                 </div>
 
-                <p className="text-sm text-gray-500 flex items-center gap-1">
+                {/* DATE */}
+                <p className="text-sm text-gray-500 flex items-center gap-1 mb-3">
                   <Calendar size={14} />
                   Ordered on {formatDate(order.created_at)}
                 </p>
 
-                <div className="flex justify-between mt-3 items-center">
+                {/* PRODUCT INFO + VIEW */}
+                <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
                     <img
                       src={order.first_product_image}
                       alt="Product"
                       className="w-12 h-12 rounded object-cover"
                     />
-                    <p className="text-sm text-gray-600">
-                      {order.items_count} item(s)
-                    </p>
+
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">
+                        {order.first_product_name ||
+                          order.items?.[0]?.product?.name ||
+                          "Product"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {order.items_count} item(s)
+                      </p>
+                    </div>
                   </div>
 
-                  <p className="font-bold text-lg">₹{order.final_amount}</p>
+                  {/* VIEW DETAILS */}
+                  <Link
+                    href={`/order-details/${order.id}`}
+                    className="flex items-center gap-1 text-sm border px-3 py-1.5 rounded-lg hover:bg-gray-50"
+                  >
+                    <Eye size={14} />
+                    View Details
+                    <ArrowRight size={14} />
+                  </Link>
                 </div>
               </div>
             );
           })
         )}
       </div>
-      {/* {selectedOrderId && (
-        <OrderDetails
-          orderId={selectedOrderId}
-          onClose={() => setSelectedOrderId(null)}
-        />
-      )} */}
     </div>
   );
 };
