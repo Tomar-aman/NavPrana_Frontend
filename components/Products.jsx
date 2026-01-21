@@ -8,6 +8,7 @@ import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 const getFeaturedImage = (images = []) => {
   return (
     images.find((img) => img.is_feature)?.image ||
@@ -18,6 +19,7 @@ const getFeaturedImage = (images = []) => {
 
 const Products = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const { list, loading, error } = useSelector((state) => state.product);
 
   useEffect(() => {
@@ -69,6 +71,7 @@ const Products = () => {
             return (
               <div
                 key={product.id}
+                onClick={() => router.push(`/product-details/${product.id}`)}
                 className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
                 <div className="relative w-full h-64">

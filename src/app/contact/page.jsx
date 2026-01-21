@@ -25,7 +25,11 @@ const Page = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const [faqs, setFaqs] = useState([]);
-  const [contactInfo, setContactInfo] = useState({ phone_numbers: [], emails: [], addresses: [] });
+  const [contactInfo, setContactInfo] = useState({
+    phone_numbers: [],
+    emails: [],
+    addresses: [],
+  });
 
   // const info = [
   //   {
@@ -103,7 +107,9 @@ const Page = () => {
       const result = await sendContactQuery(payload);
 
       if (result.status === 201) {
-        toast.success("Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.");
+        toast.success(
+          "Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.",
+        );
         setForm({
           firstName: "",
           lastName: "",
@@ -122,10 +128,15 @@ const Page = () => {
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error(error.response?.data?.message || "Failed to send message. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to send message. Please try again.",
+      );
       setSubmitStatus({
         type: "error",
-        message: error.response?.data?.message || "Failed to send message. Please try again.",
+        message:
+          error.response?.data?.message ||
+          "Failed to send message. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -135,23 +146,17 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 ">
-      <ToastContainer position="top-center" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-      {/* Header */}
-      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-6 md:px-15">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Home</span>
-            </Link>
-            <h1 className="text-3xl font-bold text-gradient">Contact Us</h1>
-            <div></div>
-          </div>
-        </div>
-      </div> */}
+      <ToastContainer
+        position="top-center"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
 
       <main className="container mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
@@ -160,7 +165,8 @@ const Page = () => {
             Get in <span className="text-gradient">Touch</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            We'd love to hear from you! Whether you have questions about our products, or need support with your order, we're here to help.
+            We'd love to hear from you! Whether you have questions about our
+            products, or need support with your order, we're here to help.
           </p>
         </section>
 
@@ -173,11 +179,21 @@ const Page = () => {
             </div>
             <h3 className="text-xl font-semibold">Phone</h3>
             <div className="space-y-2 my-3">
-              {contactInfo.phone_numbers.length > 0 ? contactInfo.phone_numbers.map((p) => (
-                <p key={p.id} className="text-sm font-medium">{p.phone_number}</p>
-              )) : <p className="text-sm text-muted-foreground">No phone numbers</p>}
+              {contactInfo.phone_numbers.length > 0 ? (
+                contactInfo.phone_numbers.map((p) => (
+                  <p key={p.id} className="text-sm font-medium">
+                    {p.phone_number}
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No phone numbers
+                </p>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground">Call us during business hours</p>
+            <p className="text-xs text-muted-foreground">
+              Call us during business hours
+            </p>
           </div>
           {/* Email */}
           <div className="p-6 text-center border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
@@ -186,11 +202,19 @@ const Page = () => {
             </div>
             <h3 className="text-xl font-semibold">Email</h3>
             <div className="space-y-2 my-3">
-              {contactInfo.emails.length > 0 ? contactInfo.emails.map((e) => (
-                <p key={e.id} className="text-sm font-medium">{e.email}</p>
-              )) : <p className="text-sm text-muted-foreground">No emails</p>}
+              {contactInfo.emails.length > 0 ? (
+                contactInfo.emails.map((e) => (
+                  <p key={e.id} className="text-sm font-medium">
+                    {e.email}
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No emails</p>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground">Send us your queries</p>
+            <p className="text-xs text-muted-foreground">
+              Send us your queries
+            </p>
           </div>
           {/* Address */}
           <div className="p-6 text-center border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all col-span-2 lg:col-span-1">
@@ -199,16 +223,29 @@ const Page = () => {
             </div>
             <h3 className="text-xl font-semibold">Address</h3>
             <div className="space-y-2 my-3">
-              {contactInfo.addresses.length > 0 ? contactInfo.addresses.map((a) => (
-                <p key={a.id} className="text-sm font-medium">
-                  {a.address_line1}<br />
-                  {a.address_line2 && <>{a.address_line2}<br /></>}
-                  {a.city}, {a.state} {a.postal_code}<br />
-                  {a.country}
-                </p>
-              )) : <p className="text-sm text-muted-foreground">No address</p>}
+              {contactInfo.addresses.length > 0 ? (
+                contactInfo.addresses.map((a) => (
+                  <p key={a.id} className="text-sm font-medium">
+                    {a.address_line1}
+                    <br />
+                    {a.address_line2 && (
+                      <>
+                        {a.address_line2}
+                        <br />
+                      </>
+                    )}
+                    {a.city}, {a.state} {a.postal_code}
+                    <br />
+                    {a.country}
+                  </p>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">No address</p>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground">Visit our office/facility</p>
+            <p className="text-xs text-muted-foreground">
+              Visit our office/facility
+            </p>
           </div>
           {/* Hours (static) */}
           <div className="p-6 text-center border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
@@ -227,7 +264,7 @@ const Page = () => {
         {/* Contact Form - Two Column Layout Responsive and Equal */}
         <section className="flex flex-col md:flex-row justify-center items-stretch min-h-[70vh] mb-16 gap-8">
           {/* Left: Image */}
-          <div className="flex-1 flex justify-center items-center min-h-[500px] bg-white/80 rounded-2xl shadow-xl p-6 border border-border/30 mb-6 md:mb-0">
+          <div className="flex-1 flex justify-center items-center min-h-[500px]  mb-6 md:mb-0">
             <div className="w-full h-full flex items-center justify-center">
               <Image
                 src={contactUsImage}
@@ -242,14 +279,19 @@ const Page = () => {
           {/* Right: Form */}
           <div className="flex-1 flex items-center justify-center min-h-[500px]">
             <div className="w-full max-w-lg bg-white/80 shadow-xl rounded-2xl p-10 border border-border/30 backdrop-blur-md mx-auto">
-              <h3 className="text-3xl font-extrabold mb-3 text-center text-primary">Send us a Message</h3>
+              <h3 className="text-3xl font-extrabold mb-3 text-center text-primary">
+                Send us a Message
+              </h3>
               <p className="text-base text-muted-foreground mb-8 text-center">
-                Fill out the form below and we'll get back to you within 24 hours.
+                Fill out the form below and we'll get back to you within 24
+                hours.
               </p>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 space-y-1">
-                    <label htmlFor="firstName" className="font-medium text-sm">First Name</label>
+                    <label htmlFor="firstName" className="font-medium text-sm">
+                      First Name
+                    </label>
                     <input
                       id="firstName"
                       value={form.firstName}
@@ -259,7 +301,9 @@ const Page = () => {
                     />
                   </div>
                   <div className="flex-1 space-y-1">
-                    <label htmlFor="lastName" className="font-medium text-sm">Last Name</label>
+                    <label htmlFor="lastName" className="font-medium text-sm">
+                      Last Name
+                    </label>
                     <input
                       id="lastName"
                       value={form.lastName}
@@ -270,7 +314,9 @@ const Page = () => {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="email" className="font-medium text-sm">Email</label>
+                  <label htmlFor="email" className="font-medium text-sm">
+                    Email
+                  </label>
                   <input
                     id="email"
                     type="email"
@@ -280,29 +326,37 @@ const Page = () => {
                     className="w-full border border-border/40 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label htmlFor="phone" className="font-medium text-sm">Phone Number</label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="Enter your phone number"
-                    className="w-full border border-border/40 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
-                  />
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="space-y-1">
+                    <label htmlFor="phone" className="font-medium text-sm">
+                      Phone Number
+                    </label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="Enter your phone number"
+                      className="w-full border border-border/40 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label htmlFor="subject" className="font-medium text-sm">
+                      Subject
+                    </label>
+                    <input
+                      id="subject"
+                      value={form.subject}
+                      onChange={handleChange}
+                      placeholder="What is this regarding?"
+                      className="w-full border border-border/40 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="subject" className="font-medium text-sm">Subject</label>
-                  <input
-                    id="subject"
-                    value={form.subject}
-                    onChange={handleChange}
-                    placeholder="What is this regarding?"
-                    className="w-full border border-border/40 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label htmlFor="message" className="font-medium text-sm">Message</label>
+                  <label htmlFor="message" className="font-medium text-sm">
+                    Message
+                  </label>
                   <textarea
                     id="message"
                     value={form.message}
@@ -331,13 +385,22 @@ const Page = () => {
           </h3>
 
           {faqs.length === 0 ? (
-            <div className="text-center text-muted-foreground">No FAQs available.</div>
+            <div className="text-center text-muted-foreground">
+              No FAQs available.
+            </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
               {faqs.map((faq) => (
-                <div key={faq.id} className="p-5 bg-background rounded-xl shadow-sm hover:shadow-md transition">
-                  <h4 className="font-semibold text-lg text-foreground mb-2">{faq.question}</h4>
-                  <p className="text-muted-foreground whitespace-pre-line">{faq.answer}</p>
+                <div
+                  key={faq.id}
+                  className="p-5 bg-background rounded-xl shadow-sm hover:shadow-md transition"
+                >
+                  <h4 className="font-semibold text-lg text-foreground mb-2">
+                    {faq.question}
+                  </h4>
+                  <p className="text-muted-foreground whitespace-pre-line">
+                    {faq.answer}
+                  </p>
                 </div>
               ))}
             </div>

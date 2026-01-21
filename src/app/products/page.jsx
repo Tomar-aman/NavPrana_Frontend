@@ -113,7 +113,7 @@ const Page = () => {
               <div
                 key={product.id}
                 onClick={() => router.push(`/product-details/${product.id}`)}
-                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
+                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
               >
                 <div className="relative w-full h-64">
                   <Image

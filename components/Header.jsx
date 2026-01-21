@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import {
-  ShoppingCart,
-  Menu,
-  X,
-  User,
-  LogOut,
-  Settings,
-  Package,
-} from "lucide-react";
+import { ShoppingCart, Menu, X, User, LogOut, Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,21 +17,19 @@ const Header = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  /* UI state */
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [hideTopBar, setHideTopBar] = useState(false);
 
-  /* Refs */
   const profileRef = useRef(null);
 
-  /* Redux state */
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { data: profile } = useSelector((state) => state.profile);
   const { items = [] } = useSelector((state) => state.cart);
 
   const cartItemQuantity = items.length;
 
-  /* Fetch profile & cart when logged in */
+  /* Fetch profile & cart */
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getProfile());
@@ -47,10 +37,20 @@ const Header = () => {
     }
   }, [isAuthenticated, dispatch]);
 
-  /* Close profile dropdown on outside click */
+  /* Hide top bar on scroll */
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
+    const handleScroll = () => {
+      setHideTopBar(window.scrollY > 80);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  /* Close profile dropdown */
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
         setIsProfileOpen(false);
       }
     };
@@ -64,7 +64,6 @@ const Header = () => {
     };
   }, [isProfileOpen]);
 
-  /* Logout */
   const handleLogout = () => {
     dispatch(logout());
     setIsProfileOpen(false);
@@ -76,28 +75,44 @@ const Header = () => {
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="bg-white border-b border-gray-300 sticky top-0 z-50"
+      className="bg-white border-b border-gray-200 fixed top-0 w-full z-50 shadow-sm"
+      animate={{ y: hideTopBar ? -0 : 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      <div className="container mx-auto px-4 py-2">
+      {/* 🔝 TOP SLIDING BAR */}
+      <AnimatePresence>
+        {!hideTopBar && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 32, opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-primary overflow-hidden flex items-center"
+          >
+            <div className="animate-marquee whitespace-nowrap text-white text-sm font-medium tracking-wide">
+              <span className="mx-8">🥛 Boosts Immunity</span>
+              <span className="mx-8">🌿 Improves Digestion</span>
+              <span className="mx-8">🔥 Increases Energy</span>
+              <span className="mx-8">🧠 Enhances Brain Health</span>
+              <span className="mx-8">❤️ Supports Heart Health</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* 🔻 MAIN HEADER */}
+      <div className="container mx-auto px-6 py-4 bg-white">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <Image
-                src={LogoImage}
-                alt="Company Logo"
-                width={160}
-                height={60}
-                className="w-40 h-auto"
-              />
-            </motion.div>
+          <Link href="/">
+            <Image
+              src={LogoImage}
+              alt="Logo"
+              width={160}
+              height={60}
+              className="w-40"
+            />
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex space-x-10">
             {[
               { label: "Home", path: "/" },
               { label: "Products", path: "/products" },
@@ -105,92 +120,71 @@ const Header = () => {
               { label: "About", path: "/about" },
               { label: "Contact", path: "/contact" },
             ].map((item) => (
-              <motion.div
+              <Link
                 key={item.label}
-                whileHover={{ y: -2 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                href={item.path}
+                className="relative group font-medium text-gray-800"
               >
-                <Link href={item.path}>{item.label}</Link>
-              </motion.div>
+                {item.label}
+                <span className="absolute left-1/2 -bottom-1 h-[2px] w-0 bg-primary transition-all duration-300 group-hover:left-0 group-hover:w-full" />
+              </Link>
             ))}
           </nav>
-
-          {/* Right Actions */}
+          {/* Right */}
           <div className="flex items-center space-x-4">
             {/* Cart */}
             <Link href="/cart" className="relative">
               <ShoppingCart className="h-5 w-5" />
-              <AnimatePresence>
-                {cartItemQuantity > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center"
-                  >
-                    {cartItemQuantity}
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              {cartItemQuantity > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs h-5 w-5 rounded-full flex items-center justify-center">
+                  {cartItemQuantity}
+                </span>
+              )}
             </Link>
 
-            {/* Auth Section */}
+            {/* Auth */}
             {!isAuthenticated ? (
-              <motion.div whileHover={{ scale: 1.05 }}>
-                <Link
-                  href="/auth"
-                  className="px-4 py-2 border rounded hover:bg-gray-100"
-                >
-                  Login
-                </Link>
-              </motion.div>
+              <Link
+                href="/auth"
+                className="px-4 py-2 border rounded hover:bg-gray-100"
+              >
+                Login
+              </Link>
             ) : (
               <div className="relative" ref={profileRef}>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsProfileOpen((prev) => !prev)}
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100"
                 >
-                  <User className="h-4 w-4" />
+                  <User size={16} />
                   {capitalize(profile?.first_name)}
-                </motion.button>
+                </button>
 
-                {/* Profile Dropdown */}
                 <AnimatePresence>
                   {isProfileOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-md"
+                      className="absolute right-0 mt-2 w-48 bg-white border rounded shadow"
                     >
                       <Link
+                        className="block px-4 py-2 hover:bg-gray-100"
                         href="/profile"
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
                       >
-                        <User size={16} /> My Profile
+                        My Profile
                       </Link>
-
                       <Link
+                        className="block px-4 py-2 hover:bg-gray-100"
                         href="/order"
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
                       >
-                        <Package size={16} /> My Orders
+                        My Orders
                       </Link>
-
-                      {/* <Link
-                        href="/settings"
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
-                      >
-                        <Settings size={16} /> Settings
-                      </Link> */}
-
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left flex cursor-pointer items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50"
+                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
                       >
-                        <LogOut size={16} /> Logout
+                        Logout
                       </button>
                     </motion.div>
                   )}
@@ -198,16 +192,16 @@ const Header = () => {
               </div>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile */}
             <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation */}{" "}
       <AnimatePresence>
+        {" "}
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
@@ -216,16 +210,17 @@ const Header = () => {
             transition={{ duration: 0.3 }}
             className="md:hidden bg-white border-t overflow-hidden"
           >
+            {" "}
             <div className="px-4 py-3 flex flex-col space-y-3">
-              <Link href="/">Home</Link>
-              <Link href="/products">Products</Link>
-              <Link href="/health-benefits">Health Benefits</Link>
-              <Link href="/about">About</Link>
-              <Link href="/contact">Contact</Link>
-              {isAuthenticated && <Link href="/profile">Profile</Link>}
-            </div>
+              {" "}
+              <Link href="/">Home</Link> <Link href="/products">Products</Link>{" "}
+              <Link href="/health-benefits">Health Benefits</Link>{" "}
+              <Link href="/about">About</Link>{" "}
+              <Link href="/contact">Contact</Link>{" "}
+              {isAuthenticated && <Link href="/profile">Profile</Link>}{" "}
+            </div>{" "}
           </motion.div>
-        )}
+        )}{" "}
       </AnimatePresence>
     </motion.header>
   );
