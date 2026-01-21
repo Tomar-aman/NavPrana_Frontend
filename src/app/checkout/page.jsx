@@ -80,7 +80,7 @@ const Page = () => {
   });
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
-  const baseURL = "http://localhost:3000";
+  // const baseURL = "http://localhost:3000";
   const { couponData, success } = useSelector((state) => state.coupon);
   console.log(couponData);
   useEffect(() => {
@@ -159,7 +159,7 @@ const Page = () => {
         quantity: item.quantity,
       })),
       address_id: selectedAddressId,
-      return_url: `${baseURL}/payment-status`,
+      // return_url: `${baseURL}/payment-status`,
     };
 
     // ✅ ONLY add coupon_code if user applied coupon
