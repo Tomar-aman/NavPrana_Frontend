@@ -31,36 +31,6 @@ const Page = () => {
     addresses: [],
   });
 
-  // const info = [
-  //   {
-  //     icon: Phone,
-  //     title: "Phone",
-  //     details: ["+91 98765 43210", "+91 98765 43211"],
-  //     description: "Call us during business hours",
-  //   },
-  //   {
-  //     icon: Mail,
-  //     title: "Email",
-  //     details: ["info@goldghee.com", "orders@goldghee.com"],
-  //     description: "Send us your queries",
-  //   },
-  //   {
-  //     icon: MapPin,
-  //     title: "Address",
-  //     details: [
-  //       "Village Khemka, Tehsil Bari",
-  //       "District Dholpur, Rajasthan 328021",
-  //     ],
-  //     description: "Visit our farm and facility",
-  //   },
-  //   {
-  //     icon: Clock,
-  //     title: "Hours",
-  //     details: ["Mon - Sat: 9 AM - 6 PM", "Sunday: 10 AM - 4 PM"],
-  //     description: "We're here to help",
-  //   },
-  // ];
-
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
@@ -145,19 +115,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 ">
-      <ToastContainer
-        position="top-center"
-        autoClose={4000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
       <main className="container mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">

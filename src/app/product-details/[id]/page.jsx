@@ -17,14 +17,14 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { toast } from "react-toastify";
 
 const Page = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const { list, loading } = useSelector((state) => state.product);
 
   const [selectedImage, setSelectedImage] = useState(0);
@@ -55,6 +55,22 @@ const Page = () => {
       .catch((err) => {
         toast.error(err);
       });
+  };
+
+  const handleBuyNow = async () => {
+    try {
+      await dispatch(
+        addToCart({
+          product: product.id,
+          quantity,
+        }),
+      ).unwrap();
+
+      // ✅ Navigate ONLY after successful add
+      router.push("/checkout");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Find product by ID
@@ -88,7 +104,7 @@ const Page = () => {
   const mainImage = images[selectedImage]?.image || "/placeholder.png";
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 my-20">
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-2 gap-12">
           {/* IMAGE SECTION */}
@@ -215,7 +231,10 @@ const Page = () => {
                 Add to Cart
               </button>
 
-              <button className="flex-1 border py-3 rounded-lg hover:bg-gray-100 font-semibold">
+              <button
+                className="flex-1 border py-3 rounded-lg hover:bg-gray-100 font-semibold"
+                onClick={handleBuyNow}
+              >
                 Buy Now
               </button>
             </div>

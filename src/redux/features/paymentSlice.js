@@ -7,6 +7,7 @@ import { paymentStatusAPI } from "@/services/payment/paymentStatus";
 export const paymentStatus = createAsyncThunk(
   "payment/paymentStatus",
   async (transactionId, { rejectWithValue }) => {
+    console.log("Fetching payment status for transactionId:", transactionId);
     try {
       const res = await paymentStatusAPI(transactionId);
       console.log("paymentStatusAPI response:", res);
@@ -46,6 +47,7 @@ const paymentSlice = createSlice({
         state.success = false;
       })
       .addCase(paymentStatus.fulfilled, (state, action) => {
+        console.log("Redux paymentData:", action.payload);
         state.loading = false;
         state.success = true;
         state.paymentData = action.payload;

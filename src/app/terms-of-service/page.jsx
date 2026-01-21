@@ -3,26 +3,7 @@ import Link from "next/link";
 
 const Page = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      {/* Header */}
-      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Home</span>
-            </Link>
-            <h1 className="text-3xl font-bold text-gradient">
-              Terms of Service
-            </h1>
-            <div></div>
-          </div>
-        </div>
-      </div> */}
-
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-card/30 rounded-3xl p-8 md:p-12">
@@ -36,10 +17,10 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Agreement to Terms</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  By accessing and using the NavPrana Organics website, you accept and
-                  agree to be bound by the terms and provision of this
-                  agreement. If you do not agree to abide by the above, please
-                  do not use this service.
+                  By accessing and using the NavPrana Organics website, you
+                  accept and agree to be bound by the terms and provision of
+                  this agreement. If you do not agree to abide by the above,
+                  please do not use this service.
                 </p>
               </section>
 
@@ -47,9 +28,10 @@ const Page = () => {
                 <h2 className="text-2xl font-bold mb-4">Use License</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   Permission is granted to temporarily download one copy of the
-                  materials on NavPrana Organics's website for personal, non-commercial
-                  transitory viewing only. This is the grant of a license, not a
-                  transfer of title, and under this license you may not:
+                  materials on NavPrana Organics's website for personal,
+                  non-commercial transitory viewing only. This is the grant of a
+                  license, not a transfer of title, and under this license you
+                  may not:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
                   <li>modify or copy the materials</li>
@@ -68,8 +50,8 @@ const Page = () => {
                 </ul>
                 <p className="text-muted-foreground leading-relaxed mt-4">
                   This license shall automatically terminate if you violate any
-                  of these restrictions and may be terminated by NavPrana Organics at any
-                  time.
+                  of these restrictions and may be terminated by NavPrana
+                  Organics at any time.
                 </p>
               </section>
 
@@ -191,26 +173,26 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Disclaimer</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  The materials on NavPrana Organics's website are provided on an 'as is'
-                  basis. NavPrana Organics makes no warranties, expressed or implied, and
-                  hereby disclaims and negates all other warranties including
-                  without limitation, implied warranties or conditions of
-                  merchantability, fitness for a particular purpose, or
-                  non-infringement of intellectual property or other violation
-                  of rights.
+                  The materials on NavPrana Organics's website are provided on
+                  an 'as is' basis. NavPrana Organics makes no warranties,
+                  expressed or implied, and hereby disclaims and negates all
+                  other warranties including without limitation, implied
+                  warranties or conditions of merchantability, fitness for a
+                  particular purpose, or non-infringement of intellectual
+                  property or other violation of rights.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-bold mb-4">Limitations</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  In no event shall NavPrana Organics or its suppliers be liable for any
-                  damages (including, without limitation, damages for loss of
-                  data or profit, or due to business interruption) arising out
-                  of the use or inability to use the materials on NavPrana Organics's
-                  website, even if NavPrana Organics or its authorized representative has
-                  been notified orally or in writing of the possibility of such
-                  damage.
+                  In no event shall NavPrana Organics or its suppliers be liable
+                  for any damages (including, without limitation, damages for
+                  loss of data or profit, or due to business interruption)
+                  arising out of the use or inability to use the materials on
+                  NavPrana Organics's website, even if NavPrana Organics or its
+                  authorized representative has been notified orally or in
+                  writing of the possibility of such damage.
                 </p>
               </section>
 

@@ -59,26 +59,7 @@ const Page = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      {/* Header */}
-      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Home</span>
-            </Link>
-            <h1 className="text-3xl font-bold text-gradient">
-              Shipping Policy
-            </h1>
-            <div></div>
-          </div>
-        </div>
-      </div> */}
-
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}

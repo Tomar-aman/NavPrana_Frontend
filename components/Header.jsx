@@ -157,7 +157,9 @@ const Header = () => {
                   className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100"
                 >
                   <User size={16} />
-                  {capitalize(profile?.first_name)}
+                  <span className="hidden sm:inline">
+                    {capitalize(profile?.first_name)}
+                  </span>
                 </button>
 
                 <AnimatePresence>

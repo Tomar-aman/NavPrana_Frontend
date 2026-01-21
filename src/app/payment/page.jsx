@@ -3,15 +3,19 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import PrivateRoute from "../../../components/PrivateRoute";
 
 const PaymentPage = () => {
   const { orderData } = useSelector((state) => state.order);
   const router = useRouter();
-
+  console.log("Order Data in PaymentPage:", orderData);
   useEffect(() => {
     if (!orderData?.payment_session_id) return;
 
     // Save transaction_id for status page
+    if (orderData.order_id) {
+      sessionStorage.setItem("order_id", orderData.order_id);
+    }
     if (orderData.transaction_id) {
       sessionStorage.setItem("transaction_id", orderData.transaction_id);
     }
@@ -48,11 +52,13 @@ const PaymentPage = () => {
   }, [orderData, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-lg font-medium text-gray-700">
-        Opening secure payment gateway…
-      </p>
-    </div>
+    <PrivateRoute>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg font-medium text-gray-700">
+          Opening secure payment gateway…
+        </p>
+      </div>
+    </PrivateRoute>
   );
 };
 

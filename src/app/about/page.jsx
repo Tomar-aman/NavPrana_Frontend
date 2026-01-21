@@ -73,16 +73,17 @@ const Page = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 ">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20 ">
       <main className="container bg-primary/5 mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Purity from the Heart of <span className="text-gradient">Chambal</span>
+            Purity from the Heart of{" "}
+            <span className="text-gradient">Chambal</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            NavPrana Organics is a clean food company on a mission.
-            Our journey begins with the golden elixir—Ghee—sourced directly from the
+            NavPrana Organics is a clean food company on a mission. Our journey
+            begins with the golden elixir—Ghee—sourced directly from the
             untouched ravines of Madhya Pradesh.
           </p>
         </section>
@@ -92,23 +93,27 @@ const Page = () => {
           <div className="space-y-6">
             <h3 className="text-3xl font-bold">Our Roots in Village Esah</h3>
             <p className="text-muted-foreground leading-relaxed">
-              NavPrana Organics was born from a simple realization: the food on our city shelves
-              lacked the soul and purity of the village. As explorers at heart, we traveled
-              deep into the <strong>Chambal region of Morena, Madhya Pradesh</strong>, looking
+              NavPrana Organics was born from a simple realization: the food on
+              our city shelves lacked the soul and purity of the village. As
+              explorers at heart, we traveled deep into the{" "}
+              <strong>Chambal region of Morena, Madhya Pradesh</strong>, looking
               for authentic sources of nutrition.
             </p>
             <p className="text-muted-foreground leading-relaxed">
               We found our answer in <strong>Village Esah</strong>.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Here, amidst the rugged beauty of Chambal, farming isn't a business—it's a way of life.
-              The soil is rich, the air is clean, and the cattle graze freely on natural pastures.
-              We knew immediately that this was where NavPrana had to begin.
+              Here, amidst the rugged beauty of Chambal, farming isn't a
+              business—it's a way of life. The soil is rich, the air is clean,
+              and the cattle graze freely on natural pastures. We knew
+              immediately that this was where NavPrana had to begin.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              While we are launching with our premium <strong>Buffalo Ghee</strong> as our first offering,
-              NavPrana is more than just a dairy brand. We are building a portfolio of organic food products
-              that bring the raw, unadulterated power of nature straight to your kitchen.
+              While we are launching with our premium{" "}
+              <strong>Buffalo Ghee</strong> as our first offering, NavPrana is
+              more than just a dairy brand. We are building a portfolio of
+              organic food products that bring the raw, unadulterated power of
+              nature straight to your kitchen.
             </p>
           </div>
           <div className="space-y-4">
@@ -134,7 +139,9 @@ const Page = () => {
 
         {/* Values */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-center mb-12">Our Core Values</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">
+            Our Core Values
+          </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
               <div
@@ -155,7 +162,9 @@ const Page = () => {
 
         {/* Timeline */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-center mb-12">Our Journey So Far</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">
+            Our Journey So Far
+          </h3>
           <div className="space-y-8">
             {timeline.map((item, index) => (
               <div key={index} className="flex items-start space-x-6">
@@ -206,13 +215,15 @@ const Page = () => {
             </div>
             <div className="space-y-4">
               <p className="text-muted-foreground leading-relaxed">
-                The Chambal region in Madhya Pradesh is legendary for its raw, unpolluted environment.
-                In Village Esah, we found a community that still respects the rhythm of nature.
+                The Chambal region in Madhya Pradesh is legendary for its raw,
+                unpolluted environment. In Village Esah, we found a community
+                that still respects the rhythm of nature.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                We are proud to bring the produce of this land to the world. While we start with
-                our signature Ghee, we are committed to expanding our range to include other
-                authentic food products from this rich soil.
+                We are proud to bring the produce of this land to the world.
+                While we start with our signature Ghee, we are committed to
+                expanding our range to include other authentic food products
+                from this rich soil.
               </p>
             </div>
           </div>
@@ -220,10 +231,12 @@ const Page = () => {
 
         {/* CTA Section */}
         <section className="text-center bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-3xl p-8 md:p-12">
-          <h3 className="text-3xl font-bold mb-4">Taste the Purity of Chambal</h3>
+          <h3 className="text-3xl font-bold mb-4">
+            Taste the Purity of Chambal
+          </h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Experience the first offering from NavPrana Organics.
-            Try our premium Ghee today.
+            Experience the first offering from NavPrana Organics. Try our
+            premium Ghee today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

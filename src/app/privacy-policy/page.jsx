@@ -1,6 +1,6 @@
 const Page = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="bg-card/30 rounded-3xl p-8 md:p-12">
@@ -14,8 +14,8 @@ const Page = () => {
               <section>
                 <h2 className="text-2xl font-bold mb-4">Introduction</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  NavPrana Organics ("we," "our," or "us") respects your privacy and is
-                  committed to protecting your personal information. This
+                  NavPrana Organics ("we," "our," or "us") respects your privacy
+                  and is committed to protecting your personal information. This
                   Privacy Policy explains how we collect, use, disclose, and
                   safeguard your information when you visit our website or make
                   a purchase from us.

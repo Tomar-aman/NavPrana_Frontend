@@ -36,7 +36,7 @@ export default function RootLayout({ children }) {
         <ReduxProvider>
           <AuthProvider>
             <ProfileProvider>
-              <GlobalUI />
+              {/* <GlobalUI /> */}
               <Header />
               <AuthInitializer />
 
