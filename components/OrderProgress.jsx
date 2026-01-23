@@ -10,7 +10,7 @@ import { Package, Clock, Truck, CheckCircle2, XCircle } from "lucide-react";
 const OrderProgress = ({ status }) => {
   console.log("OrderProgress status:", status);
   const steps = [
-    { key: "Placed", label: "Order Placed", icon: Package },
+    { key: "Accepted", label: "Accepted", icon: Package },
     { key: "Processing", label: "Processing", icon: Clock },
     { key: "Shipped", label: "Shipped", icon: Truck },
     { key: "Delivered", label: "Delivered", icon: CheckCircle2 },

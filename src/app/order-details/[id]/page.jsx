@@ -77,7 +77,7 @@ export default function Page() {
     (state) => state.order,
   );
   const { loading } = useSelector((state) => state.invoice);
-
+  console.log("orderData:", orderData);
   useEffect(() => {
     if (id) dispatch(orderDetail(id));
   }, [id, dispatch]);
