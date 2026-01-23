@@ -36,37 +36,22 @@ const Page = () => {
   const mergedCartItems = useMemo(() => {
     return cartItems.map((cartItem) => {
       const product = products.find((p) => p.id === cartItem.product);
-
-      return {
-        ...cartItem,
-        product,
-      };
+      return { ...cartItem, product };
     });
   }, [cartItems, products]);
 
   /* 🔹 Quantity handlers */
   const handleIncrease = (item) => {
-    dispatch(
-      updateCart({
-        cartId: item.id,
-        quantity: item.quantity + 1,
-      }),
-    );
+    dispatch(updateCart({ cartId: item.id, quantity: item.quantity + 1 }));
   };
 
   const handleDecrease = (item) => {
     if (item.quantity > 1) {
-      dispatch(
-        updateCart({
-          cartId: item.id,
-          quantity: item.quantity - 1,
-        }),
-      );
+      dispatch(updateCart({ cartId: item.id, quantity: item.quantity - 1 }));
     }
   };
 
   const handleDelete = (id) => {
-    console.log(id);
     dispatch(deleteCart(id));
   };
 
@@ -76,6 +61,14 @@ const Page = () => {
     return sum + Number(item.product.price) * item.quantity;
   }, 0);
 
+  const mrpSubtotal = mergedCartItems.reduce((sum, item) => {
+    if (!item.product) return sum;
+    return (
+      sum + Number(item.product.max_price || item.product.price) * item.quantity
+    );
+  }, 0);
+
+  const discountTotal = mrpSubtotal - subtotal;
   const shipping = subtotal > 1000 ? 0 : subtotal === 0 ? 0 : 50;
   const total = subtotal + shipping;
 
@@ -112,7 +105,6 @@ const Page = () => {
                 <div className="lg:col-span-2 space-y-4">
                   {mergedCartItems.map((item) => {
                     if (!item.product) return null;
-
                     const imageUrl = getFeaturedImage(item.product.images);
 
                     return (
@@ -121,13 +113,22 @@ const Page = () => {
                         className="border rounded-xl shadow p-4 bg-white"
                       >
                         <div className="flex gap-4">
-                          <Image
-                            src={imageUrl}
-                            alt={item.product.name}
-                            width={96}
-                            height={96}
-                            className="rounded-lg object-cover"
-                          />
+                          <div className="relative">
+                            <Image
+                              src={imageUrl}
+                              alt={item.product.name}
+                              width={96}
+                              height={96}
+                              className="rounded-lg object-cover"
+                            />
+
+                            {/* DISCOUNT TAG */}
+                            {item.product.discount_precent && (
+                              <span className="absolute top-1 left-1 bg-red-600 text-white text-xs px-2 py-0.5 rounded">
+                                {item.product.discount_precent}% OFF
+                              </span>
+                            )}
+                          </div>
 
                           <div className="flex-1 space-y-2">
                             <div className="flex justify-between">
@@ -170,9 +171,23 @@ const Page = () => {
                                 </button>
                               </div>
 
-                              <p className="text-lg font-semibold">
-                                ₹{Number(item.product.price) * item.quantity}
-                              </p>
+                              {/* PRICE SECTION */}
+                              <div className="text-right">
+                                {item.product.max_price && (
+                                  <p className="text-sm text-gray-400 line-through">
+                                    ₹{item.product.max_price * item.quantity}
+                                  </p>
+                                )}
+                                <p className="text-lg font-semibold text-primary">
+                                  ₹{item.product.price * item.quantity}
+                                </p>
+                                <p className="text-xs text-green-600 font-medium">
+                                  Save ₹
+                                  {(item.product.max_price -
+                                    item.product.price) *
+                                    item.quantity}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -190,13 +205,18 @@ const Page = () => {
 
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Subtotal</span>
-                        <span className="font-medium">₹{subtotal}</span>
+                        <span className="text-gray-500">MRP Total</span>
+                        <span className="line-through">₹{mrpSubtotal}</span>
+                      </div>
+
+                      <div className="flex justify-between text-green-600">
+                        <span>Discount</span>
+                        <span>-₹{discountTotal}</span>
                       </div>
 
                       <div className="flex justify-between">
                         <span className="text-gray-500">Shipping</span>
-                        <span className="font-medium">
+                        <span>
                           {shipping === 0 ? (
                             <span className="text-green-600">Free</span>
                           ) : (
@@ -205,9 +225,9 @@ const Page = () => {
                         </span>
                       </div>
 
-                      <div className="border-t pt-3 flex justify-between text-base">
-                        <span className="font-semibold">Total</span>
-                        <span className="font-bold text-lg">₹{total}</span>
+                      <div className="border-t pt-3 flex justify-between text-lg font-bold">
+                        <span>Total</span>
+                        <span className="text-primary">₹{total}</span>
                       </div>
                     </div>
 
