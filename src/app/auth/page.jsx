@@ -66,7 +66,7 @@ const Page = () => {
           email: signupForm.email,
           phone_number: signupForm.phone,
           password: signupForm.password,
-        })
+        }),
       ).unwrap();
 
       setSignupEmail(signupForm.email);
@@ -85,7 +85,7 @@ const Page = () => {
         verifyOtp({
           email: signupEmail,
           otp,
-        })
+        }),
       ).unwrap();
 
       toast.success("Account verified");
@@ -99,7 +99,7 @@ const Page = () => {
 
   return (
     <div className=" flex flex-col">
-      <main className="flex-1 flex items-center justify-center py-16 px-4">
+      <main className="flex-1 flex items-center justify-center pt-40 pb-30 px-4">
         <div className="w-full max-w-md">
           {/* Tabs */}
           <div className="grid grid-cols-2 border border-gray-400 rounded-lg overflow-hidden mb-8">
