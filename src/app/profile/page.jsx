@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 import { sendAddress } from "@/services/profile/post-profile";
-import OrderTab from "../../../components/OrderTab";
+// import OrderTab from "../../../components/OrderTab";
 import SettingsTab from "../../../components/SettingsTab";
 import AddressModal from "../../../components/AddressModal";
 import ChangePasswordModal from "../../../components/ChangePasswordModal";
@@ -218,22 +218,22 @@ const Page = () => {
     router.replace("/auth"); // 2️⃣ redirect to login
   };
 
-  const orders = [
-    {
-      id: "ORD-001",
-      date: "Dec 28, 2024",
-      status: "Delivered",
-      total: "₹1,299",
-      items: 2,
-    },
-    {
-      id: "ORD-002",
-      date: "Dec 15, 2024",
-      status: "Shipped",
-      total: "₹899",
-      items: 1,
-    },
-  ];
+  // const orders = [
+  //   {
+  //     id: "ORD-001",
+  //     date: "Dec 28, 2024",
+  //     status: "Delivered",
+  //     total: "₹1,299",
+  //     items: 2,
+  //   },
+  //   {
+  //     id: "ORD-002",
+  //     date: "Dec 15, 2024",
+  //     status: "Shipped",
+  //     total: "₹899",
+  //     items: 1,
+  //   },
+  // ];
 
   return (
     <PrivateRoute>
@@ -309,7 +309,7 @@ const Page = () => {
             <div className="bg-white rounded-xl shadow p-2 flex gap-2 max-w-md">
               {[
                 { key: "profile", label: "Profile", icon: User },
-                { key: "orders", label: "Orders", icon: Package },
+                // { key: "orders", label: "Orders", icon: Package },
                 { key: "settings", label: "Settings", icon: Settings },
               ].map(({ key, label, icon: Icon }) => (
                 <button
@@ -518,7 +518,7 @@ const Page = () => {
             )}
 
             {/* ================= ORDERS TAB ================= */}
-            {activeTab === "orders" && <OrderTab orders={orders} />}
+            {/* {activeTab === "orders" && <OrderTab orders={orders} />} */}
 
             {/* ================= SETTINGS TAB ================= */}
             {activeTab === "settings" && (

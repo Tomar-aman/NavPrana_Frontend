@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowLeft,
   Star,
@@ -29,6 +28,7 @@ const getFeaturedImage = (images = []) => {
 const Page = () => {
   const dispatch = useDispatch();
   const { list, loading, error } = useSelector((state) => state.product);
+  const { items: cartItems } = useSelector((state) => state.cart);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -56,25 +56,6 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
-      {/* Header */}
-      {/* <div className="bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-6 md:px-15">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Home</span>
-            </Link>
-            <h1 className="text-3xl font-bold text-gradient">
-              Our Premium Products
-            </h1>
-            <div></div>
-          </div>
-        </div>
-      </div> */}
-
       <main className="container mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">
@@ -108,12 +89,15 @@ const Page = () => {
         <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {list.map((product) => {
             const imageUrl = getFeaturedImage(product.images);
+            const isInCart = cartItems.some(
+              (item) => item.product === product.id,
+            );
             console.log(imageUrl);
             return (
               <div
                 key={product.id}
                 onClick={() => router.push(`/product-details/${product.id}`)}
-                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
+                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer flex flex-col h-full"
               >
                 <div className="relative w-full h-64">
                   <Image
@@ -132,7 +116,7 @@ const Page = () => {
                   </button>
                 </div>
 
-                <div className="p-6">
+                <div className="p-5 flex flex-col flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-xl font-bold">{product.name}</h3>
                     <div className="flex items-center space-x-1">
@@ -175,13 +159,30 @@ const Page = () => {
                     </span>
                   </div>
 
-                  <button
-                    className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
-                    onClick={() => handleAddToCart(product.id)}
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </button>
+                  <div className="mt-auto pt-4">
+                    {isInCart ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push("/cart");
+                        }}
+                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium"
+                      >
+                        Go to Cart
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product.id);
+                        }}
+                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium"
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Add to Cart
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

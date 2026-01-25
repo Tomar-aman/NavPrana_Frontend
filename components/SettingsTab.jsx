@@ -1,4 +1,10 @@
-import { KeyRound, ChevronRight, ShieldAlert, LogOut } from "lucide-react";
+import {
+  KeyRound,
+  ChevronRight,
+  ShieldAlert,
+  LogOut,
+  Trash2,
+} from "lucide-react";
 
 const SettingsTab = ({ onChangePassword, onLogout }) => {
   return (
@@ -35,8 +41,7 @@ const SettingsTab = ({ onChangePassword, onLogout }) => {
       </div>
 
       {/* Logout Section */}
-      <div className="border border-red-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Left Content */}
+      {/* <div className="border border-red-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-full bg-red-100 text-red-600">
             <ShieldAlert size={20} />
@@ -52,13 +57,40 @@ const SettingsTab = ({ onChangePassword, onLogout }) => {
           </div>
         </div>
 
-        {/* Logout Button */}
         <button
           onClick={onLogout}
           className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-red-300 text-red-600 font-medium hover:bg-red-50 transition"
         >
           <LogOut size={18} />
           Logout
+        </button>
+      </div> */}
+      {/* Delete Account Section */}
+      <div className="border border-red-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Left Content */}
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-full bg-red-100 text-red-600">
+            <Trash2 size={20} /> {/* Change Icon */}
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-lg text-red-600">
+              Delete Account
+            </h3>
+            <p className="text-sm text-gray-500">
+              Permanently delete your account and all associated data. This
+              action cannot be undone.
+            </p>
+          </div>
+        </div>
+
+        {/* Delete Button */}
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-red-400 text-red-600 font-medium hover:bg-red-100 transition"
+        >
+          <Trash2 size={18} />
+          Delete Account
         </button>
       </div>
     </div>
