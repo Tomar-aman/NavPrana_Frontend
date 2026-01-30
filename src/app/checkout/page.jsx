@@ -566,7 +566,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="min-h-screen bg-gray-50 py-20 px-4">
       {/* CONFETTI */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">

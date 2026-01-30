@@ -116,7 +116,7 @@ const Header = () => {
             {[
               { label: "Home", path: "/" },
               { label: "Products", path: "/products" },
-              { label: "Health Benefits", path: "/health-benefits" },
+              // { label: "Health Benefits", path: "/health-benefits" },
               { label: "About", path: "/about" },
               { label: "Contact", path: "/contact" },
             ].map((item) => (

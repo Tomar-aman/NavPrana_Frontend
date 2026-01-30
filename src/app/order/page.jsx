@@ -92,7 +92,7 @@ const Page = () => {
 
   return (
     <PrivateRoute>
-      <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="min-h-screen bg-gray-50 px-4 py-30">
         <div className="max-w-5xl mx-auto">
           {/* HEADER */}
           <div className="flex justify-between items-center mb-6">

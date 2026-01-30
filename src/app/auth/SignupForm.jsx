@@ -128,7 +128,7 @@ const SignupForm = memo(
             disabled={loading}
             className="w-full py-2 rounded-lg bg-primary text-primary-foreground
                      flex items-center justify-center gap-2
-                     disabled:opacity-70 disabled:cursor-not-allowed"
+                     disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer hover:bg-primary/90 transition font-medium"
           >
             {loading ? (
               <>
@@ -159,7 +159,7 @@ const SignupForm = memo(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default SignupForm;

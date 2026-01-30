@@ -50,28 +50,29 @@ const Footer = () => {
             <div className="flex space-x-4">
               {socialLinks.length > 0
                 ? socialLinks.map((item) => {
-                  const Icon = SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
-                  return (
-                    <a
-                      key={item.id}
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full text-background hover:text-primary hover:bg-background/10 transition-colors"
-                      aria-label={item.platform_name}
-                    >
-                      {Icon ? <Icon className="h-5 w-5" /> : null}
-                    </a>
-                  );
-                })
+                    const Icon =
+                      SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
+                    return (
+                      <a
+                        key={item.id}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-full text-background hover:text-primary hover:bg-background/10 transition-colors"
+                        aria-label={item.platform_name}
+                      >
+                        {Icon ? <Icon className="h-5 w-5" /> : null}
+                      </a>
+                    );
+                  })
                 : [Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
-                  <span
-                    key={idx}
-                    className="p-2 rounded-full text-background/40 bg-background/10"
-                  >
-                    <Icon className="h-5 w-5" />
-                  </span>
-                ))}
+                    <span
+                      key={idx}
+                      className="p-2 rounded-full text-background/40 bg-background/10"
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                  ))}
             </div>
           </div>
 
@@ -84,7 +85,7 @@ const Footer = () => {
                 { label: "Products", path: "/products" },
                 { label: "Health Benefits", path: "/health-benefits" },
                 { label: "About", path: "/about" },
-                { label: "Contact", path: "/contact" }
+                { label: "Contact", path: "/contact" },
               ].map((link, idx) => (
                 <a
                   key={idx}
@@ -151,9 +152,10 @@ const Footer = () => {
         <div className="border-t border-background/20 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-background/80 text-sm">
-              © 2024 NavPrana Organics. All rights reserved. Made with ❤️ for
-              traditional food lovers.
+              © {new Date().getFullYear()} NavPrana Organics. All rights
+              reserved. Made with ❤️ for traditional food lovers.
             </div>
+
             <div className="flex space-x-6 text-sm">
               <a
                 href="/privacy-policy"

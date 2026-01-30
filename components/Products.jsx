@@ -72,7 +72,7 @@ const Products = () => {
               <div
                 key={product.id}
                 // onClick={() => router.push(`/product-details/${product.id}`)}
-                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
+                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden  flex flex-col h-full"
               >
                 <div className="relative w-full h-64">
                   <Image
@@ -91,7 +91,7 @@ const Products = () => {
                   </button>
                 </div>
 
-                <div className="p-6">
+                <div className="p-5 flex flex-col flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-xl font-bold">{product.name}</h3>
                     <div className="flex items-center space-x-1">
@@ -134,13 +134,15 @@ const Products = () => {
                     </span>
                   </div>
 
-                  <button
-                    className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
-                    onClick={() => handleAddToCart(product.id)}
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </button>
+                  <div className="mt-auto pt-4">
+                    <button
+                      className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer"
+                      onClick={() => handleAddToCart(product.id)}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             );

@@ -166,7 +166,7 @@ const Page = () => {
                           e.stopPropagation();
                           router.push("/cart");
                         }}
-                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium"
+                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer "
                       >
                         Go to Cart
                       </button>
