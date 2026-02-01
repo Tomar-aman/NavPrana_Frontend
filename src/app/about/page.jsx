@@ -16,6 +16,7 @@ import {
 
 import organicFarmImage from "@/assets/organic-farm.jpg"; // replace with actual image
 import traditionalCowImage from "@/assets/traditional-cow.jpg"; // replace with actual image
+import { motion } from "framer-motion";
 
 const Page = () => {
   const values = [
@@ -74,7 +75,7 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 mt-20 ">
-      <main className="container bg-primary/5 mx-auto px-4 py-12 md:px-15">
+      <main className="container bg-white mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
@@ -146,7 +147,7 @@ const Page = () => {
             {values.map((value, index) => (
               <div
                 key={index}
-                className="text-center border border-border/50 bg-card/50 backdrop-blur-sm rounded-lg p-6 hover:shadow-lg transition-all duration-300"
+                className="text-center bg-primary/5 border border-border/50 bg-card/50 backdrop-blur-sm rounded-lg p-6 hover:shadow-lg transition-all duration-300"
               >
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <value.icon className="h-8 w-8 text-primary" />
@@ -159,34 +160,77 @@ const Page = () => {
             ))}
           </div>
         </section>
-
         {/* Timeline */}
         <section className="mb-16">
-          <h3 className="text-3xl font-bold text-center mb-12">
+          <h3 className="text-3xl sm:text-4xl font-bold text-center mb-12">
             Our Journey So Far
           </h3>
-          <div className="space-y-8">
+
+          <motion.div
+            className="relative space-y-10"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: {},
+              show: {
+                transition: {
+                  staggerChildren: 0.2,
+                },
+              },
+            }}
+          >
+            {/* Vertical line (desktop only) */}
+            <div className="absolute left-8 top-0 bottom-0 w-px bg-primary/20 hidden sm:block" />
+
             {timeline.map((item, index) => (
-              <div key={index} className="flex items-start space-x-6">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+              <motion.div
+                key={index}
+                className="relative flex gap-6 items-start"
+                variants={{
+                  hidden: { opacity: 0, y: 40 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.6, ease: "easeOut" },
+                  },
+                }}
+              >
+                {/* ICON */}
+                <div className="relative z-10 shrink-0">
+                  <motion.div
+                    className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center shadow-sm"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Clock className="h-8 w-8 text-primary" />
-                  </div>
+                  </motion.div>
                 </div>
-                <div className="flex-1">
-                  <div className="bg-card/30 rounded-lg p-6">
-                    <div className="flex items-center space-x-4 mb-2">
-                      <span className="text-2xl font-bold text-primary">
+
+                {/* CONTENT */}
+                <motion.div
+                  className="flex-1"
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="bg-card/40 backdrop-blur rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition">
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                      <span className="text-xl sm:text-2xl font-bold text-primary">
                         {item.year}
                       </span>
-                      <h4 className="text-xl font-semibold">{item.title}</h4>
+                      <h4 className="text-lg sm:text-xl font-semibold">
+                        {item.title}
+                      </h4>
                     </div>
-                    <p className="text-muted-foreground">{item.description}</p>
+
+                    <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                      {item.description}
+                    </p>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* Farm Info - Pivot to Sourcing */}

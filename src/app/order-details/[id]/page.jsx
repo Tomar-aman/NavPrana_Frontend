@@ -117,7 +117,7 @@ export default function Page() {
 
   return (
     <PrivateRoute>
-      <div className="min-h-screen bg-[#FBFBF7] mt-20">
+      <div className="min-h-screen bg-primary/2 mt-20">
         <main className="px-4 py-6 sm:py-10">
           <div className="max-w-4xl mx-auto">
             {/* STATUS HEADER */}
@@ -219,13 +219,16 @@ export default function Page() {
                     key={item.id}
                     className="flex flex-col sm:flex-row gap-4 bg-gray-50 rounded-lg p-3"
                   >
-                    <Image
-                      src={item.product.image}
-                      alt={item.product.name}
-                      width={80}
-                      height={80}
-                      className="rounded-lg object-cover"
-                    />
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden">
+                      <Image
+                        src={item.product.image}
+                        alt={item.product.name}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </div>
+
                     <div className="flex-1">
                       <p className="font-medium">{item.product.name}</p>
                       <p className="text-sm text-gray-600">
@@ -235,9 +238,19 @@ export default function Page() {
                         Qty: {item.quantity}
                       </p>
                     </div>
-                    <p className="font-semibold self-end sm:self-center">
-                      ₹{item.item_total}
-                    </p>
+                    <div className="text-right self-end sm:self-center">
+                      {/* MRP */}
+                      {item.product.max_price && (
+                        <p className="text-sm text-gray-400 line-through">
+                          ₹{item.product.max_price * item.quantity}
+                        </p>
+                      )}
+
+                      {/* FINAL PRICE */}
+                      <p className="font-semibold text-green-700">
+                        ₹{item.item_total}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>

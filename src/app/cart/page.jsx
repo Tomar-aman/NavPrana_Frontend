@@ -115,7 +115,12 @@ const Page = () => {
                       >
                         <div className="flex flex-col sm:flex-row gap-4">
                           {/* IMAGE */}
-                          <div className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border">
+                          <div
+                            className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border"
+                            onClick={() =>
+                              router.push(`/product-details/${item.product.id}`)
+                            }
+                          >
                             <Image
                               src={imageUrl}
                               alt={item.product.name}
