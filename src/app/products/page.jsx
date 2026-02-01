@@ -111,9 +111,9 @@ const Page = () => {
                     Save {parseInt(product.discount_precent)} %
                   </div>
 
-                  <button className="absolute top-4 right-4 p-2 rounded-sm bg-white/80 hover:bg-background">
+                  {/* <button className="absolute top-4 right-4 p-2 rounded-sm bg-white/80 hover:bg-background">
                     <Heart className="h-4 w-4" />
-                  </button>
+                  </button> */}
                 </div>
 
                 <div className="p-5 flex flex-col flex-1">
