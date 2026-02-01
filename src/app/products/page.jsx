@@ -108,7 +108,7 @@ const Page = () => {
                   />
 
                   <div className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold rounded-full bg-primary text-primary-foreground">
-                    Save {product.discount_precent} %
+                    Save {parseInt(product.discount_precent)} %
                   </div>
 
                   <button className="absolute top-4 right-4 p-2 rounded-sm bg-white/80 hover:bg-background">
@@ -130,9 +130,9 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground text-sm mb-4">
-                    {product.description}
-                  </p>
+                  {/* <p className="text-muted-foreground text-sm mb-4">
+                    {product.details}
+                  </p> */}
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {product.features.map((feature, index) => (
@@ -176,7 +176,7 @@ const Page = () => {
                           e.stopPropagation();
                           handleAddToCart(product.id);
                         }}
-                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium"
+                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
                         Add to Cart

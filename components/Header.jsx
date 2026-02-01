@@ -5,7 +5,7 @@ import { ShoppingCart, Menu, X, User, LogOut, Package } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 import LogoImage from "@/assets/logo-ghee.svg";
@@ -16,6 +16,7 @@ import { getCart } from "@/redux/features/cartSlice";
 const Header = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -111,25 +112,35 @@ const Header = () => {
               className="w-40"
             />
           </Link>
-          {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-10">
             {[
               { label: "Home", path: "/" },
               { label: "Products", path: "/products" },
-              // { label: "Health Benefits", path: "/health-benefits" },
               { label: "About", path: "/about" },
               { label: "Contact", path: "/contact" },
-            ].map((item) => (
-              <Link
-                key={item.label}
-                href={item.path}
-                className="relative group font-medium text-gray-800"
-              >
-                {item.label}
-                <span className="absolute left-1/2 -bottom-1 h-[2px] w-0 bg-primary transition-all duration-300 group-hover:left-0 group-hover:w-full" />
-              </Link>
-            ))}
+            ].map((item) => {
+              const isActive = pathname === item.path;
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.path}
+                  className={`relative group font-medium transition-colors
+          ${isActive ? "text-primary" : "text-gray-800"}
+        `}
+                >
+                  {item.label}
+
+                  <span
+                    className={`absolute left-0 -bottom-1 h-[2px] bg-primary transition-all duration-300
+            ${isActive ? "w-full" : "w-0 group-hover:w-full"}
+          `}
+                  />
+                </Link>
+              );
+            })}
           </nav>
+
           {/* Right */}
           <div className="flex items-center space-x-4">
             {/* Cart */}

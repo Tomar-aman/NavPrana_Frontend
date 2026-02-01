@@ -14,6 +14,7 @@ import {
   Truck,
   IndianRupee,
   AlertTriangle,
+  CheckCircle,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -25,6 +26,12 @@ import PrivateRoute from "../../../../components/PrivateRoute";
 
 /* ---------------- STATUS CONFIG ---------------- */
 const STATUS_CONFIG = {
+  Accepted: {
+    icon: CheckCircle,
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-600",
+    message: "Your order has been accepted and will be processed shortly.",
+  },
   Paid: {
     icon: IndianRupee,
     iconBg: "bg-green-100",
@@ -110,7 +117,7 @@ export default function Page() {
 
   return (
     <PrivateRoute>
-      <div className="min-h-screen bg-[#FBFBF7]">
+      <div className="min-h-screen bg-[#FBFBF7] mt-20">
         <main className="px-4 py-6 sm:py-10">
           <div className="max-w-4xl mx-auto">
             {/* STATUS HEADER */}
@@ -238,15 +245,16 @@ export default function Page() {
               {/* PRICE */}
               <div className="border-t mt-4 pt-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Total</span>
+                  <span>MRP</span>
                   <span>₹{orderData.total_amount}</span>
                 </div>
+
                 <div className="flex justify-between text-green-600">
                   <span>Discount</span>
                   <span>-₹{orderData.discount_amount}</span>
                 </div>
                 <div className="flex justify-between font-bold text-base sm:text-lg">
-                  <span>Final Paid</span>
+                  <span>Total</span>
                   <span className="text-green-700">
                     ₹{orderData.final_amount}
                   </span>
@@ -271,13 +279,13 @@ export default function Page() {
                 {loading ? "Generating..." : "Download Invoice"}
               </button>
 
-              <button
+              {/* <button
                 disabled
                 className="border px-4 py-2 rounded-lg flex items-center gap-2
               cursor-not-allowed opacity-50 justify-center"
               >
                 <Share2 size={16} /> Share Order
-              </button>
+              </button> */}
 
               <Link
                 href="/products"

@@ -104,7 +104,7 @@ const Page = () => {
   const mainImage = images[selectedImage]?.image || "/placeholder.png";
 
   return (
-    <div className="min-h-screen bg-gray-50 my-20">
+    <div className="min-h-screen bg-gray-50 mt-20">
       <main className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid lg:grid-cols-2 gap-12">
           {/* IMAGE SECTION */}
@@ -119,11 +119,11 @@ const Page = () => {
 
               {product.discount_precent && (
                 <span className="absolute top-4 left-4 bg-primary text-white px-4 py-1 rounded-full text-sm">
-                  Save {product.discount_precent}%
+                  Save {parseInt(product.discount_precent)} %
                 </span>
               )}
 
-              <button
+              {/* <button
                 onClick={() => setIsWishlisted(!isWishlisted)}
                 className="absolute top-4 right-4 bg-white p-2 rounded-full shadow"
               >
@@ -132,25 +132,25 @@ const Page = () => {
                     isWishlisted ? "text-red-500 fill-red-500" : "text-gray-500"
                   }`}
                 />
-              </button>
+              </button> */}
             </div>
 
             {/* THUMBNAILS */}
-            <div className="grid grid-cols-4 gap-3 mt-4">
+            <div className="grid grid-cols-4 gap-2 mt-4">
               {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`rounded-lg overflow-hidden border-2 ${
+                  className={`w-35 h-30 rounded-lg overflow-hidden border-2 flex items-center justify-center ${
                     selectedImage === i ? "border-primary" : "border-gray-200"
                   }`}
                 >
                   <Image
                     src={img.image}
                     alt={product.name}
-                    width={120}
-                    height={120}
-                    className="object-cover"
+                    width={100}
+                    height={100}
+                    className="object-cover w-full h-full"
                   />
                 </button>
               ))}
@@ -169,24 +169,19 @@ const Page = () => {
             </div>
 
             <h1 className="text-3xl font-bold">{product.name}</h1>
-            <p className="text-gray-500">{product.description}</p>
+            <p className="text-gray-500">{product.details}</p>
 
-            {/* RATING */}
-            <div className="flex items-center gap-2">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-5 w-5 ${
-                    i < Math.floor(product.average_rating || 0)
-                      ? "text-yellow-500 fill-yellow-500"
-                      : "text-gray-300"
-                  }`}
-                />
+            <div className="flex flex-wrap gap-2 mb-4">
+              {product.features.map((feature, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs"
+                >
+                  {feature.feature}
+                </span>
               ))}
-              <span className="font-semibold">
-                {product.average_rating || 0}
-              </span>
             </div>
+            {/* RATING */}
 
             {/* PRICE */}
             <div className="flex items-end gap-4">
@@ -198,7 +193,12 @@ const Page = () => {
                   ₹{product.max_price}
                 </span>
               )}
-              <span className="text-sm text-gray-500">({product.size})</span>
+            </div>
+
+            <div>
+              <p>
+                Size: <b>{product.size}</b>
+              </p>
             </div>
 
             {/* QUANTITY */}
@@ -222,9 +222,9 @@ const Page = () => {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="flex gap-4">
+            <div className="flex  gap-4 w-full">
               <button
-                className="flex-1 bg-primary hover:bg-primary/90 text-white py-3 rounded-lg flex items-center justify-center gap-2 font-semibold"
+                className="flex-[3] bg-primary hover:bg-primary/90 text-white py-3 rounded-lg flex items-center justify-center gap-2 font-semibold cursor-pointer "
                 onClick={() => handleAddToCart(product.id)}
               >
                 <ShoppingCart size={18} />
@@ -232,7 +232,7 @@ const Page = () => {
               </button>
 
               <button
-                className="flex-1 border py-3 rounded-lg hover:bg-gray-100 font-semibold"
+                className=" flex-[1] border py-3 rounded-lg hover:bg-gray-100 font-semibold cursor-pointer"
                 onClick={handleBuyNow}
               >
                 Buy Now
@@ -257,7 +257,7 @@ const Page = () => {
         {/* TABS */}
         <div className="mt-16">
           <div className="flex gap-8 border-b">
-            {["description", "storage"].map((tab) => (
+            {["description", "Specifications"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -278,11 +278,14 @@ const Page = () => {
             </div>
           )}
 
-          {activeTab === "storage" && (
+          {activeTab === "Specifications" && (
             <div className="mt-6 max-w-3xl">
-              <p className="text-gray-600">
-                Store in a cool, dry place away from sunlight.
-              </p>
+              <div
+                className="text-gray-600 prose max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: product?.specifications?.specification,
+                }}
+              />
             </div>
           )}
         </div>

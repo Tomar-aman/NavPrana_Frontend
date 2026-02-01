@@ -21,6 +21,7 @@ const Products = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { list, loading, error } = useSelector((state) => state.product);
+  const { items: cartItems } = useSelector((state) => state.cart);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -67,12 +68,14 @@ const Products = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {list.slice(0, 3).map((product) => {
             const imageUrl = getFeaturedImage(product.images);
-            console.log(imageUrl);
+            const isInCart = cartItems.some(
+              (item) => item.product === product.id,
+            );
             return (
               <div
                 key={product.id}
-                // onClick={() => router.push(`/product-details/${product.id}`)}
-                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden  flex flex-col h-full"
+                onClick={() => router.push(`/product-details/${product.id}`)}
+                className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden  flex flex-col h-full cursor-pointer"
               >
                 <div className="relative w-full h-64">
                   <Image
@@ -83,7 +86,7 @@ const Products = () => {
                   />
 
                   <div className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold rounded-full bg-primary text-primary-foreground">
-                    Save {product.discount_precent} %
+                    Save {parseInt(product.discount_precent)} %
                   </div>
 
                   <button className="absolute top-4 right-4 p-2 rounded-sm bg-white/80 hover:bg-background">
@@ -105,9 +108,9 @@ const Products = () => {
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground text-sm mb-4">
+                  {/* <p className="text-muted-foreground text-sm mb-4">
                     {product.description}
-                  </p>
+                  </p> */}
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {product.features.map((feature, index) => (
@@ -135,13 +138,28 @@ const Products = () => {
                   </div>
 
                   <div className="mt-auto pt-4">
-                    <button
-                      className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer"
-                      onClick={() => handleAddToCart(product.id)}
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
-                    </button>
+                    {isInCart ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push("/cart");
+                        }}
+                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer "
+                      >
+                        Go to Cart
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product.id);
+                        }}
+                        className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Add to Cart
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

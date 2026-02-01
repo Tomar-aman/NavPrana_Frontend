@@ -54,7 +54,7 @@ const Page = () => {
   const handleDelete = (id) => {
     dispatch(deleteCart(id));
   };
-
+  console.log(mergedCartItems);
   /* 🔹 Price calculations */
   const subtotal = mergedCartItems.reduce((sum, item) => {
     if (!item.product) return sum;
@@ -105,58 +105,69 @@ const Page = () => {
                 <div className="lg:col-span-2 space-y-4">
                   {mergedCartItems.map((item) => {
                     if (!item.product) return null;
+
                     const imageUrl = getFeaturedImage(item.product.images);
 
                     return (
                       <div
                         key={item.id}
-                        className="border rounded-xl shadow p-4 bg-white"
+                        className="border rounded-xl bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition"
                       >
-                        <div className="flex gap-4">
-                          <div className="relative">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          {/* IMAGE */}
+                          <div className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border">
                             <Image
                               src={imageUrl}
                               alt={item.product.name}
-                              width={96}
-                              height={96}
-                              className="rounded-lg object-cover"
+                              fill
+                              sizes="(max-width: 640px) 100vw, 96px"
+                              className="object-cover"
                             />
 
-                            {/* DISCOUNT TAG */}
                             {item.product.discount_precent && (
-                              <span className="absolute top-1 left-1 bg-red-600 text-white text-xs px-2 py-0.5 rounded">
-                                {item.product.discount_precent}% OFF
+                              <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded">
+                                {parseInt(item.product.discount_precent)}% OFF
                               </span>
                             )}
                           </div>
 
-                          <div className="flex-1 space-y-2">
-                            <div className="flex justify-between">
+                          {/* CONTENT */}
+                          <div className="flex-1 flex flex-col justify-between ">
+                            {/* TITLE + DELETE */}
+                            <div className="flex justify-between gap-3">
                               <div>
-                                <h3 className="font-semibold text-lg">
+                                <h3
+                                  className="font-semibold text-base sm:text-lg leading-snug cursor-pointer hover:text-primary"
+                                  onClick={() =>
+                                    router.push(
+                                      `/product-details/${item.product.id}`,
+                                    )
+                                  }
+                                >
                                   {item.product.name}
                                 </h3>
-                                <p className="text-sm text-gray-500">
-                                  {item.product.size}
+                                <p className="text-sm text-gray-500 mt-1">
+                                  Size: <b>{item.product.size}</b>
                                 </p>
                               </div>
 
                               <button
                                 onClick={() => handleDelete(item.id)}
-                                className="text-red-500 hover:text-red-600 cursor-pointer"
+                                className="text-red-500 hover:text-red-600 self-start"
                               >
                                 <Trash2 className="h-5 w-5" />
                               </button>
                             </div>
 
-                            <div className="flex items-center justify-between">
-                              {/* Quantity */}
-                              <div className="flex items-center gap-3 border rounded-lg p-1">
+                            {/* QTY + PRICE */}
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                              {/* QUANTITY */}
+                              <div className="flex items-center gap-3 border rounded-lg px-2 py-1 w-fit">
                                 <button
                                   onClick={() => handleDecrease(item)}
-                                  className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+                                  className="p-1 hover:bg-gray-100 rounded"
                                 >
-                                  <Minus className="h-4 w-4" />
+                                  <Minus className="h-3 w-3" />
                                 </button>
 
                                 <span className="w-8 text-center font-medium">
@@ -165,28 +176,32 @@ const Page = () => {
 
                                 <button
                                   onClick={() => handleIncrease(item)}
-                                  className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+                                  className="p-1 hover:bg-gray-100 rounded"
                                 >
-                                  <Plus className="h-4 w-4" />
+                                  <Plus className="h-3 w-3" />
                                 </button>
                               </div>
 
-                              {/* PRICE SECTION */}
-                              <div className="text-right">
+                              {/* PRICE */}
+                              <div className="text-left sm:text-right">
                                 {item.product.max_price && (
-                                  <p className="text-sm text-gray-400 line-through">
+                                  <p className="text-xs text-gray-400 line-through">
                                     ₹{item.product.max_price * item.quantity}
                                   </p>
                                 )}
+
                                 <p className="text-lg font-semibold text-primary">
                                   ₹{item.product.price * item.quantity}
                                 </p>
-                                <p className="text-xs text-green-600 font-medium">
-                                  Save ₹
-                                  {(item.product.max_price -
-                                    item.product.price) *
-                                    item.quantity}
-                                </p>
+
+                                {item.product.max_price && (
+                                  <p className="text-xs text-green-600 font-medium">
+                                    Save ₹
+                                    {(item.product.max_price -
+                                      item.product.price) *
+                                      item.quantity}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
