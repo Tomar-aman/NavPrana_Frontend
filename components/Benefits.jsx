@@ -1,5 +1,6 @@
 import { Heart, Zap, Shield, Sparkles, Droplets, Sun } from "lucide-react";
-import organicFarmImage from "@/assets/organic-farm.jpg";
+// import organicFarmImage from "@/assets/organic-farm.jpg";
+import organicFarmImage from "@/assets/image_nutrition.png";
 import Image from "next/image";
 
 const Benefits = () => {
@@ -8,37 +9,37 @@ const Benefits = () => {
       icon: Heart,
       title: "Rich in Nutrients",
       description:
-        "Packed with vitamins A, D, E, K and essential fatty acids for optimal health and wellness.",
+        "A powerhouse of essential vitamins and healthy fats. NavPrana Buffalo Ghee naturally supports heart health and overall wellness.",
     },
     {
       icon: Zap,
       title: "Boosts Energy",
       description:
-        "Natural source of quick energy and helps improve physical strength and stamina.",
+        "Fuel your day with healthy fats that provide long-lasting stamina. Perfect for active lifestyles and traditional Indian diets.",
     },
     {
       icon: Shield,
       title: "Supports Immunity",
       description:
-        "Contains antioxidants and natural compounds that strengthen your immune system.",
+        "Rich in antioxidants and butyric acid, our organic ghee helps strengthen your gut health and natural immune defense.",
     },
     {
       icon: Sparkles,
       title: "Pure & Wholesome",
       description:
-        "Free from chemicals, additives, and preservatives - just pure, natural goodness from nature.",
+        "Zero additives, zero chemicals. Just the golden goodness of pure buffalo milk, clarified to perfection.",
     },
     {
       icon: Droplets,
       title: "Traditional Bilona",
       description:
-        "Hand-churned using ancient methods that preserve nutrients and enhance natural flavors.",
+        "Crafted using the ancient hand-churned Bilona technique to preserve the aroma, granular texture, and superior nutritional value.",
     },
     {
       icon: Sun,
       title: "Sun-Dried Goodness",
       description:
-        "Made from milk of cows that graze in natural sunlight, enriching the ghee with vitamin D.",
+        "Sourced directly from our free-grazing buffaloes at NavPrana Farms. We ensure ethical milking practices and supreme quality.",
     },
   ];
 
@@ -54,9 +55,7 @@ const Benefits = () => {
             <span className="text-gradient">Nature's Perfect</span> Nutrition
           </h2>
           <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover the incredible health benefits of our pure desi ghee,
-            sourced from happy cows grazing in natural pastures and crafted with
-            traditional wisdom passed down through generations.
+            Discover the incredible health benefits of our pure buffalo ghee, sourced from NavPrana Farms and made using the ancient Bilona method to preserve its natural aroma and nutrients.
           </p>
         </div>
 

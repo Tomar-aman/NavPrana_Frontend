@@ -14,8 +14,8 @@ import {
   Sprout, // Added Sprout to represent the broader food company vision
 } from "lucide-react";
 
-import organicFarmImage from "@/assets/organic-farm.jpg"; // replace with actual image
-import traditionalCowImage from "@/assets/traditional-cow.jpg"; // replace with actual image
+// import organicFarmImage from "@/assets/organic-farm.jpg"; // replace with actual image
+import traditionalCowImage from "@/assets/buffalo.png"; // replace with actual image
 
 const Page = () => {
   const values = [
@@ -117,16 +117,16 @@ const Page = () => {
             </p>
           </div>
           <div className="space-y-4">
-            <div className="relative h-64 w-full">
-              {/* Tip: Use an image of the Chambal landscape or village Esah here */}
+            {/* <div className="relative h-64 w-full">
+              
               <Image
                 src={organicFarmImage}
                 alt="Landscape of Morena, MP"
                 fill
                 className="object-cover rounded-lg"
               />
-            </div>
-            <div className="relative h-64 w-full">
+            </div> */}
+            <div className="relative h-full w-full">
               <Image
                 src={traditionalCowImage}
                 alt="Buffaloes in Chambal"

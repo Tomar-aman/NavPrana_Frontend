@@ -4,8 +4,8 @@ import { ArrowRight, Leaf, TreePine, Flower } from "lucide-react";
 import Image from "next/image";
 import Slider from "react-slick";
 
-import natureHeroImage from "@/assets/nature-hero.jpg";
-import mangoImage from "@/assets/mango-juice-glass-wooden-table.jpg";
+// import natureHeroImage from "@/assets/nature-hero.jpg";
+// import mangoImage from "@/assets/mango-juice-glass-wooden-table.jpg";
 // import pineappleImage from "@/assets/tasty-pineapple-still-life.jpg";
 import pineappleImage from "@/assets/Whisk_82053c231497766ba5e4a0d05e7fa01ddr.png";
 
@@ -30,7 +30,7 @@ const Hero = () => {
       {/* Slider Background */}
       <div className="absolute inset-0">
         <Slider {...settings} className="h-full">
-          {[natureHeroImage, mangoImage, pineappleImage].map((img, i) => (
+          {[pineappleImage].map((img, i) => (
             <div key={i} className="relative h-screen">
               <Image
                 src={img}
