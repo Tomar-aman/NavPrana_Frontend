@@ -11,24 +11,26 @@ export const createOrder = createAsyncThunk(
       return await createOrderAPI(payload);
     } catch (error) {
       return rejectWithValue(
-        error.response?.data || error.message || "Order creation failed"
+        error.response?.data || error.message || "Order creation failed",
       );
     }
-  }
+  },
 );
 
 /* ================= GET ORDER LIST ================= */
 export const getOrder = createAsyncThunk(
   "order/getOrder",
-  async (_, { rejectWithValue }) => {
+  async (page, { rejectWithValue }) => {
     try {
-      return await getOrderAPI();
+      const response = await getOrderAPI(page);
+      console.log("Response in thunk:", response.data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data || error.message || "Failed to fetch orders"
+        error.response?.data || error.message || "Failed to fetch orders",
       );
     }
-  }
+  },
 );
 
 /* ================= ORDER DETAILS ================= */
@@ -39,10 +41,10 @@ export const orderDetail = createAsyncThunk(
       return await orderDetailAPI(id);
     } catch (error) {
       return rejectWithValue(
-        error.response?.data || error.message || "Failed to fetch order detail"
+        error.response?.data || error.message || "Failed to fetch order detail",
       );
     }
-  }
+  },
 );
 
 /* ================= SLICE ================= */

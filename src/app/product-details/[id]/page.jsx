@@ -136,21 +136,27 @@ const Page = () => {
             </div>
 
             {/* THUMBNAILS */}
-            <div className="grid grid-cols-4 gap-2 mt-4">
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 mt-4">
               {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-35 h-30 rounded-lg overflow-hidden border-2 flex items-center justify-center ${
-                    selectedImage === i ? "border-primary" : "border-gray-200"
-                  }`}
+                  className={`
+        relative aspect-square rounded-lg overflow-hidden
+        border-2 transition
+        ${
+          selectedImage === i
+            ? "border-primary ring-2 ring-primary/40"
+            : "border-gray-200 hover:border-gray-400"
+        }
+      `}
                 >
                   <Image
                     src={img.image}
                     alt={product.name}
-                    width={100}
-                    height={100}
-                    className="object-cover w-full h-full"
+                    fill
+                    sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, 120px"
+                    className="object-cover"
                   />
                 </button>
               ))}

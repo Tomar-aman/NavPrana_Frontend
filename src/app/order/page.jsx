@@ -22,20 +22,27 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getOrder } from "@/redux/features/orderSlice";
 import PrivateRoute from "../../../components/PrivateRoute";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const Page = () => {
   const dispatch = useDispatch();
   const { fetchLoading, orderList } = useSelector((state) => state.order);
 
+  console.log("Order List:", orderList.count);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [open, setOpen] = useState(false);
 
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+
   const orders = orderList?.results || [];
 
   useEffect(() => {
-    dispatch(getOrder());
-  }, [dispatch]);
+    dispatch(getOrder(currentPage));
+  }, [dispatch, currentPage]);
+
+  const totalPages = Math.ceil((orderList?.count || 0) / 10);
 
   /* ---------------- HELPERS ---------------- */
 
@@ -238,6 +245,44 @@ const Page = () => {
             })
           )}
         </div>
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
+            {/* Previous */}
+            <button
+              disabled={currentPage === 1}
+              className="px-3 py-2 border rounded-lg disabled:opacity-40"
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              ←
+            </button>
+
+            {/* Page Numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`px-4 py-2 rounded-lg border text-sm font-medium transition
+          ${
+            currentPage === page
+              ? "bg-primary text-white border-primary"
+              : "hover:bg-gray-100"
+          }`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            {/* Next */}
+            <button
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 border rounded-lg disabled:opacity-40"
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
     </PrivateRoute>
   );

@@ -55,12 +55,12 @@ const Products = () => {
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Our <span className="text-gradient">Premium Collection</span>
+            Pure <span className="text-gradient">Buffalo Ghee</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Choose from our carefully crafted range of pure desi ghee, each made
-            with traditional methods and the finest ingredients for authentic
-            taste and nutrition.
+            Explore our premium range of NavPrana Buffalo Ghee, hand-churned
+            using the traditional Bilona method. Ensure authentic taste and
+            maximum nutrition in every jar.
           </p>
         </div>
 

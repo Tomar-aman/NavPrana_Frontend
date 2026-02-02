@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  ArrowLeft,
   Heart,
   Leaf,
   Users,
@@ -118,16 +117,16 @@ const Page = () => {
             </p>
           </div>
           <div className="space-y-4">
-            <div className="relative h-64 w-full">
-              {/* Tip: Use an image of the Chambal landscape or village Esah here */}
+            {/* <div className="relative h-64 w-full">
+              
               <Image
                 src={organicFarmImage}
                 alt="Landscape of Morena, MP"
                 fill
                 className="object-cover rounded-lg"
               />
-            </div>
-            <div className="relative h-64 w-full">
+            </div> */}
+            <div className="relative h-full w-full">
               <Image
                 src={traditionalCowImage}
                 alt="Buffaloes in Chambal"
