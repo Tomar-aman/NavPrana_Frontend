@@ -136,7 +136,7 @@ export default function Page() {
             </div>
 
             {/* ORDER META */}
-            <div className="bg-white rounded-xl border p-4 sm:p-6 mb-6 flex flex-col sm:flex-row gap-4 justify-between">
+            <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6 mb-6 flex flex-col sm:flex-row gap-4 justify-between">
               <div>
                 <p className="text-sm text-gray-500">Order ID</p>
                 <p className="text-lg sm:text-xl font-bold text-green-700 break-all">
@@ -152,7 +152,7 @@ export default function Page() {
             </div>
 
             {/* ORDER STATUS */}
-            <div className="bg-white rounded-xl border p-4 sm:p-6 mb-6 overflow-x-auto">
+            <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6 mb-6 overflow-x-auto">
               <h2 className="font-semibold mb-4">Order Status</h2>
               <OrderProgress status={orderData.status_display} />
             </div>
@@ -160,7 +160,7 @@ export default function Page() {
             {/* ADDRESS + PAYMENT */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {/* ADDRESS */}
-              <div className="bg-white rounded-xl border p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6">
                 <h3 className="font-semibold flex items-center gap-2 mb-3">
                   <MapPin className="text-green-700" /> Delivery Address
                 </h3>
@@ -180,7 +180,7 @@ export default function Page() {
               </div>
 
               {/* PAYMENT */}
-              <div className="bg-white rounded-xl border p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6">
                 <h3 className="font-semibold flex items-center gap-2 mb-3">
                   <CreditCard className="text-green-700" /> Payment Details
                 </h3>
@@ -210,7 +210,7 @@ export default function Page() {
             </div>
 
             {/* ITEMS */}
-            <div className="bg-white rounded-xl border p-4 sm:p-6 mb-6">
+            <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6 mb-6">
               <h2 className="font-semibold mb-4">Order Items</h2>
 
               <div className="space-y-4">
@@ -256,7 +256,7 @@ export default function Page() {
               </div>
 
               {/* PRICE */}
-              <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+              <div className="border-t border-primary-border mt-4 pt-4 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>MRP</span>
                   <span>₹{orderData.total_amount}</span>

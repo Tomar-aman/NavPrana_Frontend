@@ -83,7 +83,7 @@ const Page = () => {
 
             {/* EMPTY CART */}
             {mergedCartItems.length === 0 && !loading ? (
-              <div className="border rounded-xl shadow p-8 text-center bg-white">
+              <div className="border border-primary-border rounded-xl shadow p-8 text-center bg-white">
                 <div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
                   <ShoppingBag className="h-10 w-10 text-gray-400" />
                 </div>
@@ -111,12 +111,12 @@ const Page = () => {
                     return (
                       <div
                         key={item.id}
-                        className="border rounded-xl bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition"
+                        className="border border-primary-border rounded-xl bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition"
                       >
                         <div className="flex flex-col sm:flex-row gap-4">
                           {/* IMAGE */}
                           <div
-                            className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border"
+                            className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-primary-border"
                             onClick={() =>
                               router.push(`/product-details/${item.product.id}`)
                             }
@@ -167,7 +167,7 @@ const Page = () => {
                             {/* QTY + PRICE */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                               {/* QUANTITY */}
-                              <div className="flex items-center gap-3 border rounded-lg px-2 py-1 w-fit">
+                              <div className="flex items-center gap-3 border border-primary-border rounded-lg px-2 py-1 w-fit">
                                 <button
                                   onClick={() => handleDecrease(item)}
                                   className="p-1 hover:bg-gray-100 rounded"
@@ -218,7 +218,7 @@ const Page = () => {
 
                 {/* ORDER SUMMARY */}
                 <div className="lg:col-span-1">
-                  <div className="border rounded-xl shadow p-6 sticky top-4 bg-white">
+                  <div className="border border-primary-border rounded-xl shadow p-6 sticky top-4 bg-white">
                     <h2 className="text-xl font-semibold mb-4">
                       Order Summary
                     </h2>
@@ -245,7 +245,7 @@ const Page = () => {
                         </span>
                       </div>
 
-                      <div className="border-t pt-3 flex justify-between text-lg font-bold">
+                      <div className="border-t border-primary-border pt-3 flex justify-between text-lg font-bold">
                         <span>Total</span>
                         <span className="text-primary">₹{total}</span>
                       </div>
@@ -260,7 +260,7 @@ const Page = () => {
                     </button>
 
                     <Link href="/products">
-                      <button className="w-full mt-3 px-6 py-3 border rounded-lg hover:bg-gray-100 cursor-pointer">
+                      <button className="w-full mt-3 px-6 py-3 border border-primary-border rounded-lg hover:bg-gray-100 cursor-pointer">
                         Continue Shopping
                       </button>
                     </Link>

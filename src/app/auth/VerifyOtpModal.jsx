@@ -62,7 +62,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify }) => {
           type="text"
           maxLength={6}
           placeholder="Enter 6-digit OTP"
-          className="w-full border rounded-lg px-3 py-2 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full border border-primary-border rounded-lg px-3 py-2 text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
         />

@@ -57,7 +57,7 @@ const LoginForm = memo(
                 placeholder="you@example.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary"
               />
             </div>
             {errors.email && (
@@ -75,7 +75,7 @@ const LoginForm = memo(
                 placeholder="Enter your password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary"
               />
               <button
                 type="button"
@@ -117,7 +117,7 @@ const LoginForm = memo(
             disabled={loading}
             className="w-full py-2 rounded-lg bg-primary text-primary-foreground
               flex items-center justify-center gap-2
-              disabled:opacity-70 hover:bg-primary/90 transition font-medium"
+              disabled:opacity-70 hover:bg-primary/90 transition font-medium cursor-pointer"
           >
             {loading ? (
               <>

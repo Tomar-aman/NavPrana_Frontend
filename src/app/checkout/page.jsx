@@ -264,7 +264,7 @@ const Page = () => {
               </div>
             </div> */}
             {/* ADDRESS */}
-            <div className="bg-white rounded-2xl border p-6 space-y-5">
+            <div className="bg-white rounded-2xl border border-primary-border p-6 space-y-5">
               {/* Header */}
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-800">
@@ -286,11 +286,11 @@ const Page = () => {
                   <div
                     key={addr.id}
                     onClick={() => setSelectedAddressId(addr.id)}
-                    className={`relative rounded-xl border p-4 cursor-pointer transition-all duration-200 group
+                    className={`relative rounded-xl border border-primary-border p-4 cursor-pointer transition-all duration-200 group
           ${
             selectedAddressId === addr.id
               ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-              : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+              : "border-gray-200 hover:border-gray-400 hover:shadow-sm"
           }
           ${index === 0 ? "md:col-span-2" : ""}
         `}
@@ -365,7 +365,7 @@ const Page = () => {
             </div>
 
             {/* PAYMENT */}
-            <div className="bg-white border rounded-xl p-6">
+            <div className="bg-white border border-primary-border rounded-xl p-6">
               <h2 className="font-semibold mb-3">Payment Method</h2>
 
               {[
@@ -373,16 +373,16 @@ const Page = () => {
                 { id: "card", label: "Card", icon: CreditCard },
                 {
                   id: "cod",
-                  label: "COD (Disabled)",
+                  label: "Cash On Delivery Not Available",
                   icon: Truck,
                   disabled: true,
                 },
               ].map((p) => (
                 <label
                   key={p.id}
-                  className={`flex gap-2 border p-3 rounded mb-2 cursor-pointer ${
-                    p.disabled ? "bg-gray-100 text-gray-400" : ""
-                  }`}
+                  className={`flex gap-2 border p-3 border-primary-border rounded mb-2 cursor-pointer 
+                     
+                  `}
                 >
                   <input
                     type="radio"
@@ -398,7 +398,7 @@ const Page = () => {
           </div>
 
           {/* RIGHT SUMMARY */}
-          <div className="bg-white border rounded-xl p-6 sticky top-4 h-fit">
+          <div className="bg-white border border-primary-border rounded-xl p-6 sticky top-4 h-fit">
             <h2 className="font-semibold mb-4">Order Summary</h2>
 
             {/* CART ITEMS */}
@@ -412,7 +412,10 @@ const Page = () => {
                 const save = (mrp - price) * item.quantity;
 
                 return (
-                  <div key={item.id} className="flex gap-3 border-b pb-2">
+                  <div
+                    key={item.id}
+                    className="flex gap-3 border-b border-primary-border pb-2"
+                  >
                     <Image
                       src={
                         item.product.images?.[0]?.image || "/placeholder.png"
@@ -455,7 +458,7 @@ const Page = () => {
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   disabled={success}
-                  className={`border px-3 py-2 rounded uppercase w-full transition
+                  className={`border border-primary-border px-3 py-2 rounded uppercase w-full transition
         ${success ? "bg-gray-100 cursor-not-allowed" : ""}
       `}
                   placeholder="Enter coupon"
@@ -468,7 +471,7 @@ const Page = () => {
         ${
           success
             ? "bg-green-600 text-white cursor-not-allowed"
-            : "border hover:bg-gray-100"
+            : "border border-primary-border hover:bg-gray-100"
         }
       `}
                 >
@@ -485,7 +488,7 @@ const Page = () => {
             </div>
 
             {/* PRICE SUMMARY */}
-            <div className="border-t mt-4 pt-4 text-sm space-y-2">
+            <div className="border-t border-primary-border mt-4 pt-4 text-sm space-y-2">
               <div className="flex justify-between">
                 <span>MRP Total</span>
                 <span className="line-through">₹{mrpSubtotal}</span>
@@ -508,7 +511,7 @@ const Page = () => {
                 <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
               </div>
 
-              <div className="flex justify-between font-bold text-lg border-t pt-2">
+              <div className="flex justify-between font-bold text-lg border-t border-primary-border pt-2">
                 <span>Total Payable</span>
                 <span className="text-primary">₹{total}</span>
               </div>

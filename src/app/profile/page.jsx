@@ -64,6 +64,7 @@ const Page = () => {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const { list: address, loading } = useSelector((state) => state.address);
+  const profileSectionRef = useRef(null);
   const handleChangePassword = async () => {
     try {
       await dispatch(
@@ -296,8 +297,17 @@ const Page = () => {
                 </div>
 
                 <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="border px-4 py-2 rounded-lg flex items-center bg-white gap-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    setIsEditing(!isEditing);
+                    // smooth scroll to profile section
+                    setTimeout(() => {
+                      profileSectionRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }, 100);
+                  }}
+                  className="border border-primary-border px-4 py-2 rounded-lg flex items-center bg-white gap-2 hover:bg-gray-100 cursor-pointer"
                 >
                   <Edit2 size={16} />
                   Edit Profile
@@ -330,7 +340,10 @@ const Page = () => {
 
             {/* ================= PROFILE TAB ================= */}
             {activeTab === "profile" && (
-              <div className="grid md:grid-cols-2 gap-6">
+              <div
+                className="grid md:grid-cols-2 gap-6"
+                ref={profileSectionRef}
+              >
                 {/* Personal Information */}
                 <div className="bg-white p-6 rounded-xl shadow space-y-4">
                   <h2 className="font-semibold flex items-center gap-2 text-lg">
@@ -347,7 +360,7 @@ const Page = () => {
                         disabled={!isEditing}
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="w-full border px-3 py-2 rounded-lg disabled:bg-gray-50"
+                        className="w-full border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
                       />
                     </div>
                     <div>
@@ -358,7 +371,7 @@ const Page = () => {
                         disabled={!isEditing}
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="w-full border px-3 py-2 rounded-lg disabled:bg-gray-50"
+                        className="w-full border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
                       />
                     </div>
                   </div>
@@ -377,7 +390,7 @@ const Page = () => {
                         disabled={!isEditing}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 border px-3 py-2 rounded-lg disabled:bg-gray-50"
+                        className="w-full pl-10 border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
                       />
                     </div>
                   </div>
@@ -396,7 +409,7 @@ const Page = () => {
                         disabled={!isEditing}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-10 border px-3 py-2 rounded-lg disabled:bg-gray-50"
+                        className="w-full pl-10 border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
                       />
                     </div>
                   </div>
@@ -440,7 +453,7 @@ const Page = () => {
                       <div
                         key={addr.id}
                         onClick={() => setSelectedAddressId(addr.id)}
-                        className={`border rounded-xl p-4 cursor-pointer transition relative group
+                        className={`border border-primary-border rounded-xl p-4 cursor-pointer transition relative group
           
           ${index === 0 ? "md:col-span-2 bg-primary/5" : "bg-white"}
           

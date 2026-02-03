@@ -59,7 +59,7 @@ const Page = () => {
   const onSubmitPasswordReset = async (password, confirmPassword) => {
     try {
       await dispatch(
-        resetPassword({ email, password, confirm_password: confirmPassword })
+        resetPassword({ email, password, confirm_password: confirmPassword }),
       ).unwrap();
 
       toast.success("Password reset successful");
@@ -94,7 +94,7 @@ const Page = () => {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full pl-10 pr-3 py-2 border rounded-lg"
+                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -119,7 +119,7 @@ const Page = () => {
                   type="text"
                   maxLength={6}
                   placeholder="Enter 6-digit OTP"
-                  className="w-full pl-10 pr-3 py-2 border rounded-lg text-center tracking-widest"
+                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg text-center tracking-widest"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                 />

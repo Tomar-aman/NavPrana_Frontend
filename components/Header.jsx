@@ -157,7 +157,7 @@ const Header = () => {
             {!isAuthenticated ? (
               <Link
                 href="/auth"
-                className="px-4 py-2 border rounded hover:bg-gray-100"
+                className="px-4 py-2 border rounded hover:bg-gray-400"
               >
                 Login
               </Link>
@@ -165,7 +165,7 @@ const Header = () => {
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100"
+                  className="flex items-center gap-2 border px-4 py-2 border-gray-400 rounded hover:bg-gray-100"
                 >
                   <User size={16} />
                   <span className="hidden sm:inline">
@@ -179,7 +179,7 @@ const Header = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-white border rounded shadow"
+                      className="absolute right-0 mt-2 w-48 bg-white border border-primary-border rounded shadow"
                     >
                       <Link
                         className="block px-4 py-2 hover:bg-gray-100"
@@ -195,7 +195,7 @@ const Header = () => {
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                        className="w-full text-left px-4 py-2  text-red-600 hover:bg-red-50"
                       >
                         Logout
                       </button>

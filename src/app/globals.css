@@ -9,6 +9,7 @@
     --color-accent: #f0c442;
     --color-primary-foreground: #d6ded3;
     --color-border: #969799;
+    --color-primary-border: #cecece;
     --gradient-gradient: linear-gradient(80deg,
             rgba(38, 89, 38, 1) 0%,
             rgba(38, 89, 38, 1) 10%,

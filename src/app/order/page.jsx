@@ -118,7 +118,7 @@ const Page = () => {
           </div>
 
           {/* FILTERS */}
-          <div className="bg-white p-4 rounded-lg border mb-6 flex gap-4">
+          <div className="bg-white p-4 rounded-lg border border-primary-border mb-6 flex gap-4">
             {/* SEARCH */}
             <div className="relative flex-1">
               <Search
@@ -126,7 +126,7 @@ const Page = () => {
                 size={16}
               />
               <input
-                className="w-full pl-10 border rounded px-3 py-2"
+                className="w-full pl-10 border border-primary-border rounded px-3 py-2"
                 placeholder="Search by order ID"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -137,7 +137,7 @@ const Page = () => {
             <div className="relative w-48">
               <button
                 onClick={() => setOpen((p) => !p)}
-                className="w-full border rounded px-3 py-2 bg-white flex items-center justify-between"
+                className="w-full border border-primary-border rounded px-3 py-2 bg-white flex items-center justify-between"
               >
                 <span className="flex items-center gap-2">
                   <currentStatus.icon size={16} />
@@ -147,7 +147,7 @@ const Page = () => {
               </button>
 
               {open && (
-                <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow cursor-pointer">
+                <div className="absolute z-10 mt-1 w-full bg-white border border-primary-border rounded shadow cursor-pointer">
                   {statusOptions.map((option) => (
                     <button
                       key={option.value}
@@ -178,7 +178,7 @@ const Page = () => {
               return (
                 <div
                   key={order.id}
-                  className="bg-white border rounded-xl p-5 mb-4"
+                  className="bg-white border border-primary-border rounded-xl p-5 mb-4"
                 >
                   {/* TOP ROW */}
                   <div className="flex justify-between items-center mb-3">
@@ -233,7 +233,7 @@ const Page = () => {
                     {/* VIEW DETAILS */}
                     <Link
                       href={`/order-details/${order.id}`}
-                      className="flex items-center gap-1 text-sm border px-3 py-1.5 rounded-lg hover:bg-gray-50"
+                      className="flex items-center gap-1 text-sm border px-3 py-1.5 rounded-lg hover:bg-gray-50 border-primary-border"
                     >
                       <Eye size={14} />
                       View Details
@@ -251,7 +251,7 @@ const Page = () => {
             {/* Previous */}
             <button
               disabled={currentPage === 1}
-              className="px-3 py-2 border rounded-lg disabled:opacity-40"
+              className="px-3 py-2 border border-primary-border rounded-lg disabled:opacity-40"
               onClick={() => setCurrentPage((p) => p - 1)}
             >
               ←
@@ -261,7 +261,7 @@ const Page = () => {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
-                className={`px-4 py-2 rounded-lg border text-sm font-medium transition
+                className={`px-4 py-2 rounded-lg border border-primary-border text-sm font-medium transition
           ${
             currentPage === page
               ? "bg-primary text-white border-primary"
@@ -276,7 +276,7 @@ const Page = () => {
             {/* Next */}
             <button
               disabled={currentPage === totalPages}
-              className="px-3 py-2 border rounded-lg disabled:opacity-40"
+              className="px-3 py-2 border rounded-lg border-primary-border disabled:opacity-40"
               onClick={() => setCurrentPage((p) => p + 1)}
             >
               →

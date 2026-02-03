@@ -21,14 +21,14 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative w-full min-h-[60vh] md:min-h-[80vh] lg:min-h-screen overflow-hidden mt-20"
+      className="relative w-full min-h-[40vh] md:min-h-[80vh] lg:min-h-screen overflow-hidden mt-25 md:mt-20"
     >
       {/* Slider */}
       <Slider {...settings} className="h-full">
         {[pineappleImage].map((img, i) => (
           <div
             key={i}
-            className="relative w-full  min-h-[60vh] md:min-h-[80vh] lg:min-h-screen"
+            className="relative w-full  min-h-[40vh] md:min-h-[80vh] lg:min-h-screen"
           >
             <Image
               src={img}
@@ -40,7 +40,7 @@ const Hero = () => {
             />
 
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black/40" />
+            {/* <div className="absolute inset-0 bg-black/40" /> */}
           </div>
         ))}
       </Slider>

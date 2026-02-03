@@ -3,6 +3,7 @@ import { addToCartAPI } from "@/services/cart/addToCart";
 import { getCartAPI } from "@/services/cart/getCart";
 import { deleteCartAPI } from "@/services/cart/delectCart";
 import { updateCartAPI } from "@/services/cart/updateCart";
+import { logout } from "./authSlice";
 
 /* ================= ADD TO CART ================= */
 export const addToCart = createAsyncThunk(
@@ -14,10 +15,10 @@ export const addToCart = createAsyncThunk(
       return res.data; // ✅ FIXED
     } catch (err) {
       return rejectWithValue(
-        err?.response?.data?.message || "Failed to add to cart"
+        err?.response?.data?.message || "Failed to add to cart",
       );
     }
-  }
+  },
 );
 
 /* ================= GET CART ================= */
@@ -30,10 +31,10 @@ export const getCart = createAsyncThunk(
       return res; // ✅ ONLY DATA
     } catch (err) {
       return rejectWithValue(
-        err?.response?.data?.message || "Failed to fetch cart"
+        err?.response?.data?.message || "Failed to fetch cart",
       );
     }
-  }
+  },
 );
 
 /* ================= UPDATE CART ================= */
@@ -45,10 +46,10 @@ export const updateCart = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(
-        err?.response?.data?.message || "Failed to update cart"
+        err?.response?.data?.message || "Failed to update cart",
       );
     }
-  }
+  },
 );
 
 /* ================= DELETE CART ================= */
@@ -60,20 +61,22 @@ export const deleteCart = createAsyncThunk(
       return cartId; // ✅ return id to remove from store
     } catch (err) {
       return rejectWithValue(
-        err?.response?.data?.message || "Failed to delete cart item"
+        err?.response?.data?.message || "Failed to delete cart item",
       );
     }
-  }
+  },
 );
+
+const initialState = {
+  items: [], // 🛒 cart items
+  loading: false,
+  error: null,
+  successMessage: null,
+};
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    items: [], // 🛒 cart items
-    loading: false,
-    error: null,
-    successMessage: null,
-  },
+  initialState,
 
   reducers: {
     resetCartState: (state) => {
@@ -118,14 +121,16 @@ const cartSlice = createSlice({
       /* ---------- UPDATE ---------- */
       .addCase(updateCart.fulfilled, (state, action) => {
         state.items = state.items.map((item) =>
-          item.id === action.payload.id ? action.payload : item
+          item.id === action.payload.id ? action.payload : item,
         );
       })
 
       /* ---------- DELETE ---------- */
       .addCase(deleteCart.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item.id !== action.payload);
-      });
+      })
+      // your existing reducers
+      .addCase(logout, () => initialState); // ✅ RESET CART SAFELY
   },
 });
 

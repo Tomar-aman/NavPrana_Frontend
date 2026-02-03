@@ -16,7 +16,7 @@ const SettingsTab = ({ onChangePassword, onLogout }) => {
       </div>
 
       {/* Change Password */}
-      <div className="flex justify-between items-center border p-4 rounded-lg">
+      <div className="flex justify-between items-center border border-primary-border p-4 rounded-lg">
         {/* Left */}
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-gray-100 text-gray-700">
@@ -32,7 +32,7 @@ const SettingsTab = ({ onChangePassword, onLogout }) => {
         {/* Right Button */}
         <button
           onClick={onChangePassword}
-          className="flex items-center gap-2 border px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+          className="flex items-center gap-2 border border-primary-border px-3 py-2 rounded-lg hover:bg-gray-100 transition"
           title="Update Password"
         >
           <span className="hidden sm:inline text-sm">Update</span>
@@ -40,31 +40,6 @@ const SettingsTab = ({ onChangePassword, onLogout }) => {
         </button>
       </div>
 
-      {/* Logout Section */}
-      {/* <div className="border border-red-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-full bg-red-100 text-red-600">
-            <ShieldAlert size={20} />
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-lg text-red-600">
-              Account Action
-            </h3>
-            <p className="text-sm text-gray-500">
-              Securely sign out from your account on this device
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={onLogout}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-red-300 text-red-600 font-medium hover:bg-red-50 transition"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
-      </div> */}
       {/* Delete Account Section */}
       <div className="border border-red-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         {/* Left Content */}

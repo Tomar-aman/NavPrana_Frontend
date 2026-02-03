@@ -166,10 +166,10 @@ const Page = () => {
           {/* INFO SECTION */}
           <div className="space-y-6">
             <div className="flex gap-2">
-              <span className="flex items-center gap-1 text-sm border px-3 py-1 rounded-full">
+              <span className="flex items-center gap-1 text-primary text-sm border border-primary-border px-3 py-1 rounded-full">
                 <Leaf size={14} /> 100% Natural
               </span>
-              <span className="flex items-center gap-1 text-sm border px-3 py-1 rounded-full">
+              <span className="flex items-center gap-1 text-primary text-sm border border-primary-border px-3 py-1 rounded-full">
                 <Award size={14} /> Premium Quality
               </span>
             </div>
@@ -210,7 +210,7 @@ const Page = () => {
             {/* QUANTITY */}
             <div className="flex items-center gap-4">
               <span className="font-medium">Quantity</span>
-              <div className="flex items-center border rounded-lg overflow-hidden">
+              <div className="flex items-center border border-primary-border rounded-lg overflow-hidden">
                 <button
                   onClick={() => handleQuantityChange(-1)}
                   className="px-4 py-2 hover:bg-gray-100"
@@ -238,7 +238,7 @@ const Page = () => {
               </button>
 
               <button
-                className=" flex-[1] border py-3 rounded-lg hover:bg-gray-100 font-semibold cursor-pointer"
+                className=" flex-[1] border border-primary-border py-3 rounded-lg hover:bg-gray-100 font-semibold cursor-pointer"
                 onClick={handleBuyNow}
               >
                 Buy Now
@@ -246,7 +246,7 @@ const Page = () => {
             </div>
 
             {/* TRUST BADGES */}
-            <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 pt-4 border-t">
+            <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 pt-4 border-t border-primary-border">
               <div className="flex items-center gap-2">
                 <Truck size={18} /> Free Shipping
               </div>
@@ -262,7 +262,7 @@ const Page = () => {
 
         {/* TABS */}
         <div className="mt-16">
-          <div className="flex gap-8 border-b">
+          <div className="flex gap-8 border-b border-primary-border">
             {["description", "Specifications"].map((tab) => (
               <button
                 key={tab}
