@@ -26,6 +26,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { list, loading } = useSelector((state) => state.product);
+  const { items: cartItems } = useSelector((state) => state.cart);
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -75,7 +76,7 @@ const Page = () => {
 
   // Find product by ID
   const product = list?.find((item) => item.id === Number(id));
-
+  const isInCart = cartItems.some((item) => item.product === product.id);
   // Quantity handler
   const handleQuantityChange = (val) => {
     setQuantity((prev) => Math.max(1, prev + val));
@@ -229,13 +230,29 @@ const Page = () => {
 
             {/* ACTION BUTTONS */}
             <div className="flex  gap-4 w-full">
-              <button
-                className="flex-[3] bg-primary hover:bg-primary/90 text-white py-3 rounded-lg flex items-center justify-center gap-2 font-semibold cursor-pointer "
-                onClick={() => handleAddToCart(product.id)}
-              >
-                <ShoppingCart size={18} />
-                Add to Cart
-              </button>
+              {isInCart ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push("/cart");
+                  }}
+                  className=" flex-[3] flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer "
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Go to Cart
+                </button>
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(product.id);
+                  }}
+                  className="flex-[3] flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Add to Cart
+                </button>
+              )}
 
               <button
                 className=" flex-[1] border border-primary-border py-3 rounded-lg hover:bg-gray-100 font-semibold cursor-pointer"

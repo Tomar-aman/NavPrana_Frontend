@@ -168,6 +168,7 @@ const Page = () => {
                         }}
                         className="w-full flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer "
                       >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
                         Go to Cart
                       </button>
                     ) : (
