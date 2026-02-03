@@ -17,12 +17,13 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { toast } from "react-toastify";
 
 const Page = () => {
   const { id } = useParams();
+
   const dispatch = useDispatch();
   const router = useRouter();
   const { list, loading } = useSelector((state) => state.product);
@@ -76,7 +77,11 @@ const Page = () => {
 
   // Find product by ID
   const product = list?.find((item) => item.id === Number(id));
-  const isInCart = cartItems.some((item) => item.product === product.id);
+  // const isInCart = cartItems.some((item) => item.product === product.id);
+  const isInCart = product
+    ? cartItems.some((item) => item.product === product.id)
+    : false;
+
   // Quantity handler
   const handleQuantityChange = (val) => {
     setQuantity((prev) => Math.max(1, prev + val));
@@ -93,11 +98,7 @@ const Page = () => {
 
   // Product not found
   if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Product not found</p>
-      </div>
-    );
+    notFound();
   }
 
   // Safe image getter
@@ -123,17 +124,6 @@ const Page = () => {
                   Save {parseInt(product.discount_precent)} %
                 </span>
               )}
-
-              {/* <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
-                className="absolute top-4 right-4 bg-white p-2 rounded-full shadow"
-              >
-                <Heart
-                  className={`h-5 w-5 ${
-                    isWishlisted ? "text-red-500 fill-red-500" : "text-gray-500"
-                  }`}
-                />
-              </button> */}
             </div>
 
             {/* THUMBNAILS */}

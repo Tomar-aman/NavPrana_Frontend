@@ -1,7 +1,5 @@
 "use client";
 import { ShoppingCart, Star, Truck, Shield, Heart } from "lucide-react";
-import gheeProductImage from "@/assets/ghee-product.jpg";
-import cookingGheeImage from "@/assets/cooking-with-ghee.jpg";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
@@ -169,7 +167,7 @@ const Products = () => {
         </div>
 
         {/* Trust Indicators */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-0 text-center">
           {[
             {
               icon: Truck,

@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,7 +10,6 @@ import {
   Sprout,
   Bird,
   Cloud,
-  Flower2,
   Wind,
 } from "lucide-react";
 // import { Button } from "@/components/ui/button";
@@ -20,7 +18,6 @@ export default function NotFound() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    console.error("404 Error: Page not found");
     setIsLoaded(true);
   }, []);
 
