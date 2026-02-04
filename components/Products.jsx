@@ -20,6 +20,7 @@ const Products = () => {
   const router = useRouter();
   const { list, loading, error } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -28,6 +29,12 @@ const Products = () => {
   console.log(list);
 
   const handleAddToCart = (productId) => {
+    // 🚫 If user not logged in → redirect to login
+    if (!isAuthenticated) {
+      toast.info("Please login to add items to cart");
+      router.push("/auth");
+      return;
+    }
     console.log(productId);
     dispatch(
       addToCart({
@@ -106,10 +113,6 @@ const Products = () => {
                     </div>
                   </div>
 
-                  {/* <p className="text-muted-foreground text-sm mb-4">
-                    {product.description}
-                  </p> */}
-
                   <div className="flex flex-wrap gap-2 mb-4">
                     {product.features.map((feature, index) => (
                       <span
@@ -167,7 +170,7 @@ const Products = () => {
         </div>
 
         {/* Trust Indicators */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-0 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
           {[
             {
               icon: Truck,
@@ -192,14 +195,19 @@ const Products = () => {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="flex flex-col items-center space-y-3 p-6 bg-card/30 rounded-lg"
+              className="flex flex-col items-center space-y-3 p-4 sm:p-6 bg-card/30 rounded-lg"
             >
-              <div className="w-12 h-12 bg-[#2b6033] rounded-full flex items-center justify-center">
-                <item.icon className="h-6 w-6 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#2b6033] rounded-full flex items-center justify-center">
+                <item.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
+
               <div>
-                <h4 className="font-semibold text-foreground">{item.title}</h4>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                <h4 className="font-semibold text-foreground text-sm sm:text-base">
+                  {item.title}
+                </h4>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  {item.desc}
+                </p>
               </div>
             </div>
           ))}

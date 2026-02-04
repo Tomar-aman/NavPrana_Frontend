@@ -28,6 +28,7 @@ const Page = () => {
   const router = useRouter();
   const { list, loading } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -42,6 +43,12 @@ const Page = () => {
   }, [dispatch, list]);
 
   const handleAddToCart = (productId) => {
+    // 🚫 If user not logged in → redirect to login
+    if (!isAuthenticated) {
+      toast.info("Please login to add items to cart");
+      router.push("/auth");
+      return;
+    }
     console.log(productId);
     dispatch(
       addToCart({

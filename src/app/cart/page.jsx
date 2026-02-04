@@ -74,7 +74,7 @@ const Page = () => {
 
   return (
     <PrivateRoute>
-      <div className="flex flex-col my-20">
+      <div className="flex flex-col my-15 sm:my-20">
         <main className="flex-1 py-16 px-4">
           <div className="container mx-auto max-w-6xl">
             <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">

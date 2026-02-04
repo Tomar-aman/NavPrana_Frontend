@@ -13,8 +13,7 @@ import {
   Sprout, // Added Sprout to represent the broader food company vision
 } from "lucide-react";
 
-import organicFarmImage from "@/assets/organic-farm.jpg"; // replace with actual image
-import traditionalCowImage from "@/assets/traditional-cow.jpg"; // replace with actual image
+import traditionalCowImage from "@/assets/buffalo.png"; // replace with actual image
 import { motion } from "framer-motion";
 
 const Page = () => {

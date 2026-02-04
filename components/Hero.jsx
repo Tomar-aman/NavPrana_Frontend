@@ -21,29 +21,23 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative w-full min-h-[40vh] md:min-h-[80vh] lg:min-h-screen overflow-hidden mt-25 md:mt-20"
+      className="
+        relative w-full overflow-hidden
+        pt-20
+        h-[45vh]
+        sm:h-[60vh]
+        md:h-[85vh]
+        lg:h-screen
+      "
     >
-      {/* Slider */}
-      <Slider {...settings} className="h-full">
-        {[pineappleImage].map((img, i) => (
-          <div
-            key={i}
-            className="relative w-full  min-h-[40vh] md:min-h-[80vh] lg:min-h-screen"
-          >
-            <Image
-              src={img}
-              alt="Hero Background"
-              fill
-              priority={i === 0}
-              sizes="100vw"
-              className=" md:object-cover object-center "
-            />
-
-            {/* Overlay */}
-            {/* <div className="absolute inset-0 bg-black/40" /> */}
-          </div>
-        ))}
-      </Slider>
+      <div className="relative w-full h-full">
+        <Image
+          src={pineappleImage}
+          alt="Hero Background"
+          fill
+          className="object-contain sm:object-cover object-center"
+        />
+      </div>
     </section>
   );
 };

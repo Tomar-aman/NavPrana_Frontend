@@ -29,6 +29,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const { list, loading, error } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -37,6 +38,12 @@ const Page = () => {
   console.log(list);
 
   const handleAddToCart = (productId) => {
+    // 🚫 If user not logged in → redirect to login
+    if (!isAuthenticated) {
+      toast.info("Please login to add items to cart");
+      router.push("/auth");
+      return;
+    }
     console.log(productId);
     dispatch(
       addToCart({
@@ -55,7 +62,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 mt-20">
       <main className="container mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">

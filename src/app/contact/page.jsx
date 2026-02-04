@@ -115,7 +115,7 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 mt-20">
       <main className="container mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">
