@@ -63,7 +63,7 @@ const SignupForm = memo(
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
-                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg"
+                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
                   placeholder="Enter First name"
                   value={form.firstName}
                   onChange={(e) =>
@@ -86,7 +86,7 @@ const SignupForm = memo(
                 <input
                   type="text"
                   placeholder="Enter Last name"
-                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg"
+                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
                   value={form.lastName}
                   onChange={(e) =>
                     setForm({ ...form, lastName: e.target.value })
@@ -107,7 +107,7 @@ const SignupForm = memo(
               <input
                 type="email"
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg"
+                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
@@ -127,7 +127,7 @@ const SignupForm = memo(
               <input
                 placeholder="10-digit mobile number"
                 type="tel"
-                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg"
+                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
@@ -145,7 +145,7 @@ const SignupForm = memo(
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Minimum 8 characters"
-                className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg"
+                className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />

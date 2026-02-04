@@ -52,7 +52,7 @@ const ResetPasswordModal = ({ isOpen, email, onClose, onSubmit }) => {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="New Password"
-            className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg"
+            className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -71,7 +71,7 @@ const ResetPasswordModal = ({ isOpen, email, onClose, onSubmit }) => {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Confirm Password"
-            className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg"
+            className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />

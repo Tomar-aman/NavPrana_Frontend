@@ -94,7 +94,7 @@ const Page = () => {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg"
+                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
