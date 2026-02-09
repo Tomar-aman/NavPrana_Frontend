@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getOrder } from "@/redux/features/orderSlice";
 import PrivateRoute from "../../../components/PrivateRoute";
 import { useSearchParams, useRouter } from "next/navigation";
+import AddReviewModal from "../../../components/AddReviewModal";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,8 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [open, setOpen] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewData, setReviewData] = useState(null);
 
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
@@ -282,7 +285,18 @@ const Page = () => {
                         Order delivered successfully
                       </div>
 
-                      <button className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition">
+                      <button
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition"
+                        onClick={() => {
+                          setReviewData({
+                            orderId: order.id,
+                            productId: order.product.id,
+                            productName: order.name || "Product",
+                            productImage: order.first_product_image,
+                          });
+                          setShowReviewModal(true);
+                        }}
+                      >
                         ✍️ Write Review
                       </button>
                     </div>
@@ -338,6 +352,20 @@ const Page = () => {
               →
             </button>
           </div>
+        )}
+
+        {reviewData && (
+          <AddReviewModal
+            isOpen={showReviewModal}
+            onClose={() => {
+              setShowReviewModal(false);
+              setReviewData(null);
+            }}
+            orderId={reviewData.orderId}
+            productId={reviewData.productId}
+            productName={reviewData.productName}
+            productImage={reviewData.productImage}
+          />
         )}
       </div>
     </PrivateRoute>
