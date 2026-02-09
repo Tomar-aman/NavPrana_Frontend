@@ -23,7 +23,7 @@ import {
 } from "@/redux/features/addressSlice";
 import { fetchProducts } from "@/redux/features/product";
 import { getCart } from "@/redux/features/cartSlice";
-import { applyCoupon } from "@/redux/features/couponSlice";
+import { applyCoupon, resetCouponState } from "@/redux/features/couponSlice";
 import { createOrder } from "@/redux/features/orderSlice";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -34,6 +34,7 @@ import { toast } from "react-toastify";
 const Page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const [couponError, setCouponError] = useState("");
 
   const { list: address } = useSelector((state) => state.address);
   const { list: products } = useSelector((state) => state.product);
@@ -100,10 +101,36 @@ const Page = () => {
   const total = subtotal + shipping - couponDiscount;
 
   /* Apply Coupon */
-  const handleApplyCoupon = () => {
-    if (!couponCode) return toast.error("Enter coupon code");
-    dispatch(applyCoupon({ order_total: subtotal, coupon_code: couponCode }));
+  const handleApplyCoupon = async () => {
+    if (!couponCode) {
+      setCouponError("Please enter a coupon code");
+      return;
+    }
+
+    try {
+      setCouponError("");
+      await dispatch(
+        applyCoupon({
+          order_total: subtotal,
+          coupon_code: couponCode,
+        }),
+      ).unwrap();
+    } catch (err) {
+      const message =
+        err?.error ||
+        Object.values(err || {})?.[0]?.[0] ||
+        "Invalid coupon code";
+      console.log("Coupon apply error:", err.error);
+
+      setCouponError(message);
+    }
   };
+
+  useEffect(() => {
+    if (success) {
+      dispatch({ type: "coupon/resetCouponState" }); // see step 4
+    }
+  }, [couponCode]);
 
   /* Create Order */
   const handleCreateOrder = () => {
@@ -373,7 +400,7 @@ const Page = () => {
                 { id: "card", label: "Card", icon: CreditCard },
                 {
                   id: "cod",
-                  label: "Cash On Delivery Not Available",
+                  label: "COD (Unavailable at your location)",
                   icon: Truck,
                   disabled: true,
                 },
@@ -453,31 +480,59 @@ const Page = () => {
                 <span className="font-medium">Apply Coupon</span>
               </div>
 
-              <div className="flex gap-2">
+              <div className="relative flex gap-2">
                 <input
                   value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
+                  onChange={(e) => {
+                    setCouponCode(e.target.value.toUpperCase());
+                    setCouponError("");
+                  }}
                   disabled={success}
                   className={`border border-primary-border px-3 py-2 rounded uppercase w-full transition
-        ${success ? "bg-gray-100 cursor-not-allowed" : ""}
-      `}
+      ${success ? "bg-gray-100 cursor-not-allowed pr-10" : ""}
+    `}
                   placeholder="Enter coupon"
                 />
 
-                <button
-                  onClick={handleApplyCoupon}
-                  disabled={success}
-                  className={`px-4 rounded transition font-medium
-        ${
-          success
-            ? "bg-green-600 text-white cursor-not-allowed"
-            : "border border-primary-border hover:bg-gray-100"
-        }
-      `}
-                >
-                  {success ? "Applied" : "Apply"}
-                </button>
+                {/* REMOVE ICON (✕ inside input) */}
+                {/* {success && (
+                  <button
+                    onClick={() => {
+                      dispatch(resetCouponState());
+                      setCouponCode("");
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-red-500"
+                    title="Remove coupon"
+                  >
+                    ✕
+                  </button>
+                )} */}
+
+                {/* APPLY / REMOVE BUTTON */}
+                {!success ? (
+                  <button
+                    onClick={handleApplyCoupon}
+                    className="px-4 rounded transition font-medium border border-primary-border hover:bg-gray-100"
+                  >
+                    Apply
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      dispatch(resetCouponState());
+                      setCouponCode("");
+                    }}
+                    className="px-4 rounded transition font-medium border border-dashed border-red-400 text-red-500 hover:text-white cursor-pointer hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
+
+              {/* ERROR MESSAGE */}
+              {couponError && (
+                <p className="text-red-500 text-sm mt-2">{couponError}</p>
+              )}
 
               {/* SUCCESS MESSAGE */}
               {success && couponData && (

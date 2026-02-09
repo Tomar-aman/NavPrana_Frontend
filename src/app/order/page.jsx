@@ -97,6 +97,39 @@ const Page = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const getPagination = (current, total) => {
+    const pages = [];
+
+    // If pages are small, show all
+    if (total <= 6) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+      return pages;
+    }
+
+    // Always show first page
+    pages.push(1);
+
+    // Left dots
+    if (current > 3) pages.push("...");
+
+    // Middle pages (current -1, current, current +1)
+    const start = Math.max(2, current - 1);
+    const end = Math.min(total - 2, current + 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    // Right dots
+    if (current < total - 3) pages.push("...");
+
+    // Always show second last & last
+    pages.push(total - 1);
+    pages.push(total);
+
+    return [...new Set(pages)];
+  };
+
   return (
     <PrivateRoute>
       <div className="min-h-screen bg-gray-50 px-4 py-30">
@@ -240,6 +273,20 @@ const Page = () => {
                       <ArrowRight size={14} />
                     </Link>
                   </div>
+
+                  {/* DELIVERED SUCCESS + REVIEW */}
+                  {order.status_display === "Delivered" && (
+                    <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-green-700 text-sm font-medium">
+                        <CheckCircle2 size={18} />
+                        Order delivered successfully
+                      </div>
+
+                      <button className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition">
+                        ✍️ Write Review
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -251,33 +298,42 @@ const Page = () => {
             {/* Previous */}
             <button
               disabled={currentPage === 1}
-              className="px-3 py-2 border border-primary-border rounded-lg disabled:opacity-40"
               onClick={() => setCurrentPage((p) => p - 1)}
+              className="px-3 py-2 border border-primary-border rounded-lg disabled:opacity-40"
             >
               ←
             </button>
 
             {/* Page Numbers */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                className={`px-4 py-2 rounded-lg border border-primary-border text-sm font-medium transition
-          ${
-            currentPage === page
-              ? "bg-primary text-white border-primary"
-              : "hover:bg-gray-100"
-          }`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
+            {getPagination(currentPage, totalPages).map((page, index) =>
+              page === "..." ? (
+                <span
+                  key={`dots-${index}`}
+                  className="px-3 py-2 text-gray-500 select-none"
+                >
+                  …
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-4 py-2 rounded-lg border border-primary-border text-sm font-medium transition
+            ${
+              currentPage === page
+                ? "bg-primary text-white border-primary"
+                : "hover:bg-gray-100"
+            }`}
+                >
+                  {page}
+                </button>
+              ),
+            )}
 
             {/* Next */}
             <button
               disabled={currentPage === totalPages}
-              className="px-3 py-2 border rounded-lg border-primary-border disabled:opacity-40"
               onClick={() => setCurrentPage((p) => p + 1)}
+              className="px-3 py-2 border border-primary-border rounded-lg disabled:opacity-40"
             >
               →
             </button>

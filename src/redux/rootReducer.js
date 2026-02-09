@@ -10,6 +10,7 @@ import orderReducer from "./features/orderSlice";
 import paymentReducer from "./features/paymentSlice";
 import uiReducer from "./features/uiSlice";
 import invoiceReducer from "./features/invoiceSlice";
+import reviewReducer from "./features/reviewSlice";
 
 export default combineReducers({
   auth: authReducer,
@@ -23,4 +24,5 @@ export default combineReducers({
   payment: paymentReducer,
   ui: uiReducer,
   invoice: invoiceReducer,
+  review: reviewReducer,
 });
