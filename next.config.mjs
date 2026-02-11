@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "api.navprana.cloud",
         pathname: "/media/**",
       },
+      {
+        protocol: "http",
+        hostname: "api.navprana.com",
+        pathname: "/media/**",
+      },
     ],
   },
 };
