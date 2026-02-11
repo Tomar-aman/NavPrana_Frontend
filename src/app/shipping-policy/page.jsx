@@ -9,19 +9,40 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Shipping Policy — Fast & Secure Delivery Across India",
+  description:
+    "Learn about NavPrana Organics shipping policy. We deliver pure desi ghee across India with temperature-controlled packaging, free shipping available on qualifying orders.",
+  keywords: [
+    "NavPrana shipping",
+    "ghee delivery India",
+    "organic ghee shipping",
+    "free shipping ghee",
+  ],
+  openGraph: {
+    title: "Shipping Policy | NavPrana Organics",
+    description:
+      "Fast and secure delivery of organic desi ghee across India. Temperature-controlled packaging ensures freshness.",
+    url: "/shipping-policy",
+  },
+  alternates: {
+    canonical: "/shipping-policy",
+  },
+};
+
 const Page = () => {
   const shippingZones = [
     {
       zone: "Metro Cities",
       cities: "Delhi, Mumbai, Bangalore, Chennai, Kolkata, Hyderabad",
       duration: "2-3 business days",
-      charges: "Free shipping on orders above ₹599",
+      charges: "Free shipping on orders above ₹999",
     },
     {
       zone: "Tier 1 Cities",
       cities: "Pune, Ahmedabad, Jaipur, Lucknow, Kanpur, Nagpur",
       duration: "3-4 business days",
-      charges: "Free shipping on orders above ₹799",
+      charges: "Free shipping on orders above ₹999",
     },
     {
       zone: "Tier 2 Cities",

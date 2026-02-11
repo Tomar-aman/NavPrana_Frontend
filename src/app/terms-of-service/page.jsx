@@ -1,6 +1,21 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Terms of Service",
+  description:
+    "Read the NavPrana Organics terms of service. Understand the terms and conditions for using our website and purchasing our organic desi ghee products.",
+  openGraph: {
+    title: "Terms of Service | NavPrana Organics",
+    description:
+      "Terms and conditions for using NavPrana Organics website and purchasing our products.",
+    url: "/terms-of-service",
+  },
+  alternates: {
+    canonical: "/terms-of-service",
+  },
+};
+
 const Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
