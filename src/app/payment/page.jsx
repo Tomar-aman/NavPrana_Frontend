@@ -28,7 +28,7 @@ const PaymentPage = () => {
       if (!window.Cashfree) return;
 
       const cashfree = new window.Cashfree({
-        mode: "sandbox", // production later
+        mode: process.env.NEXT_PUBLIC_CASHFREE_MODE || "sandbox", // production later
       });
 
       cashfree.checkout({
@@ -36,7 +36,6 @@ const PaymentPage = () => {
 
         // ✅ THIS CALLBACK ALWAYS FIRES
         onPayment: (data) => {
-          console.log("Cashfree payment response:", data);
 
           // 🔁 Navigate AFTER payment completes
           router.replace("/payment-status");

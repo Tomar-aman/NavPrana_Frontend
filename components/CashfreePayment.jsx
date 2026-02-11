@@ -22,7 +22,7 @@ const CashfreePayment = ({ paymentSessionId }) => {
     }
 
     const cashfree = new window.Cashfree({
-      mode: "sandbox", // 🔴 change to "production" in live
+      mode: process.env.NEXT_PUBLIC_CASHFREE_MODE || "sandbox", // 🔴 change to "production" in live
     });
 
     cashfree.checkout({
