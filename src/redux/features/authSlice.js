@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi } from "@/services/auth/login";
 import { signUp } from "@/services/auth/signUp";
 import { verifyAPI } from "@/services/auth/verifyOTP";
+import { googleAuthApi } from "@/services/auth/googleAuth";
 import { setAuthToken, removeAuthToken, getAuthToken } from "@/utils/authToken";
 
 /* ================= LOGIN ================= */
@@ -41,6 +42,23 @@ export const verifyOtp = createAsyncThunk(
       return await verifyAPI(payload);
     } catch (err) {
       return rejectWithValue("Invalid OTP");
+    }
+  }
+);
+
+/* ================= GOOGLE LOGIN ================= */
+export const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (token, { rejectWithValue }) => {
+    try {
+      console.log(token);
+      const res = await googleAuthApi(token);
+      setAuthToken(res.access);
+      return res;
+    } catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message || "Google login failed"
+      );
     }
   }
 );
@@ -118,6 +136,22 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(verifyOtp.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      /* ---------- GOOGLE LOGIN ---------- */
+      .addCase(googleLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.token = action.payload.access;
+        state.isAuthenticated = true;
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

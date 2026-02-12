@@ -3,6 +3,7 @@
 import { memo, useState } from "react";
 import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
+import GoogleSignInButton from "./GoogleSignInButton";
 
 const SignupForm = memo(
   ({ form, setForm, showPassword, setShowPassword, onSubmit, loading }) => {
@@ -183,6 +184,9 @@ const SignupForm = memo(
               "Sign Up"
             )}
           </button>
+
+          {/* Google Sign-In */}
+          <GoogleSignInButton />
 
           <p className="text-xs text-center text-muted-foreground">
             By signing up, you agree to our{" "}

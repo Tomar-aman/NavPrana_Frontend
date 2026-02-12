@@ -3,6 +3,7 @@
 import { memo, useState } from "react";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import GoogleSignInButton from "./GoogleSignInButton";
 
 const LoginForm = memo(
   ({
@@ -128,6 +129,9 @@ const LoginForm = memo(
               "Sign In"
             )}
           </button>
+
+          {/* Google Sign-In */}
+          <GoogleSignInButton />
         </div>
       </div>
     );
