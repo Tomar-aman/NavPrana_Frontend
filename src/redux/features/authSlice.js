@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+﻿import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi } from "@/services/auth/login";
 import { signUp } from "@/services/auth/signUp";
 import { verifyAPI } from "@/services/auth/verifyOTP";
@@ -58,7 +58,6 @@ export const googleLogin = createAsyncThunk(
   "auth/googleLogin",
   async (token, { rejectWithValue }) => {
     try {
-      console.log(token);
       const res = await googleAuthApi(token);
       setAuthToken(res.access);
       return res;

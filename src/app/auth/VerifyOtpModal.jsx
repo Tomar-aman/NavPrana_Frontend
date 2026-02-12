@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
@@ -32,9 +32,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify }) => {
   const onResend = async () => {
     try {
       const res = await resendVerifyApi({ email });
-      console.log(res);
     } catch (err) {
-      console.log(err);
     }
   };
 

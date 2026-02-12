@@ -5,8 +5,8 @@ const TOKEN_KEY = "access_token";
 // Save token
 export const setAuthToken = (token) => {
   Cookies.set(TOKEN_KEY, token, {
-    expires: 1, // 1 day
-    secure: false, // true in production (https)
+    expires: 1,
+    secure: true,
     sameSite: "lax",
   });
 };

@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
+import PrivateRoute from "../../../components/PrivateRoute";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -120,7 +121,6 @@ const Page = () => {
         err?.error ||
         Object.values(err || {})?.[0]?.[0] ||
         "Invalid coupon code";
-      console.log("Coupon apply error:", err.error);
 
       setCouponError(message);
     }
@@ -133,7 +133,7 @@ const Page = () => {
   }, [couponCode]);
 
   /* Create Order */
-  const handleCreateOrder = () => {
+  const handleCreateOrder = async () => {
     if (!selectedAddressId) return toast.error("Select address");
 
     const payload = {
@@ -146,8 +146,12 @@ const Page = () => {
       // return_url: "http://localhost:3000/payment-status",
     };
 
-    dispatch(createOrder(payload));
-    router.push("/payment");
+    try {
+      await dispatch(createOrder(payload)).unwrap();
+      router.push("/payment");
+    } catch (err) {
+      toast.error(err?.message || "Order creation failed");
+    }
   };
 
   /* Add Address */
@@ -200,7 +204,6 @@ const Page = () => {
 
       toast.success("Address updated");
     } catch (err) {
-      console.log(err);
       toast.error("Failed to update address");
     }
   };
@@ -215,52 +218,53 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-20 px-4">
-      {/* CONFETTI */}
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-50">
-          {[...Array(50)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-3 h-5 rounded"
-              style={{
-                left: `${Math.random() * 100}%`,
-                backgroundColor: [
-                  "#22c55e",
-                  "#eab308",
-                  "#3b82f6",
-                  "#ec4899",
-                  "#f97316",
-                ][Math.floor(Math.random() * 5)],
-              }}
-              initial={{ bottom: -10, opacity: 1 }}
-              animate={{
-                bottom: "110vh",
-                opacity: 0,
-                rotate: Math.random() * 720,
-              }}
-              transition={{ duration: Math.random() * 2 + 1.5 }}
-            />
-          ))}
-        </div>
-      )}
+    <PrivateRoute>
+      <div className="min-h-screen bg-gray-50 py-20 px-4">
+        {/* CONFETTI */}
+        {showConfetti && (
+          <div className="fixed inset-0 pointer-events-none z-50">
+            {[...Array(50)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-3 h-5 rounded"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  backgroundColor: [
+                    "#22c55e",
+                    "#eab308",
+                    "#3b82f6",
+                    "#ec4899",
+                    "#f97316",
+                  ][Math.floor(Math.random() * 5)],
+                }}
+                initial={{ bottom: -10, opacity: 1 }}
+                animate={{
+                  bottom: "110vh",
+                  opacity: 0,
+                  rotate: Math.random() * 720,
+                }}
+                transition={{ duration: Math.random() * 2 + 1.5 }}
+              />
+            ))}
+          </div>
+        )}
 
-      <div className="max-w-6xl mx-auto">
-        {/* BACK */}
-        <Link
-          href="/cart"
-          className="flex items-center gap-2 text-gray-500 mb-6"
-        >
-          <ArrowLeft size={16} /> Back to Cart
-        </Link>
+        <div className="max-w-6xl mx-auto">
+          {/* BACK */}
+          <Link
+            href="/cart"
+            className="flex items-center gap-2 text-gray-500 mb-6"
+          >
+            <ArrowLeft size={16} /> Back to Cart
+          </Link>
 
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+          <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* LEFT SIDE */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* ADDRESS */}
-            {/* <div className="bg-white border rounded-xl p-6">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* LEFT SIDE */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* ADDRESS */}
+              {/* <div className="bg-white border rounded-xl p-6">
               <div className="flex justify-between mb-4">
                 <h2 className="font-semibold text-lg">Delivery Address</h2>
                 <button
@@ -290,212 +294,211 @@ const Page = () => {
                 ))}
               </div>
             </div> */}
-            {/* ADDRESS */}
-            <div className="bg-white rounded-2xl border border-primary-border p-6 space-y-5">
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  Delivery Address
-                </h2>
+              {/* ADDRESS */}
+              <div className="bg-white rounded-2xl border border-primary-border p-6 space-y-5">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Delivery Address
+                  </h2>
 
-                <button
-                  onClick={() => setShowAddressModal(true)}
-                  className="flex items-center gap-2 border border-dashed border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary/10 transition cursor-pointer"
-                >
-                  <Plus size={16} />
-                  Add Address
-                </button>
-              </div>
+                  <button
+                    onClick={() => setShowAddressModal(true)}
+                    className="flex items-center gap-2 border border-dashed border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary/10 transition cursor-pointer"
+                  >
+                    <Plus size={16} />
+                    Add Address
+                  </button>
+                </div>
 
-              {/* Address List */}
-              <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
-                {address.map((addr, index) => (
-                  <div
-                    key={addr.id}
-                    onClick={() => setSelectedAddressId(addr.id)}
-                    className={`relative rounded-xl border border-primary-border p-4 cursor-pointer transition-all duration-200 group
-          ${
-            selectedAddressId === addr.id
-              ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-              : "border-gray-200 hover:border-gray-400 hover:shadow-sm"
-          }
+                {/* Address List */}
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+                  {address.map((addr, index) => (
+                    <div
+                      key={addr.id}
+                      onClick={() => setSelectedAddressId(addr.id)}
+                      className={`relative rounded-xl border border-primary-border p-4 cursor-pointer transition-all duration-200 group
+          ${selectedAddressId === addr.id
+                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                          : "border-gray-200 hover:border-gray-400 hover:shadow-sm"
+                        }
           ${index === 0 ? "md:col-span-2" : ""}
         `}
-                  >
-                    {/* Actions (Edit / Delete) */}
-                    <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                      <button
-                        className="p-1.5 rounded-md text-gray-600 hover:bg-gray-100"
-                        title="Edit address"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditAddressData(addr);
-                          setShowAddressModal(true);
-                        }}
-                      >
-                        <Pencil size={14} />
-                      </button>
+                    >
+                      {/* Actions (Edit / Delete) */}
+                      <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                        <button
+                          className="p-1.5 rounded-md text-gray-600 hover:bg-gray-100"
+                          title="Edit address"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditAddressData(addr);
+                            setShowAddressModal(true);
+                          }}
+                        >
+                          <Pencil size={14} />
+                        </button>
 
-                      <button
-                        className="p-1.5 rounded-md text-red-600 hover:bg-red-50"
-                        title="Delete address"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteAddress(addr.id);
-                        }}
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-
-                    {/* Default Badge */}
-                    {addr.is_default && (
-                      <span className="absolute top-3 left-3 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                        Default
-                      </span>
-                    )}
-
-                    {/* Address Content */}
-                    <div className="flex gap-3 mt-6">
-                      <div className="text-primary mt-1">
-                        <Home size={20} />
+                        <button
+                          className="p-1.5 rounded-md text-red-600 hover:bg-red-50"
+                          title="Delete address"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteAddress(addr.id);
+                          }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
 
-                      <div className="space-y-1">
-                        <p className="font-medium text-gray-800">
-                          {addr.address_line1}
-                        </p>
+                      {/* Default Badge */}
+                      {addr.is_default && (
+                        <span className="absolute top-3 left-3 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                          Default
+                        </span>
+                      )}
 
-                        {addr.address_line2 && (
-                          <p className="text-sm text-gray-500">
-                            {addr.address_line2}
+                      {/* Address Content */}
+                      <div className="flex gap-3 mt-6">
+                        <div className="text-primary mt-1">
+                          <Home size={20} />
+                        </div>
+
+                        <div className="space-y-1">
+                          <p className="font-medium text-gray-800">
+                            {addr.address_line1}
                           </p>
-                        )}
 
-                        <p className="text-sm text-gray-500">
-                          {addr.city}, {addr.state} – {addr.postal_code}
-                        </p>
+                          {addr.address_line2 && (
+                            <p className="text-sm text-gray-500">
+                              {addr.address_line2}
+                            </p>
+                          )}
 
-                        <p className="text-sm text-gray-500">{addr.country}</p>
+                          <p className="text-sm text-gray-500">
+                            {addr.city}, {addr.state} – {addr.postal_code}
+                          </p>
+
+                          <p className="text-sm text-gray-500">{addr.country}</p>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Selected Indicator */}
-                    {selectedAddressId === addr.id && (
-                      <span className="absolute bottom-3 right-3 text-xs text-primary font-medium">
-                        ✓ Selected
-                      </span>
-                    )}
-                  </div>
+                      {/* Selected Indicator */}
+                      {selectedAddressId === addr.id && (
+                        <span className="absolute bottom-3 right-3 text-xs text-primary font-medium">
+                          ✓ Selected
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* PAYMENT */}
+              <div className="bg-white border border-primary-border rounded-xl p-6">
+                <h2 className="font-semibold mb-3">Payment Method</h2>
+
+                {[
+                  { id: "upi", label: "UPI", icon: Wallet },
+                  { id: "card", label: "Card", icon: CreditCard },
+                  {
+                    id: "cod",
+                    label: "COD (Unavailable at your location)",
+                    icon: Truck,
+                    disabled: true,
+                  },
+                ].map((p) => (
+                  <label
+                    key={p.id}
+                    className={`flex gap-2 border p-3 border-primary-border rounded mb-2 cursor-pointer 
+                     
+                  `}
+                  >
+                    <input
+                      type="radio"
+                      className="accent-primary"
+                      disabled={p.disabled}
+                      checked={paymentMethod === p.id}
+                      onChange={() => setPaymentMethod(p.id)}
+                    />
+                    <p.icon size={18} /> {p.label}
+                  </label>
                 ))}
               </div>
             </div>
 
-            {/* PAYMENT */}
-            <div className="bg-white border border-primary-border rounded-xl p-6">
-              <h2 className="font-semibold mb-3">Payment Method</h2>
+            {/* RIGHT SUMMARY */}
+            <div className="bg-white border border-primary-border rounded-xl p-6 sticky top-4 h-fit">
+              <h2 className="font-semibold mb-4">Order Summary</h2>
 
-              {[
-                { id: "upi", label: "UPI", icon: Wallet },
-                { id: "card", label: "Card", icon: CreditCard },
-                {
-                  id: "cod",
-                  label: "COD (Unavailable at your location)",
-                  icon: Truck,
-                  disabled: true,
-                },
-              ].map((p) => (
-                <label
-                  key={p.id}
-                  className={`flex gap-2 border p-3 border-primary-border rounded mb-2 cursor-pointer 
-                     
-                  `}
-                >
-                  <input
-                    type="radio"
-                    className="accent-primary"
-                    disabled={p.disabled}
-                    checked={paymentMethod === p.id}
-                    onChange={() => setPaymentMethod(p.id)}
-                  />
-                  <p.icon size={18} /> {p.label}
-                </label>
-              ))}
-            </div>
-          </div>
+              {/* CART ITEMS */}
+              <div className="space-y-3 max-h-40 overflow-auto">
+                {mergedCartItems.map((item) => {
+                  if (!item.product) return null;
+                  const mrp = Number(
+                    item.product.max_price || item.product.price,
+                  );
+                  const price = Number(item.product.price);
+                  const save = (mrp - price) * item.quantity;
 
-          {/* RIGHT SUMMARY */}
-          <div className="bg-white border border-primary-border rounded-xl p-6 sticky top-4 h-fit">
-            <h2 className="font-semibold mb-4">Order Summary</h2>
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex gap-3 border-b border-primary-border pb-2"
+                    >
+                      <Image
+                        src={
+                          item.product.images?.[0]?.image || "/placeholder.png"
+                        }
+                        width={60}
+                        height={60}
+                        className="rounded object-cover"
+                        alt=""
+                      />
 
-            {/* CART ITEMS */}
-            <div className="space-y-3 max-h-40 overflow-auto">
-              {mergedCartItems.map((item) => {
-                if (!item.product) return null;
-                const mrp = Number(
-                  item.product.max_price || item.product.price,
-                );
-                const price = Number(item.product.price);
-                const save = (mrp - price) * item.quantity;
+                      <div className="flex-1">
+                        <p className="font-medium">{item.product.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {item.quantity} × ₹{price}
+                        </p>
 
-                return (
-                  <div
-                    key={item.id}
-                    className="flex gap-3 border-b border-primary-border pb-2"
-                  >
-                    <Image
-                      src={
-                        item.product.images?.[0]?.image || "/placeholder.png"
-                      }
-                      width={60}
-                      height={60}
-                      className="rounded object-cover"
-                      alt=""
-                    />
-
-                    <div className="flex-1">
-                      <p className="font-medium">{item.product.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {item.quantity} × ₹{price}
-                      </p>
-
-                      <div className="text-xs flex gap-2">
-                        <span className="line-through text-gray-400">
-                          ₹{mrp * item.quantity}
-                        </span>
-                        <span className="text-green-600">Save ₹{save}</span>
+                        <div className="text-xs flex gap-2">
+                          <span className="line-through text-gray-400">
+                            ₹{mrp * item.quantity}
+                          </span>
+                          <span className="text-green-600">Save ₹{save}</span>
+                        </div>
                       </div>
+
+                      <p className="font-medium">₹{price * item.quantity}</p>
                     </div>
-
-                    <p className="font-medium">₹{price * item.quantity}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* COUPON */}
-            <div className="mt-4">
-              <div className="flex gap-2 mb-2 items-center">
-                <Tag size={16} />
-                <span className="font-medium">Apply Coupon</span>
+                  );
+                })}
               </div>
 
-              <div className="relative flex gap-2">
-                <input
-                  value={couponCode}
-                  onChange={(e) => {
-                    setCouponCode(e.target.value.toUpperCase());
-                    setCouponError("");
-                  }}
-                  disabled={success}
-                  className={`border border-primary-border px-3 py-2 rounded uppercase w-full transition
+              {/* COUPON */}
+              <div className="mt-4">
+                <div className="flex gap-2 mb-2 items-center">
+                  <Tag size={16} />
+                  <span className="font-medium">Apply Coupon</span>
+                </div>
+
+                <div className="relative flex gap-2">
+                  <input
+                    value={couponCode}
+                    onChange={(e) => {
+                      setCouponCode(e.target.value.toUpperCase());
+                      setCouponError("");
+                    }}
+                    disabled={success}
+                    className={`border border-primary-border px-3 py-2 rounded uppercase w-full transition
       ${success ? "bg-gray-100 cursor-not-allowed pr-10" : ""}
     `}
-                  placeholder="Enter coupon"
-                />
+                    placeholder="Enter coupon"
+                  />
 
-                {/* REMOVE ICON (✕ inside input) */}
-                {/* {success && (
+                  {/* REMOVE ICON (✕ inside input) */}
+                  {/* {success && (
                   <button
                     onClick={() => {
                       dispatch(resetCouponState());
@@ -508,111 +511,112 @@ const Page = () => {
                   </button>
                 )} */}
 
-                {/* APPLY / REMOVE BUTTON */}
-                {!success ? (
-                  <button
-                    onClick={handleApplyCoupon}
-                    className="px-4 rounded transition font-medium border border-primary-border hover:bg-gray-100"
-                  >
-                    Apply
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      dispatch(resetCouponState());
-                      setCouponCode("");
-                    }}
-                    className="px-4 rounded transition font-medium border border-dashed border-red-400 text-red-500 hover:text-white cursor-pointer hover:bg-red-600"
-                  >
-                    Remove
-                  </button>
+                  {/* APPLY / REMOVE BUTTON */}
+                  {!success ? (
+                    <button
+                      onClick={handleApplyCoupon}
+                      className="px-4 rounded transition font-medium border border-primary-border hover:bg-gray-100"
+                    >
+                      Apply
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        dispatch(resetCouponState());
+                        setCouponCode("");
+                      }}
+                      className="px-4 rounded transition font-medium border border-dashed border-red-400 text-red-500 hover:text-white cursor-pointer hover:bg-red-600"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* ERROR MESSAGE */}
+                {couponError && (
+                  <p className="text-red-500 text-sm mt-2">{couponError}</p>
+                )}
+
+                {/* SUCCESS MESSAGE */}
+                {success && couponData && (
+                  <p className="text-green-600 text-sm mt-2 font-medium">
+                    🎉 Coupon <b>{couponData.code}</b> applied successfully!
+                  </p>
                 )}
               </div>
 
-              {/* ERROR MESSAGE */}
-              {couponError && (
-                <p className="text-red-500 text-sm mt-2">{couponError}</p>
-              )}
-
-              {/* SUCCESS MESSAGE */}
-              {success && couponData && (
-                <p className="text-green-600 text-sm mt-2 font-medium">
-                  🎉 Coupon <b>{couponData.code}</b> applied successfully!
-                </p>
-              )}
-            </div>
-
-            {/* PRICE SUMMARY */}
-            <div className="border-t border-primary-border mt-4 pt-4 text-sm space-y-2">
-              <div className="flex justify-between">
-                <span>MRP Total</span>
-                <span className="line-through">₹{mrpSubtotal}</span>
-              </div>
-
-              <div className="flex justify-between text-green-600">
-                <span>Product Discount</span>
-                <span>-₹{productDiscount}</span>
-              </div>
-
-              {couponDiscount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>Coupon Discount</span>
-                  <span>-₹{couponDiscount}</span>
+              {/* PRICE SUMMARY */}
+              <div className="border-t border-primary-border mt-4 pt-4 text-sm space-y-2">
+                <div className="flex justify-between">
+                  <span>MRP Total</span>
+                  <span className="line-through">₹{mrpSubtotal}</span>
                 </div>
-              )}
 
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
+                <div className="flex justify-between text-green-600">
+                  <span>Product Discount</span>
+                  <span>-₹{productDiscount}</span>
+                </div>
+
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Coupon Discount</span>
+                    <span>-₹{couponDiscount}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
+                </div>
+
+                <div className="flex justify-between font-bold text-lg border-t border-primary-border pt-2">
+                  <span>Total Payable</span>
+                  <span className="text-primary">₹{total}</span>
+                </div>
+
+                <p className="text-xs text-green-700 font-medium">
+                  🎉 You saved ₹{productDiscount + couponDiscount}
+                </p>
               </div>
 
-              <div className="flex justify-between font-bold text-lg border-t border-primary-border pt-2">
-                <span>Total Payable</span>
-                <span className="text-primary">₹{total}</span>
-              </div>
+              {/* PLACE ORDER */}
+              <button
+                onClick={handleCreateOrder}
+                className="mt-5 w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90"
+              >
+                Place Order • ₹{total}
+              </button>
 
-              <p className="text-xs text-green-700 font-medium">
-                🎉 You saved ₹{productDiscount + couponDiscount}
-              </p>
-            </div>
-
-            {/* PLACE ORDER */}
-            <button
-              onClick={handleCreateOrder}
-              className="mt-5 w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90"
-            >
-              Place Order • ₹{total}
-            </button>
-
-            <div className="flex justify-center gap-4 mt-3 text-xs text-gray-500">
-              <div className="flex items-center gap-1">
-                <Shield size={14} /> Secure
-              </div>
-              <div className="flex items-center gap-1">
-                <Truck size={14} /> Fast Delivery
+              <div className="flex justify-center gap-4 mt-3 text-xs text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Shield size={14} /> Secure
+                </div>
+                <div className="flex items-center gap-1">
+                  <Truck size={14} /> Fast Delivery
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ADDRESS MODAL */}
-      {showAddressModal && (
-        <AddressModal
-          isOpen={showAddressModal}
-          isEdit={!!editAddressData}
-          formData={formData}
-          setFormData={setFormData}
-          onClose={() => {
-            setShowAddressModal(false);
-            setEditAddressData(null);
-          }}
-          onSubmit={
-            editAddressData ? handleUpdateAddress : handleOnsubmitAddress
-          }
-        />
-      )}
-    </div>
+        {/* ADDRESS MODAL */}
+        {showAddressModal && (
+          <AddressModal
+            isOpen={showAddressModal}
+            isEdit={!!editAddressData}
+            formData={formData}
+            setFormData={setFormData}
+            onClose={() => {
+              setShowAddressModal(false);
+              setEditAddressData(null);
+            }}
+            onSubmit={
+              editAddressData ? handleUpdateAddress : handleOnsubmitAddress
+            }
+          />
+        )}
+      </div>
+    </PrivateRoute>
   );
 };
 

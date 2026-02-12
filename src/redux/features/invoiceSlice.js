@@ -1,4 +1,4 @@
-import { inVoiceApi } from "@/services/Invoice/invoice";
+﻿import { inVoiceApi } from "@/services/Invoice/invoice";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 /* ---------------- GET INVOICE ---------------- */
@@ -7,7 +7,6 @@ export const getInvoice = createAsyncThunk(
   async (orderId, { rejectWithValue }) => {
     try {
       const res = await inVoiceApi(orderId);
-      console.log(res);
       return res;
     } catch (error) {
       return rejectWithValue(

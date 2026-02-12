@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+﻿import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createOrderAPI } from "@/services/order/createOrder";
 import { getOrderAPI } from "@/services/order/getOrder";
 import { orderDetailAPI } from "@/services/order/orderDetails";
@@ -23,7 +23,6 @@ export const getOrder = createAsyncThunk(
   async (page, { rejectWithValue }) => {
     try {
       const response = await getOrderAPI(page);
-      console.log("Response in thunk:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(

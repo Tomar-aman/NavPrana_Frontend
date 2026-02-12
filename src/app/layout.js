@@ -2,13 +2,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "@/Context/AuthContext";
 import { ProfileProvider } from "@/Context/ProfileContext";
 import ReduxProvider from "@/redux/provider";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import AuthInitializer from "../../components/AuthInitializer";
-import GlobalUI from "../../components/GlobalUI";
+import ErrorBoundary from "../../components/ErrorBoundary";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "swiper/css";
@@ -166,9 +165,8 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReduxProvider>
-          <AuthProvider>
             <ProfileProvider>
-              {/* <GlobalUI /> */}
+              <ErrorBoundary>
               <Header />
               <AuthInitializer />
 
@@ -186,13 +184,13 @@ export default function RootLayout({ children }) {
                 theme="light"
               />
               <Footer />
+              </ErrorBoundary>
             </ProfileProvider>
-          </AuthProvider>
         </ReduxProvider>
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
-      {process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      )}
     </html>
   );
 }

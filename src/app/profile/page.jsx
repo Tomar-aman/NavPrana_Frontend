@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -143,7 +143,6 @@ const Page = () => {
     if (!file) return;
 
     setSelectedFile(file);
-    console.log("Selected file:", file);
   };
 
   // 🅰️ Avatar letters
@@ -170,7 +169,6 @@ const Page = () => {
       toast.success("Profile updated successfully");
       setIsEditing(false);
     } catch (err) {
-      console.log(err);
       toast.error("Failed to update profile");
     }
   };
@@ -209,7 +207,6 @@ const Page = () => {
 
       toast.success("Address updated");
     } catch (err) {
-      console.log(err);
       toast.error("Failed to update address");
     }
   };
@@ -326,11 +323,10 @@ const Page = () => {
                   key={key}
                   onClick={() => setActiveTab(key)}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition cursor-pointer
-        ${
-          activeTab === key
-            ? "bg-primary text-white shadow-sm"
-            : "text-gray-600 hover:bg-gray-100"
-        }`}
+        ${activeTab === key
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-gray-600 hover:bg-gray-100"
+                    }`}
                 >
                   <Icon size={16} />
                   <span className="hidden sm:inline">{label}</span>
@@ -457,11 +453,10 @@ const Page = () => {
           
           ${index === 0 ? "md:col-span-2 bg-primary/5" : "bg-white"}
           
-          ${
-            selectedAddressId === addr.id
-              ? "border-primary ring-1 ring-primary/30"
-              : "hover:border-gray-300"
-          }
+          ${selectedAddressId === addr.id
+                            ? "border-primary ring-1 ring-primary/30"
+                            : "hover:border-gray-300"
+                          }
         `}
                       >
                         {/* Top Actions */}

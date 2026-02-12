@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+﻿import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getProduct } from "../../services/products/get-product";
 
 /* ================= GET PRODUCTS ================= */
@@ -7,7 +7,6 @@ export const fetchProducts = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getProduct(); // ✅ await API
-      console.log(res.results);
       return res.results; // or res.data based on your API
     } catch (err) {
       return rejectWithValue(

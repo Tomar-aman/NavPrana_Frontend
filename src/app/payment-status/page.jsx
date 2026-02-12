@@ -1,4 +1,4 @@
-// "use client";
+﻿// "use client";
 
 // import { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -152,10 +152,9 @@ const PaymentStatusPage = () => {
     if (typeof window === "undefined") return;
 
     const transactionId = sessionStorage.getItem("transaction_id");
-    console.log("transactionId:", transactionId);
 
     if (!transactionId) {
-      console.error("❌ transaction_id missing");
+      console.error("âŒ transaction_id missing");
       return;
     }
 

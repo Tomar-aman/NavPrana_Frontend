@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import {
@@ -35,7 +35,6 @@ const Page = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
   const router = useRouter();
-  console.log(list);
 
   const handleAddToCart = (productId) => {
     // 🚫 If user not logged in → redirect to login
@@ -44,7 +43,6 @@ const Page = () => {
       router.push("/auth");
       return;
     }
-    console.log(productId);
     dispatch(
       addToCart({
         product: productId,
@@ -99,7 +97,6 @@ const Page = () => {
             const isInCart = cartItems.some(
               (item) => item.product === product.id,
             );
-            console.log(imageUrl);
             return (
               <div
                 key={product.id}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
@@ -54,7 +54,7 @@ const Page = () => {
   const handleDelete = (id) => {
     dispatch(deleteCart(id));
   };
-  console.log(mergedCartItems);
+
   /* 🔹 Price calculations */
   const subtotal = mergedCartItems.reduce((sum, item) => {
     if (!item.product) return sum;

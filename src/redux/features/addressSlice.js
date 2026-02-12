@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+﻿import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAddress } from "@/services/profile/get-address";
 import { deleteAddresses } from "@/services/profile/delete-address";
 import { updateAddress } from "@/services/profile/update-address";
@@ -34,7 +34,6 @@ export const editAddress = createAsyncThunk(
   "address/editAddress",
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      console.log("Editing Address ID:", id, "with Data:", data);
       const updated = await updateAddress(id, data); // ✅ fixed
       return updated; // updated address object
     } catch (err) {
@@ -77,7 +76,6 @@ const addressSlice = createSlice({
 
       /* ---------- EDIT ---------- */
       .addCase(editAddress.fulfilled, (state, action) => {
-        console.log("Edited Address Payload:", action.payload);
         const index = state.list.findIndex(
           (addr) => addr.id === action.payload.id
         );

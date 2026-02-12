@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+﻿import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { couponApplyAPI } from "@/services/coupon/couponApply";
 
 /**
@@ -8,9 +8,7 @@ export const applyCoupon = createAsyncThunk(
   "coupon/applyCoupon",
   async (payload, { rejectWithValue }) => {
     try {
-      console.log(payload);
       const res = await couponApplyAPI(payload);
-      console.log(res);
       return res; // API response
     } catch (error) {
       return rejectWithValue(

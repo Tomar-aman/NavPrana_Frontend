@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+﻿import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addToCartAPI } from "@/services/cart/addToCart";
 import { getCartAPI } from "@/services/cart/getCart";
-import { deleteCartAPI } from "@/services/cart/delectCart";
+import { deleteCartAPI } from "@/services/cart/deleteCart";
 import { updateCartAPI } from "@/services/cart/updateCart";
 import { logout } from "./authSlice";
 
@@ -10,7 +10,6 @@ export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ product, quantity }, { rejectWithValue }) => {
     try {
-      console.log(product, quantity);
       const res = await addToCartAPI({ product, quantity });
       return res.data; // ✅ FIXED
     } catch (err) {
@@ -27,7 +26,7 @@ export const getCart = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await getCartAPI();
-      console.log(res);
+ 
       return res; // ✅ ONLY DATA
     } catch (err) {
       return rejectWithValue(

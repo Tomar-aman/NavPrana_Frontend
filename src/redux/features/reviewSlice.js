@@ -1,4 +1,4 @@
-import {
+﻿import {
   addReviewAPI,
   getReviewAPI,
   updateReviewAPI,
@@ -23,7 +23,6 @@ export const addReview = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       // API call to add a review
-      console.log("Adding review with data:", { data });
       const newReview = await addReviewAPI(data);
       return newReview;
     } catch (err) {

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -29,7 +29,6 @@ const Page = () => {
   const dispatch = useDispatch();
   const { fetchLoading, orderList } = useSelector((state) => state.order);
 
-  console.log("Order List:", orderList.count);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [open, setOpen] = useState(false);
@@ -224,9 +223,8 @@ const Page = () => {
                       </span>
 
                       <span
-                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
-                          statusStyle[order.status_display]
-                        }`}
+                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${statusStyle[order.status_display]
+                          }`}
                       >
                         {Icon && <Icon size={12} />}
                         {order.status_display}
@@ -332,11 +330,10 @@ const Page = () => {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`px-4 py-2 rounded-lg border border-primary-border text-sm font-medium transition
-            ${
-              currentPage === page
-                ? "bg-primary text-white border-primary"
-                : "hover:bg-gray-100"
-            }`}
+            ${currentPage === page
+                      ? "bg-primary text-white border-primary"
+                      : "hover:bg-gray-100"
+                    }`}
                 >
                   {page}
                 </button>

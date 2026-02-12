@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -8,7 +8,6 @@ import PrivateRoute from "../../../components/PrivateRoute";
 const PaymentPage = () => {
   const { orderData } = useSelector((state) => state.order);
   const router = useRouter();
-  console.log("Order Data in PaymentPage:", orderData);
   useEffect(() => {
     if (!orderData?.payment_session_id) return;
 
