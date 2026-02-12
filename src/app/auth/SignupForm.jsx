@@ -6,8 +6,11 @@ import Link from "next/link";
 import GoogleSignInButton from "./GoogleSignInButton";
 
 const SignupForm = memo(
-  ({ form, setForm, showPassword, setShowPassword, onSubmit, loading }) => {
+  ({ form, setForm, showPassword, setShowPassword, onSubmit, loading, apiErrors = {} }) => {
     const [errors, setErrors] = useState({});
+
+    // Merge client-side and API errors (API errors take priority)
+    const allErrors = { ...errors, ...apiErrors };
 
     /* ---------- VALIDATION ---------- */
     const validate = () => {
@@ -64,7 +67,8 @@ const SignupForm = memo(
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
-                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.firstName ? "border-red-500" : "border-primary-border"
+                    }`}
                   placeholder="Enter First name"
                   value={form.firstName}
                   onChange={(e) =>
@@ -72,8 +76,8 @@ const SignupForm = memo(
                   }
                 />
               </div>
-              {errors.firstName && (
-                <p className="text-xs text-red-600 mt-1">{errors.firstName}</p>
+              {allErrors.firstName && (
+                <p className="text-xs text-red-600 mt-1">{allErrors.firstName}</p>
               )}
             </div>
 
@@ -87,15 +91,16 @@ const SignupForm = memo(
                 <input
                   type="text"
                   placeholder="Enter Last name"
-                  className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.lastName ? "border-red-500" : "border-primary-border"
+                    }`}
                   value={form.lastName}
                   onChange={(e) =>
                     setForm({ ...form, lastName: e.target.value })
                   }
                 />
               </div>
-              {errors.lastName && (
-                <p className="text-xs text-red-600 mt-1">{errors.lastName}</p>
+              {allErrors.lastName && (
+                <p className="text-xs text-red-600 mt-1">{allErrors.lastName}</p>
               )}
             </div>
           </div>
@@ -108,13 +113,14 @@ const SignupForm = memo(
               <input
                 type="email"
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.email ? "border-red-500" : "border-primary-border"
+                  }`}
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </div>
-            {errors.email && (
-              <p className="text-xs text-red-600 mt-1">{errors.email}</p>
+            {allErrors.email && (
+              <p className="text-xs text-red-600 mt-1">{allErrors.email}</p>
             )}
           </div>
 
@@ -128,13 +134,14 @@ const SignupForm = memo(
               <input
                 placeholder="10-digit mobile number"
                 type="tel"
-                className="w-full pl-10 pr-3 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.phone ? "border-red-500" : "border-primary-border"
+                  }`}
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
             </div>
-            {errors.phone && (
-              <p className="text-xs text-red-600 mt-1">{errors.phone}</p>
+            {allErrors.phone && (
+              <p className="text-xs text-red-600 mt-1">{allErrors.phone}</p>
             )}
           </div>
 
@@ -146,7 +153,8 @@ const SignupForm = memo(
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Minimum 8 characters"
-                className="w-full pl-10 pr-10 py-2 border border-primary-border rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.password ? "border-red-500" : "border-primary-border"
+                  }`}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
@@ -162,8 +170,8 @@ const SignupForm = memo(
                 )}
               </button>
             </div>
-            {errors.password && (
-              <p className="text-xs text-red-600 mt-1">{errors.password}</p>
+            {allErrors.password && (
+              <p className="text-xs text-red-600 mt-1">{allErrors.password}</p>
             )}
           </div>
 

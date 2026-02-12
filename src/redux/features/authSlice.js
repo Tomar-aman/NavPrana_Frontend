@@ -29,7 +29,14 @@ export const signupUser = createAsyncThunk(
     try {
       return await signUp(data);
     } catch (err) {
-      return rejectWithValue(err?.response?.data?.message || "Signup failed");
+      const errData = err?.response?.data;
+
+      // Pass field-level errors as-is: {"email": ["Email already exists."]}
+      if (errData && typeof errData === "object") {
+        return rejectWithValue(errData);
+      }
+
+      return rejectWithValue("Signup failed");
     }
   }
 );
