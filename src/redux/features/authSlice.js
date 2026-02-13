@@ -17,7 +17,8 @@ export const loginUser = createAsyncThunk(
 
       return res;
     } catch (err) {
-      return rejectWithValue(err?.response?.data?.message || "Login failed");
+      const msg = err?.response?.data?.message || err?.response?.data?.error || "Login failed";
+      return rejectWithValue(msg);
     }
   }
 );
@@ -31,12 +32,12 @@ export const signupUser = createAsyncThunk(
     } catch (err) {
       const errData = err?.response?.data;
 
-      // Pass field-level errors as-is: {"email": ["Email already exists."]}
+      // Pass field-level errors or message from API
       if (errData && typeof errData === "object") {
         return rejectWithValue(errData);
       }
 
-      return rejectWithValue("Signup failed");
+      return rejectWithValue(errData?.message || "Signup failed");
     }
   }
 );
@@ -46,9 +47,12 @@ export const verifyOtp = createAsyncThunk(
   "auth/verifyOtp",
   async (payload, { rejectWithValue }) => {
     try {
-      return await verifyAPI(payload);
+      const res = await verifyAPI(payload);
+      setAuthToken(res.access);
+      return res;
     } catch (err) {
-      return rejectWithValue("Invalid OTP");
+      const msg = err?.response?.data?.message || err?.response?.data?.error || "OTP verification failed";
+      return rejectWithValue(msg);
     }
   }
 );
@@ -62,9 +66,8 @@ export const googleLogin = createAsyncThunk(
       setAuthToken(res.access);
       return res;
     } catch (err) {
-      return rejectWithValue(
-        err?.response?.data?.message || "Google login failed"
-      );
+      const msg = err?.response?.data?.message || err?.response?.data?.error || "Google login failed";
+      return rejectWithValue(msg);
     }
   }
 );
@@ -138,8 +141,11 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(verifyOtp.fulfilled, (state) => {
+      .addCase(verifyOtp.fulfilled, (state, action) => {
         state.loading = false;
+        state.user = action.payload.user || null;
+        state.token = action.payload.access;
+        state.isAuthenticated = true;
       })
       .addCase(verifyOtp.rejected, (state, action) => {
         state.loading = false;

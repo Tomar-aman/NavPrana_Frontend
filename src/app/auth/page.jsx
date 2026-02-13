@@ -108,9 +108,8 @@ const Page = () => {
         }),
       ).unwrap();
 
-      toast.success("Account verified");
+      toast.success("Account verified! You're now logged in.");
       setShowOtpModal(false);
-      setActiveTab("signin");
       router.push("/");
     } catch {
       toast.error("Invalid OTP");
