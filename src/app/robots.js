@@ -17,6 +17,6 @@ export default function robots() {
         ],
       },
     ],
-    sitemap: "https://www.navprana.com/sitemap.xml",
+    sitemap: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com"}/sitemap.xml`,
   };
 }

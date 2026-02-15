@@ -98,7 +98,7 @@ const AddReviewModal = ({
       const response = await dispatch(addReview(formData)).unwrap();
 
       toast.success(response?.message || "Review submitted successfully");
-      console.log("Review submitted:", response);
+
       handleClose();
     } catch (error) {
       toast.error(error || "Failed to submit review");
@@ -154,11 +154,10 @@ const AddReviewModal = ({
                   className="focus:outline-none"
                 >
                   <Star
-                    className={`w-8 h-8 ${
-                      (hoverRating || rating) >= star
+                    className={`w-8 h-8 ${(hoverRating || rating) >= star
                         ? "fill-amber-400 text-amber-400"
                         : "text-gray-300"
-                    }`}
+                      }`}
                   />
                 </button>
               ))}

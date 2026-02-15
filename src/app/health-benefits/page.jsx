@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ArrowLeft,
   Heart,
@@ -10,6 +8,21 @@ import {
   Leaf,
 } from "lucide-react";
 import Link from "next/link";
+
+export const metadata = {
+  title: "Health Benefits of Pure Desi Ghee",
+  description:
+    "Discover the incredible health benefits of pure desi ghee — heart health, brain function, energy, immune support, skin care, and digestive health. Learn why NavPrana Bilona ghee is nature's superfood.",
+  openGraph: {
+    title: "Health Benefits of Pure Desi Ghee | NavPrana Organics",
+    description:
+      "Discover the powerful health benefits of traditional Bilona desi ghee — from heart health to brain function.",
+    url: "/health-benefits",
+  },
+  alternates: {
+    canonical: "/health-benefits",
+  },
+};
 
 const Page = () => {
   const benefits = [

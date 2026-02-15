@@ -7,6 +7,7 @@ import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { generateSlug } from "@/utils/slug";
 const getFeaturedImage = (images = []) => {
   return (
     images.find((img) => img.is_feature)?.image ||
@@ -26,7 +27,6 @@ const Products = () => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  console.log(list);
 
   const handleAddToCart = (productId) => {
     // 🚫 If user not logged in → redirect to login
@@ -35,7 +35,6 @@ const Products = () => {
       router.push("/auth");
       return;
     }
-    console.log(productId);
     dispatch(
       addToCart({
         product: productId,
@@ -79,7 +78,7 @@ const Products = () => {
             return (
               <div
                 key={product.id}
-                onClick={() => router.push(`/product-details/${product.id}`)}
+                onClick={() => router.push(`/product-details/${generateSlug(product.name)}`)}
                 className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden  flex flex-col h-full cursor-pointer"
               >
                 <div className="relative w-full h-64">

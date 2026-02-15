@@ -82,10 +82,8 @@ const Page = () => {
   const [couponError, setCouponError] = useState("");
   // const baseURL = "http://localhost:3000";
   const { couponData, success } = useSelector((state) => state.coupon);
-  console.log(couponData);
   useEffect(() => {
     if (success && couponData) {
-      console.log("Coupon Applied:", couponData);
     }
   }, [success, couponData]);
   const handleRemoveCoupon = () => {
@@ -140,7 +138,7 @@ const Page = () => {
       payload.coupon_code = couponCode;
     }
 
-    console.log("CREATE ORDER PAYLOAD 👉", payload);
+
 
     dispatch(createOrder(payload));
     router.push("/payment");
@@ -213,11 +211,10 @@ const Page = () => {
                       key={addr.id}
                       onClick={() => setSelectedAddressId(addr.id)}
                       className={`relative rounded-xl border p-4 cursor-pointer transition-all duration-200 group
-          ${
-            selectedAddressId === addr.id
-              ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-              : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-          }
+          ${selectedAddressId === addr.id
+                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                          : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                        }
           ${index === 0 ? "md:col-span-2" : ""}
         `}
                     >
@@ -309,13 +306,12 @@ const Page = () => {
                   <label
                     key={p.id}
                     className={`flex items-center gap-3 p-4 rounded-lg border mb-3
-      ${
-        p.disabled
-          ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
-          : paymentMethod === p.id
-            ? "border-primary bg-green-50 cursor-pointer"
-            : "border-gray-200 cursor-pointer"
-      }`}
+      ${p.disabled
+                        ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : paymentMethod === p.id
+                          ? "border-primary bg-green-50 cursor-pointer"
+                          : "border-gray-200 cursor-pointer"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -343,7 +339,7 @@ const Page = () => {
                     <div key={item.id} className="flex gap-3">
                       <Image
                         src={imageUrl}
-                        alt=""
+                        alt={item.product.name}
                         width={56}
                         height={56}
                         className="w-14 h-14 rounded object-cover"

@@ -38,7 +38,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-6">
             <div className="flex items-center space-x-2">
-              <Image className="w-40 h-15" alt="" src={LogoImage} />
+              <Image className="w-40 h-15" alt="NavPrana Organics" src={LogoImage} />
             </div>
             <p className="text-background/80 leading-relaxed">
               Bringing you the finest pure desi ghee using traditional methods
@@ -50,29 +50,29 @@ const Footer = () => {
             <div className="flex space-x-4">
               {socialLinks.length > 0
                 ? socialLinks.map((item) => {
-                    const Icon =
-                      SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
-                    return (
-                      <a
-                        key={item.id}
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full text-background hover:text-primary hover:bg-background/10 transition-colors"
-                        aria-label={item.platform_name}
-                      >
-                        {Icon ? <Icon className="h-5 w-5" /> : null}
-                      </a>
-                    );
-                  })
-                : [Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
-                    <span
-                      key={idx}
-                      className="p-2 rounded-full text-background/40 bg-background/10"
+                  const Icon =
+                    SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 rounded-full text-background hover:text-primary hover:bg-background/10 transition-colors"
+                      aria-label={item.platform_name}
                     >
-                      <Icon className="h-5 w-5" />
-                    </span>
-                  ))}
+                      {Icon ? <Icon className="h-5 w-5" /> : null}
+                    </a>
+                  );
+                })
+                : [Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
+                  <span
+                    key={idx}
+                    className="p-2 rounded-full text-background/40 bg-background/10"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                ))}
             </div>
           </div>
 

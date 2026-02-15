@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { getCart, updateCart, deleteCart } from "@/redux/features/cartSlice";
 import { useRouter } from "next/navigation";
+import { generateSlug } from "@/utils/slug";
 import PrivateRoute from "../../../components/PrivateRoute";
 
 /* 🔹 Get featured image safely */
@@ -118,7 +119,7 @@ const Page = () => {
                           <div
                             className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-primary-border"
                             onClick={() =>
-                              router.push(`/product-details/${item.product.id}`)
+                              router.push(`/product-details/${generateSlug(item.product.name)}`)
                             }
                           >
                             <Image
@@ -145,7 +146,7 @@ const Page = () => {
                                   className="font-semibold text-base sm:text-lg leading-snug cursor-pointer hover:text-primary"
                                   onClick={() =>
                                     router.push(
-                                      `/product-details/${item.product.id}`,
+                                      `/product-details/${generateSlug(item.product.name)}`,
                                     )
                                   }
                                 >

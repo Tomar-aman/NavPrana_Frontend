@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://www.navprana.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -77,21 +77,12 @@ export const metadata = {
     title: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
     description:
       "100% pure, traditional Bilona method desi ghee from the Chambal valley. No preservatives, no additives. Farm-fresh organic ghee delivered to your doorstep.",
-    images: [
-      {
-        url: "/favicon.ico",
-        width: 64,
-        height: 64,
-        alt: "NavPrana Organics Logo",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
     description:
       "100% pure, traditional Bilona method desi ghee from the Chambal valley. Farm-fresh organic ghee delivered to your doorstep.",
-    images: ["/favicon.ico"],
   },
   icons: {
     icon: "/favicon.ico",
@@ -109,7 +100,7 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "NavPrana Organics",
   url: SITE_URL,
-  logo: `${SITE_URL}/favicon.ico`,
+  logo: `${SITE_URL}/opengraph-image`,
   description:
     "NavPrana Organics is a clean food company bringing pure, traditional Bilona method desi ghee from the Chambal valley of Madhya Pradesh.",
   address: {
@@ -127,7 +118,9 @@ const organizationJsonLd = {
     email: "support@navprana.com",
     availableLanguage: ["English", "Hindi"],
   },
-  sameAs: [],
+  sameAs: [
+    "https://www.instagram.com/navprana/",
+  ],
 };
 
 const websiteJsonLd = {

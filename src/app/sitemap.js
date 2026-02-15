@@ -1,56 +1,79 @@
-export default function sitemap() {
-  const baseUrl = "https://www.navprana.com";
+import { generateSlug } from "@/utils/slug";
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
+
+export default async function sitemap() {
   const staticPages = [
     {
-      url: baseUrl,
+      url: BASE_URL,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/products`,
+      url: `${BASE_URL}/products`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${BASE_URL}/about`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/health-benefits`,
+      url: `${BASE_URL}/health-benefits`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/contact`,
+      url: `${BASE_URL}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/shipping-policy`,
+      url: `${BASE_URL}/shipping-policy`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.4,
     },
     {
-      url: `${baseUrl}/privacy-policy`,
+      url: `${BASE_URL}/privacy-policy`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/terms-of-service`,
+      url: `${BASE_URL}/terms-of-service`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
   ];
 
-  return staticPages;
+  // Fetch product pages dynamically
+  const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/";
+  let productPages = [];
+  try {
+    const res = await fetch(`${API_URL}api/v1/product/products/`, {
+      next: { revalidate: 86400 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const products = data.results || data || [];
+      productPages = products.map((product) => ({
+        url: `${BASE_URL}/product-details/${generateSlug(product.name)}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.8,
+      }));
+    }
+  } catch {
+    // If API is unavailable, continue with static pages only
+  }
+
+  return [...staticPages, ...productPages];
 }

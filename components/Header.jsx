@@ -111,7 +111,7 @@ const Header = () => {
           <Link href="/">
             <Image
               src={LogoImage}
-              alt="Logo"
+              alt="NavPrana Organics"
               width={160}
               height={60}
               className="w-40"

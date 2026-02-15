@@ -8,7 +8,7 @@ import { Package, Clock, Truck, CheckCircle2, XCircle } from "lucide-react";
  * "Placed" | "Processing" | "Shipped" | "Delivered" | "Cancelled" | "Failed"
  */
 const OrderProgress = ({ status }) => {
-  console.log("OrderProgress status:", status);
+
   const steps = [
     { key: "Accepted", label: "Accepted", icon: Package },
     { key: "Processing", label: "Processing", icon: Clock },
@@ -58,19 +58,17 @@ const OrderProgress = ({ status }) => {
                   delay: index * 0.1,
                 }}
                 className={`w-11 h-11 rounded-full flex items-center justify-center border-2
-                  ${
-                    isCompleted
-                      ? "bg-green-600 border-green-600 text-white shadow-md"
-                      : "bg-white border-gray-300 text-gray-400"
+                  ${isCompleted
+                    ? "bg-green-600 border-green-600 text-white shadow-md"
+                    : "bg-white border-gray-300 text-gray-400"
                   }`}
               >
                 <step.icon size={18} />
               </motion.div>
 
               <span
-                className={`text-xs mt-2 font-medium ${
-                  isCompleted ? "text-green-700" : "text-gray-400"
-                }`}
+                className={`text-xs mt-2 font-medium ${isCompleted ? "text-green-700" : "text-gray-400"
+                  }`}
               >
                 {step.label}
               </span>

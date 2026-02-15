@@ -9,7 +9,7 @@ export default function NavPranaLoader() {
     <div className="loader-wrapper">
       <div className="foliage-container">
         <div className="center-text">
-          <Image src={Logo} alt="..." />
+          <Image src={Logo} alt="NavPrana Organics" />
         </div>
 
         <div className="leaf leaf-1">🍃</div>

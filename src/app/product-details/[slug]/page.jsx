@@ -20,9 +20,11 @@ import { fetchProducts } from "@/redux/features/product";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { toast } from "react-toastify";
+import { findProductBySlug } from "@/utils/slug";
+import NavPranaLoader from "../../../../components/NavPranaLoader";
 
 const Page = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -34,22 +36,25 @@ const Page = () => {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
+  const [hasFetched, setHasFetched] = useState(false);
 
   // Fetch products if not already loaded
   useEffect(() => {
     if (!list || list.length === 0) {
-      dispatch(fetchProducts());
+      dispatch(fetchProducts()).finally(() => {
+        setHasFetched(true);
+      });
+    } else {
+      setHasFetched(true);
     }
   }, [dispatch, list]);
 
   const handleAddToCart = (productId) => {
-    // 🚫 If user not logged in → redirect to login
     if (!isAuthenticated) {
       toast.info("Please login to add items to cart");
       router.push("/auth");
       return;
     }
-    console.log(productId);
     dispatch(
       addToCart({
         product: productId,
@@ -75,16 +80,14 @@ const Page = () => {
         }),
       ).unwrap();
 
-      // ✅ Navigate ONLY after successful add
       router.push("/checkout");
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Find product by ID
-  const product = list?.find((item) => item.id === Number(id));
-  // const isInCart = cartItems.some((item) => item.product === product.id);
+  // Find product by slug
+  const product = findProductBySlug(list, slug);
   const isInCart = product
     ? cartItems.some((item) => item.product === product.id)
     : false;
@@ -94,16 +97,12 @@ const Page = () => {
     setQuantity((prev) => Math.max(1, prev + val));
   };
 
-  // Loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading product...</p>
-      </div>
-    );
+  // Show loading while products are being fetched
+  if (loading || !hasFetched) {
+    return <NavPranaLoader />;
   }
 
-  // Product not found
+  // Product not found — only after products have been fetched
   if (!product) {
     notFound();
   }
@@ -142,11 +141,10 @@ const Page = () => {
                   className={`
         relative aspect-square rounded-lg overflow-hidden
         border-2 transition
-        ${
-          selectedImage === i
-            ? "border-primary ring-2 ring-primary/40"
-            : "border-gray-200 hover:border-gray-400"
-        }
+        ${selectedImage === i
+                      ? "border-primary ring-2 ring-primary/40"
+                      : "border-gray-200 hover:border-gray-400"
+                    }
       `}
                 >
                   <Image
@@ -281,11 +279,10 @@ const Page = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 text-sm font-medium ${
-                  activeTab === tab
-                    ? "border-b-2 border-primary text-primary"
-                    : "text-gray-500"
-                }`}
+                className={`pb-3 text-sm font-medium ${activeTab === tab
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-gray-500"
+                  }`}
               >
                 {tab.toUpperCase()}
               </button>

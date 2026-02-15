@@ -85,7 +85,7 @@ export default function Page() {
   );
   const { loading } = useSelector((state) => state.invoice);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  console.log("orderData:", orderData);
+
   useEffect(() => {
     if (id) dispatch(orderDetail(id));
   }, [id, dispatch]);
@@ -194,11 +194,10 @@ export default function Page() {
 
                 <div
                   className={`mt-4 rounded-lg p-3 flex items-center gap-2 text-sm
-                ${
-                  orderData.payment_status_display === "Paid"
-                    ? "bg-green-50 border border-green-200 text-green-700"
-                    : "bg-red-50 border border-red-200 text-red-700"
-                }`}
+                ${orderData.payment_status_display === "Paid"
+                      ? "bg-green-50 border border-green-200 text-green-700"
+                      : "bg-red-50 border border-red-200 text-red-700"
+                    }`}
                 >
                   {orderData.payment_status_display === "Paid" ? (
                     <CheckCircle2 size={16} />

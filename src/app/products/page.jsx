@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import { generateSlug } from "@/utils/slug";
+
 import Image from "next/image";
 import {
   ArrowLeft,
@@ -100,7 +102,7 @@ const Page = () => {
             return (
               <div
                 key={product.id}
-                onClick={() => router.push(`/product-details/${product.id}`)}
+                onClick={() => router.push(`/product-details/${generateSlug(product.name)}`)}
                 className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer flex flex-col h-full"
               >
                 <div className="relative w-full h-64">
