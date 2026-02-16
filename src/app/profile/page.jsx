@@ -169,7 +169,7 @@ const Page = () => {
       toast.success("Profile updated successfully");
       setIsEditing(false);
     } catch (err) {
-      toast.error("Failed to update profile");
+      toast.error(Object.values(err)[0]?.[0] || "Failed to update profile");
     }
   };
 
@@ -177,8 +177,8 @@ const Page = () => {
     try {
       await dispatch(deleteAddress(id)).unwrap();
       toast.success("Address deleted");
-    } catch {
-      toast.error("Failed to delete address");
+    } catch (err) {
+      toast.error(err?.error || err?.message || "Failed to delete address");
     }
   };
 
@@ -207,7 +207,7 @@ const Page = () => {
 
       toast.success("Address updated");
     } catch (err) {
-      toast.error("Failed to update address");
+      toast.error(err?.error || err?.message || "Failed to update address");
     }
   };
 

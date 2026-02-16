@@ -25,10 +25,10 @@ export const updateProfile = createAsyncThunk(
       const res = await editProfile(formData);
       return res; // updated profile
     } catch (err) {
-      return rejectWithValue("Profile update failed");
+      return rejectWithValue(err?.response?.data || "Profile update failed");
     }
   }
-);
+)
 
 const profileSlice = createSlice({
   name: "profile",

@@ -150,7 +150,7 @@ const Page = () => {
       await dispatch(createOrder(payload)).unwrap();
       router.push("/payment");
     } catch (err) {
-      toast.error(err?.message || "Order creation failed");
+      toast.error(err?.error || err?.message || "Order creation failed. Please try again.");
     }
   };
 

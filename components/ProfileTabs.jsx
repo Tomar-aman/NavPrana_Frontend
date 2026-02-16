@@ -112,14 +112,14 @@ const Page = () => {
     dispatch(applyCoupon({ order_total: subtotal, coupon_code: couponCode }));
   };
 
-  const handleCreateOrder = () => {
+  const handleCreateOrder = async () => {
     if (!selectedAddressId) {
-      alert("Please select address");
+      toast.error("Please select a delivery address");
       return;
     }
 
     if (!cartItems.length) {
-      alert("Cart is empty");
+      toast.error("Your cart is empty");
       return;
     }
 
@@ -130,7 +130,6 @@ const Page = () => {
         quantity: item.quantity,
       })),
       address_id: selectedAddressId,
-      // return_url: `${baseURL}/payment-status`,
     };
 
     // ✅ ONLY add coupon_code if user applied coupon
@@ -138,10 +137,12 @@ const Page = () => {
       payload.coupon_code = couponCode;
     }
 
-
-
-    dispatch(createOrder(payload));
-    router.push("/payment");
+    try {
+      await dispatch(createOrder(payload)).unwrap();
+      router.push("/payment");
+    } catch (err) {
+      toast.error(err?.error || err?.message || "Order creation failed. Please try again.");
+    }
   };
 
   const handleOnsubmitAddress = async () => {
