@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import AuthInitializer from "../../components/AuthInitializer";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import GlobalUI from "../../components/GlobalUI";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "swiper/css";
@@ -162,6 +163,7 @@ export default function RootLayout({ children }) {
               <ErrorBoundary>
               <Header />
               <AuthInitializer />
+              <GlobalUI />
 
               {children}
 

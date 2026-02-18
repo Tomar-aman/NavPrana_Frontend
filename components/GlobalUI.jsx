@@ -2,13 +2,17 @@
 
 import { useSelector } from "react-redux";
 import NavPranaLoader from "./NavPranaLoader";
+import SignupOfferPopup from "./SignupOfferPopup";
 
 const GlobalUI = () => {
   const globalLoading = useSelector((state) => state.ui?.globalLoading);
 
-  if (!globalLoading) return null;
-
-  return <NavPranaLoader />;
+  return (
+    <>
+      {globalLoading && <NavPranaLoader />}
+      <SignupOfferPopup />
+    </>
+  );
 };
 
 export default GlobalUI;
