@@ -1,11 +1,18 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-export const runtime = "edge";
 export const alt = "NavPrana Organics — Pure Desi Ghee";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function Image() {
+export default async function Image() {
+  // Read SVG logo and convert to base64 data URI
+  const logoPath = join(process.cwd(), "public", "logo-ghee.svg");
+  const logoBuffer = await readFile(logoPath);
+  const logoBase64 = logoBuffer.toString("base64");
+  const logoDataUri = `data:image/svg+xml;base64,${logoBase64}`;
+
   return new ImageResponse(
     (
       <div
@@ -16,7 +23,7 @@ export default function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+          background: "linear-gradient(135deg, #1a3d1a 0%, #265926 50%, #2d6b2d 100%)",
           fontFamily: "sans-serif",
           position: "relative",
           overflow: "hidden",
@@ -31,7 +38,7 @@ export default function Image() {
             width: "300px",
             height: "300px",
             borderRadius: "50%",
-            background: "rgba(212, 168, 67, 0.15)",
+            background: "rgba(240, 196, 66, 0.15)",
             display: "flex",
           }}
         />
@@ -43,42 +50,27 @@ export default function Image() {
             width: "250px",
             height: "250px",
             borderRadius: "50%",
-            background: "rgba(212, 168, 67, 0.1)",
+            background: "rgba(240, 196, 66, 0.1)",
             display: "flex",
           }}
         />
 
-        {/* Leaf icon */}
-        <div
-          style={{
-            fontSize: "64px",
-            marginBottom: "16px",
-            display: "flex",
-          }}
-        >
-          🌿
-        </div>
-
-        {/* Brand name */}
-        <div
-          style={{
-            fontSize: "72px",
-            fontWeight: 800,
-            color: "#D4A843",
-            letterSpacing: "-2px",
-            display: "flex",
-          }}
-        >
-          NavPrana Organics
-        </div>
+        {/* Logo */}
+        <img
+          src={logoDataUri}
+          width={480}
+          height={115}
+          alt="NavPrana Organics"
+          style={{ marginBottom: "24px" }}
+        />
 
         {/* Divider */}
         <div
           style={{
             width: "120px",
             height: "3px",
-            background: "linear-gradient(90deg, transparent, #D4A843, transparent)",
-            margin: "20px 0",
+            background: "linear-gradient(90deg, transparent, #f0c442, transparent)",
+            margin: "16px 0",
             display: "flex",
           }}
         />
@@ -87,7 +79,7 @@ export default function Image() {
         <div
           style={{
             fontSize: "28px",
-            color: "#e8e8e8",
+            color: "#eef1ea",
             letterSpacing: "4px",
             textTransform: "uppercase",
             display: "flex",
@@ -100,7 +92,7 @@ export default function Image() {
         <div
           style={{
             fontSize: "18px",
-            color: "#a0a0a0",
+            color: "#cfdbbd",
             marginTop: "12px",
             display: "flex",
           }}
@@ -116,13 +108,13 @@ export default function Image() {
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            background: "rgba(212, 168, 67, 0.15)",
+            background: "rgba(240, 196, 66, 0.15)",
             padding: "8px 24px",
             borderRadius: "20px",
-            border: "1px solid rgba(212, 168, 67, 0.3)",
+            border: "1px solid rgba(240, 196, 66, 0.3)",
           }}
         >
-          <div style={{ fontSize: "14px", color: "#D4A843", display: "flex" }}>
+          <div style={{ fontSize: "14px", color: "#f0c442", display: "flex" }}>
             www.navprana.com
           </div>
         </div>

@@ -170,7 +170,7 @@ const Page = () => {
       setIsEditing(false);
     } catch (err) {
       toast.error(Object.values(err)[0]?.[0] || "Failed to update profile");
-    }
+    } I
   };
 
   const handleDeleteAddress = async (id) => {
