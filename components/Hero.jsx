@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Slider from "react-slick";
-import pineappleImage from "@/assets/Whisk_82053c231497766ba5e4a0d05e7fa01ddr.png";
+import pineappleImage from "@/assets/hero_image.png";
 
 const Hero = () => {
   const settings = {
