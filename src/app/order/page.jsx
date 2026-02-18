@@ -288,8 +288,8 @@ const Page = () => {
                         onClick={() => {
                           setReviewData({
                             orderId: order.id,
-                            productId: order.product.id,
-                            productName: order.name || "Product",
+                            productId: order.items?.[0]?.product?.id || order.items?.[0]?.product_id || order.id,
+                            productName: order.first_product_name || order.items?.[0]?.product?.name || "Product",
                             productImage: order.first_product_image,
                           });
                           setShowReviewModal(true);

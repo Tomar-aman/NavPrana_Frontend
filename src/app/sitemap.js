@@ -60,6 +60,7 @@ export default async function sitemap() {
   try {
     const res = await fetch(`${API_URL}api/v1/product/products/`, {
       next: { revalidate: 86400 },
+      headers: { "Accept": "application/json" },
     });
     if (res.ok) {
       const data = await res.json();
@@ -72,7 +73,17 @@ export default async function sitemap() {
       }));
     }
   } catch {
-    // If API is unavailable, continue with static pages only
+    // Fallback: hardcode known product slugs if API is unreachable
+    const knownSlugs = [
+      "navprana-organics-pure-desi-buffalo-bilona-ghee-500ml",
+      "navprana-organics-pure-desi-buffalo-bilona-ghee-1-litre",
+    ];
+    productPages = knownSlugs.map((slug) => ({
+      url: `${BASE_URL}/product-details/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
   }
 
   return [...staticPages, ...productPages];

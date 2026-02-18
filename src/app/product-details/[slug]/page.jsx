@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Star,
-  Heart,
   ShoppingCart,
   Minus,
   Plus,
@@ -22,6 +21,7 @@ import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { toast } from "react-toastify";
 import { findProductBySlug } from "@/utils/slug";
 import NavPranaLoader from "../../../../components/NavPranaLoader";
+import StickyCartBar from "../../../../components/StickyCartBar";
 
 const Page = () => {
   const { slug } = useParams();
@@ -34,11 +34,9 @@ const Page = () => {
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [hasFetched, setHasFetched] = useState(false);
 
-  // Fetch products if not already loaded
   useEffect(() => {
     if (!list || list.length === 0) {
       dispatch(fetchProducts()).finally(() => {
@@ -55,12 +53,7 @@ const Page = () => {
       router.push("/auth");
       return;
     }
-    dispatch(
-      addToCart({
-        product: productId,
-        quantity: 1,
-      }),
-    )
+    dispatch(addToCart({ product: productId, quantity: 1 }))
       .unwrap()
       .then(() => {
         toast.success("Product added to cart");
@@ -74,84 +67,76 @@ const Page = () => {
   const handleBuyNow = async () => {
     try {
       await dispatch(
-        addToCart({
-          product: product.id,
-          quantity,
-        }),
+        addToCart({ product: product.id, quantity }),
       ).unwrap();
-
       router.push("/checkout");
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Find product by slug
   const product = findProductBySlug(list, slug);
   const isInCart = product
     ? cartItems.some((item) => item.product === product.id)
     : false;
 
-  // Quantity handler
   const handleQuantityChange = (val) => {
     setQuantity((prev) => Math.max(1, prev + val));
   };
 
-  // Show loading while products are being fetched
   if (loading || !hasFetched) {
     return <NavPranaLoader />;
   }
 
-  // Product not found — only after products have been fetched
   if (!product) {
     notFound();
   }
 
-  // Safe image getter
   const images = product.images || [];
   const mainImage = images[selectedImage]?.image || "/placeholder.png";
 
+  const trustBadges = [
+    { icon: Truck, label: "Free Shipping", color: "bg-blue-50", iconColor: "text-blue-500" },
+    { icon: Shield, label: "Quality Assured", color: "bg-green-50", iconColor: "text-green-600" },
+    { icon: RotateCcw, label: "Easy Returns", color: "bg-amber-50", iconColor: "text-amber-500" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 mt-20">
-      <main className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid lg:grid-cols-2 gap-12">
+    <div className="min-h-screen bg-background mt-20">
+      <main className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* IMAGE SECTION */}
           <div>
-            <div className="relative aspect-square bg-white rounded-2xl overflow-hidden shadow">
+            <div className="relative aspect-square bg-white rounded-2xl overflow-hidden border border-gray-100">
               <Image
                 src={mainImage}
                 alt={product.name}
                 fill
                 className="object-cover"
               />
-
               {product.discount_precent && (
-                <span className="absolute top-4 left-4 bg-primary text-white px-4 py-1 rounded-full text-sm">
-                  Save {parseInt(product.discount_precent)} %
+                <span className="absolute top-3 left-3 bg-primary text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                  Save {parseInt(product.discount_precent)}%
                 </span>
               )}
             </div>
 
-            {/* THUMBNAILS */}
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 mt-4">
+            {/* Thumbnails */}
+            <div className="grid grid-cols-5 sm:grid-cols-6 gap-2 mt-3">
               {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`
-        relative aspect-square rounded-lg overflow-hidden
-        border-2 transition
-        ${selectedImage === i
-                      ? "border-primary ring-2 ring-primary/40"
-                      : "border-gray-200 hover:border-gray-400"
-                    }
-      `}
+                  className={`relative aspect-square rounded-xl overflow-hidden border-2 transition ${selectedImage === i
+                      ? "border-primary ring-2 ring-primary/30"
+                      : "border-gray-200 hover:border-gray-300"
+                    }`}
                 >
                   <Image
                     src={img.image}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, 120px"
+                    sizes="(max-width: 640px) 20vw, 80px"
                     className="object-cover"
                   />
                 </button>
@@ -160,80 +145,90 @@ const Page = () => {
           </div>
 
           {/* INFO SECTION */}
-          <div className="space-y-6">
+          <div className="space-y-5">
+            {/* Badges */}
             <div className="flex gap-2">
-              <span className="flex items-center gap-1 text-primary text-sm border border-primary-border px-3 py-1 rounded-full">
-                <Leaf size={14} /> 100% Natural
+              <span className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-lg">
+                <Leaf size={13} /> 100% Natural
               </span>
-              <span className="flex items-center gap-1 text-primary text-sm border border-primary-border px-3 py-1 rounded-full">
-                <Award size={14} /> Premium Quality
+              <span className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-lg">
+                <Award size={13} /> Premium Quality
               </span>
             </div>
 
-            <h1 className="text-3xl font-bold">{product.name}</h1>
-            <p className="text-gray-500">{product.details}</p>
+            {/* Name & Details */}
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                {product.name}
+              </h1>
+              <p className="text-sm text-muted-foreground">{product.details}</p>
+            </div>
 
-            <div className="flex flex-wrap gap-2 mb-4">
+            {/* Features */}
+            <div className="flex flex-wrap gap-1.5">
               {product.features.map((feature, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs"
+                  className="px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-[11px] font-medium"
                 >
                   {feature.feature}
                 </span>
               ))}
             </div>
-            {/* RATING */}
 
-            {/* PRICE */}
-            <div className="flex items-end gap-4">
-              <span className="text-3xl font-bold text-primary">
+            {/* Price */}
+            <div className="flex items-end gap-3">
+              <span className="text-3xl font-bold text-foreground">
                 ₹{product.price}
               </span>
               {product.max_price && (
-                <span className="line-through text-gray-400 text-lg">
+                <span className="line-through text-muted-foreground text-base">
                   ₹{product.max_price}
+                </span>
+              )}
+              {product.discount_precent && (
+                <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                  {parseInt(product.discount_precent)}% OFF
                 </span>
               )}
             </div>
 
-            <div>
-              <p>
-                Size: <b>{product.size}</b>
-              </p>
+            {/* Size */}
+            <div className="text-sm text-muted-foreground">
+              Size: <span className="font-semibold text-foreground">{product.size}</span>
             </div>
 
-            {/* QUANTITY */}
-            <div className="flex items-center gap-4">
-              <span className="font-medium">Quantity</span>
-              <div className="flex items-center border border-primary-border rounded-lg overflow-hidden">
+            {/* Quantity */}
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium">Quantity</span>
+              <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
                 <button
                   onClick={() => handleQuantityChange(-1)}
-                  className="px-4 py-2 hover:bg-gray-100"
+                  className="px-3 py-2 hover:bg-gray-50 transition"
                 >
-                  <Minus size={16} />
+                  <Minus size={14} />
                 </button>
-                <span className="px-6 font-semibold">{quantity}</span>
+                <span className="px-4 font-semibold text-sm">{quantity}</span>
                 <button
                   onClick={() => handleQuantityChange(1)}
-                  className="px-4 py-2 hover:bg-gray-100"
+                  className="px-3 py-2 hover:bg-gray-50 transition"
                 >
-                  <Plus size={16} />
+                  <Plus size={14} />
                 </button>
               </div>
             </div>
 
-            {/* ACTION BUTTONS */}
-            <div className="flex  gap-4 w-full">
+            {/* Action Buttons */}
+            <div className="flex gap-3">
               {isInCart ? (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push("/cart");
                   }}
-                  className=" flex-[3] flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition font-medium cursor-pointer "
+                  className="flex-[3] flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
                 >
-                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  <ShoppingCart size={16} />
                   Go to Cart
                 </button>
               ) : (
@@ -242,46 +237,54 @@ const Page = () => {
                     e.stopPropagation();
                     handleAddToCart(product.id);
                   }}
-                  className="flex-[3] flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition font-medium cursor-pointer"
+                  className="flex-[3] flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
                 >
-                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  <ShoppingCart size={16} />
                   Add to Cart
                 </button>
               )}
 
               <button
-                className=" flex-[1] border border-primary-border py-3 rounded-lg hover:bg-gray-100 font-semibold cursor-pointer"
+                className="flex-[1] border border-gray-200 py-3 rounded-xl hover:bg-gray-50 text-sm font-semibold transition cursor-pointer"
                 onClick={handleBuyNow}
               >
                 Buy Now
               </button>
             </div>
 
-            {/* TRUST BADGES */}
-            <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 pt-4 border-t border-primary-border">
-              <div className="flex items-center gap-2">
-                <Truck size={18} /> Free Shipping
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield size={18} /> Quality Assured
-              </div>
-              <div className="flex items-center gap-2">
-                <RotateCcw size={18} /> Easy Returns
-              </div>
+            <StickyCartBar
+              product={product}
+              isInCart={isInCart}
+              onAddToCart={handleAddToCart}
+              onGoToCart={() => router.push("/cart")}
+            />
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-gray-100">
+              {trustBadges.map((badge, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <div className={`w-8 h-8 ${badge.color} rounded-lg flex items-center justify-center shrink-0`}>
+                    <badge.icon size={14} className={badge.iconColor} />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">
+                    {badge.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* TABS */}
-        <div className="mt-16">
-          <div className="flex gap-8 border-b border-primary-border">
+        {/* Tabs */}
+        <div className="mt-10">
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
             {["description", "Specifications"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 text-sm font-medium ${activeTab === tab
-                  ? "border-b-2 border-primary text-primary"
-                  : "text-gray-500"
+                className={`px-4 py-2 text-xs font-medium rounded-lg transition ${activeTab === tab
+                    ? "bg-white text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 {tab.toUpperCase()}
@@ -290,15 +293,17 @@ const Page = () => {
           </div>
 
           {activeTab === "description" && (
-            <div className="mt-6 max-w-3xl">
-              <p className="text-gray-600">{product.description}</p>
+            <div className="mt-4 max-w-3xl">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {product.description}
+              </p>
             </div>
           )}
 
           {activeTab === "Specifications" && (
-            <div className="mt-6 max-w-3xl">
+            <div className="mt-4 max-w-3xl">
               <div
-                className="text-gray-600 prose max-w-none"
+                className="text-sm text-muted-foreground prose max-w-none"
                 dangerouslySetInnerHTML={{
                   __html: product?.specifications?.specification,
                 }}

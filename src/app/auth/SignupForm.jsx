@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import GoogleSignInButton from "./GoogleSignInButton";
 
@@ -48,130 +48,164 @@ const SignupForm = memo(
       onSubmit();
     };
 
+    const clearError = (field) => {
+      if (errors[field]) {
+        setErrors((prev) => ({ ...prev, [field]: "" }));
+      }
+    };
+
     return (
-      <div className="border border-gray-400 rounded-xl shadow-sm bg-card p-6">
-        <h2 className="text-2xl font-bold text-center mb-1">Create Account</h2>
-        <p className="text-center text-muted-foreground mb-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h2 className="text-xl font-semibold text-foreground mb-1">Create account</h2>
+        <p className="text-sm text-muted-foreground mb-6">
           Join us to start your wellness journey
         </p>
 
         <div className="space-y-4">
           {/* First & Last Name */}
-          <div className="flex flex-col md:flex-row gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {/* First Name */}
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">
-                First Name *
+            <div>
+              <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+                First Name
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                  <User size={15} className="text-gray-500" />
+                </div>
                 <input
                   type="text"
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.firstName ? "border-red-500" : "border-primary-border"
+                  className={`w-full pl-14 pr-3 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.firstName ? "border-red-400" : "border-gray-200"
                     }`}
-                  placeholder="Enter First name"
+                  placeholder="First name"
                   value={form.firstName}
-                  onChange={(e) =>
-                    setForm({ ...form, firstName: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setForm({ ...form, firstName: e.target.value });
+                    clearError("firstName");
+                  }}
                 />
               </div>
               {allErrors.firstName && (
-                <p className="text-xs text-red-600 mt-1">{allErrors.firstName}</p>
+                <p className="text-xs text-red-500 mt-1">{allErrors.firstName}</p>
               )}
             </div>
 
             {/* Last Name */}
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">
-                Last Name *
+            <div>
+              <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+                Last Name
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                  <User size={15} className="text-gray-500" />
+                </div>
                 <input
                   type="text"
-                  placeholder="Enter Last name"
-                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.lastName ? "border-red-500" : "border-primary-border"
+                  placeholder="Last name"
+                  className={`w-full pl-14 pr-3 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.lastName ? "border-red-400" : "border-gray-200"
                     }`}
                   value={form.lastName}
-                  onChange={(e) =>
-                    setForm({ ...form, lastName: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setForm({ ...form, lastName: e.target.value });
+                    clearError("lastName");
+                  }}
                 />
               </div>
               {allErrors.lastName && (
-                <p className="text-xs text-red-600 mt-1">{allErrors.lastName}</p>
+                <p className="text-xs text-red-500 mt-1">{allErrors.lastName}</p>
               )}
             </div>
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-1">Email *</label>
+            <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+              Email
+            </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                <Mail size={15} className="text-gray-500" />
+              </div>
               <input
                 type="email"
                 placeholder="you@example.com"
-                className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.email ? "border-red-500" : "border-primary-border"
+                className={`w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.email ? "border-red-400" : "border-gray-200"
                   }`}
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={(e) => {
+                  setForm({ ...form, email: e.target.value });
+                  clearError("email");
+                }}
               />
             </div>
             {allErrors.email && (
-              <p className="text-xs text-red-600 mt-1">{allErrors.email}</p>
+              <p className="text-xs text-red-500 mt-1">{allErrors.email}</p>
             )}
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Phone Number *
+            <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+              Phone Number
             </label>
             <div className="relative">
-              <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                <Phone size={15} className="text-gray-500" />
+              </div>
               <input
                 placeholder="10-digit mobile number"
                 type="tel"
-                className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.phone ? "border-red-500" : "border-primary-border"
+                inputMode="numeric"
+                maxLength={10}
+                className={`w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.phone ? "border-red-400" : "border-gray-200"
                   }`}
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  setForm({ ...form, phone: val });
+                  clearError("phone");
+                }}
               />
             </div>
             {allErrors.phone && (
-              <p className="text-xs text-red-600 mt-1">{allErrors.phone}</p>
+              <p className="text-xs text-red-500 mt-1">{allErrors.phone}</p>
             )}
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">Password *</label>
+            <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+              Password
+            </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                <Lock size={15} className="text-gray-500" />
+              </div>
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Minimum 8 characters"
-                className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none ${allErrors.password ? "border-red-500" : "border-primary-border"
+                className={`w-full pl-14 pr-12 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.password ? "border-red-400" : "border-gray-200"
                   }`}
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={(e) => {
+                  setForm({ ...form, password: e.target.value });
+                  clearError("password");
+                }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition"
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <EyeOff size={16} />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <Eye size={16} />
                 )}
               </button>
             </div>
             {allErrors.password && (
-              <p className="text-xs text-red-600 mt-1">{allErrors.password}</p>
+              <p className="text-xs text-red-500 mt-1">{allErrors.password}</p>
             )}
           </div>
 
@@ -179,9 +213,9 @@ const SignupForm = memo(
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full py-2 rounded-lg bg-primary text-primary-foreground
-              flex items-center justify-center gap-2
-              disabled:opacity-70 hover:bg-primary/90 transition font-medium cursor-pointer"
+            className="w-full py-3 rounded-xl bg-primary text-primary-foreground
+              flex items-center justify-center gap-2 text-sm
+              disabled:opacity-70 hover:bg-primary/90 transition font-medium cursor-pointer shadow-sm"
           >
             {loading ? (
               <>
@@ -189,7 +223,10 @@ const SignupForm = memo(
                 Creating account...
               </>
             ) : (
-              "Sign Up"
+              <>
+                Create Account
+                <ArrowRight size={16} />
+              </>
             )}
           </button>
 
@@ -198,11 +235,11 @@ const SignupForm = memo(
 
           <p className="text-xs text-center text-muted-foreground">
             By signing up, you agree to our{" "}
-            <Link href="/terms-of-service" className="text-primary">
+            <Link href="/terms-of-service" className="text-primary hover:underline">
               Terms
             </Link>{" "}
             &{" "}
-            <Link href="/privacy-policy" className="text-primary">
+            <Link href="/privacy-policy" className="text-primary hover:underline">
               Privacy Policy
             </Link>
           </p>

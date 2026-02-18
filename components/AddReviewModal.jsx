@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Star, Video, X, Upload } from "lucide-react";
+import { Star, X, Upload, ImagePlus, Video, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addReview } from "@/redux/features/reviewSlice";
+
+const ratingLabels = ["", "Poor", "Fair", "Good", "Very Good", "Excellent"];
 
 const AddReviewModal = ({
   isOpen,
@@ -24,6 +26,8 @@ const AddReviewModal = ({
 
   if (!isOpen) return null;
 
+  const activeRating = hoverRating || rating;
+
   /* ---------------- FILE UPLOAD ---------------- */
 
   const handleFileChange = (e) => {
@@ -31,14 +35,11 @@ const AddReviewModal = ({
     if (!files) return;
 
     const newFiles = [];
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     Array.from(files).forEach((file) => {
       if (mediaFiles.length + newFiles.length >= 5) {
-        toast({
-          title: "Maximum files reached",
-          description: "You can upload up to 5 images/videos",
-          variant: "destructive",
-        });
+        toast.error("Maximum 5 files allowed");
         return;
       }
 
@@ -46,11 +47,12 @@ const AddReviewModal = ({
       const isVideo = file.type.startsWith("video/");
 
       if (!isImage && !isVideo) {
-        toast({
-          title: "Invalid file type",
-          description: "Only images or videos allowed",
-          variant: "destructive",
-        });
+        toast.error("Only images or videos are allowed");
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`"${file.name}" exceeds 10MB limit`);
         return;
       }
 
@@ -74,34 +76,31 @@ const AddReviewModal = ({
 
   const handleSubmit = async () => {
     if (!rating) {
-      toast.error("Please select a star rating");
+      toast.error("Please select a rating");
       return;
     }
-
     if (!reviewText.trim()) {
       toast.error("Please write a review");
+      return;
+    }
+    if (reviewText.trim().length < 10) {
+      toast.error("Review must be at least 10 characters");
       return;
     }
 
     try {
       setIsSubmitting(true);
-
       const formData = new FormData();
       formData.append("product", productId);
       formData.append("rating", rating);
       formData.append("review", reviewText);
-
-      mediaFiles.forEach((media, index) => {
-        formData.append("media_files", media.file);
-      });
+      mediaFiles.forEach((media) => formData.append("media_files", media.file));
 
       const response = await dispatch(addReview(formData)).unwrap();
-
-      toast.success(response?.message || "Review submitted successfully");
-
+      toast.success(response?.message || "Review submitted!");
       handleClose();
     } catch (error) {
-      toast.error(error || "Failed to submit review");
+      toast.error(error?.error || error?.message || "Failed to submit review");
     } finally {
       setIsSubmitting(false);
     }
@@ -120,30 +119,43 @@ const AddReviewModal = ({
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-      <div className="bg-white w-full max-w-lg rounded-xl shadow-lg max-h-[90vh] overflow-y-auto">
-        {/* HEADER */}
-        <div className="p-5 border-b">
-          <h2 className="text-lg font-semibold">Write a Review</h2>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)" }}
+    >
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-foreground">Write a Review</h2>
+          <button
+            onClick={handleClose}
+            className="p-1 rounded-full hover:bg-gray-100 transition cursor-pointer"
+          >
+            <X size={20} className="text-gray-400" />
+          </button>
         </div>
 
-        <div className="p-5 space-y-6">
-          {/* PRODUCT INFO */}
-          <div className="flex gap-4 bg-gray-50 p-3 rounded-lg">
+        <div className="px-6 py-5 space-y-5">
+          {/* Product */}
+          <div className="flex items-center gap-3">
             <img
               src={productImage}
               alt={productName}
-              className="w-16 h-16 rounded-lg object-cover"
+              className="w-12 h-12 rounded-lg object-cover border border-gray-100"
             />
             <div>
-              <p className="font-medium">{productName}</p>
-              <p className="text-sm text-gray-500">Order: {orderId}</p>
+              <p className="font-medium text-sm text-foreground leading-tight">
+                {productName}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Order #{orderId}
+              </p>
             </div>
           </div>
 
-          {/* RATING */}
+          {/* Rating */}
           <div>
-            <p className="font-semibold mb-2">Your Rating *</p>
+            <p className="text-sm font-medium text-foreground mb-2">Rating</p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -151,39 +163,47 @@ const AddReviewModal = ({
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
-                  className="focus:outline-none"
+                  className="focus:outline-none transition-transform hover:scale-110 cursor-pointer"
                 >
                   <Star
-                    className={`w-8 h-8 ${(hoverRating || rating) >= star
+                    className={`w-7 h-7 transition-colors ${activeRating >= star
                         ? "fill-amber-400 text-amber-400"
-                        : "text-gray-300"
+                        : "text-gray-200"
                       }`}
                   />
                 </button>
               ))}
+              {activeRating > 0 && (
+                <span className="text-sm text-muted-foreground ml-2">
+                  {ratingLabels[activeRating]}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* REVIEW TEXT */}
+          {/* Review text */}
           <div>
-            <p className="font-semibold mb-2">Your Review</p>
+            <p className="text-sm font-medium text-foreground mb-2">Your Review</p>
             <textarea
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Share your experience..."
+              placeholder="What did you like or dislike about this product?"
               maxLength={1000}
-              className="w-full border rounded-lg p-3 min-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full border border-gray-200 rounded-xl p-3 min-h-[100px] text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition"
             />
-            <p className="text-xs text-gray-500 text-right">
-              {reviewText.length}/1000
-            </p>
+            <div className="flex justify-between mt-1">
+              <p className="text-xs text-muted-foreground">Min 10 characters</p>
+              <p className="text-xs text-muted-foreground">
+                {reviewText.length}/1000
+              </p>
+            </div>
           </div>
 
-          {/* MEDIA UPLOAD */}
+          {/* Media upload */}
           <div>
-            <p className="font-semibold mb-1">Add Photos / Videos</p>
-            <p className="text-sm text-gray-500 mb-3">
-              Upload up to 5 images or videos
+            <p className="text-sm font-medium text-foreground mb-2">
+              Photos & Videos{" "}
+              <span className="font-normal text-muted-foreground">(optional)</span>
             </p>
 
             <input
@@ -195,58 +215,67 @@ const AddReviewModal = ({
               className="hidden"
             />
 
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={mediaFiles.length >= 5}
-              className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
-            >
-              <Upload size={16} />
-              Upload Media
-            </button>
+            <div className="flex gap-2 flex-wrap">
+              {mediaFiles.map((media, index) => (
+                <div
+                  key={index}
+                  className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-200 group"
+                >
+                  {media.type === "image" ? (
+                    <img
+                      src={media.preview}
+                      className="w-full h-full object-cover"
+                      alt="Upload preview"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                      <Video size={20} className="text-gray-400" />
+                    </div>
+                  )}
+                  <button
+                    onClick={() => removeMedia(index)}
+                    className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                  >
+                    <X size={16} className="text-white" />
+                  </button>
+                </div>
+              ))}
 
-            {mediaFiles.length > 0 && (
-              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-4">
-                {mediaFiles.map((media, index) => (
-                  <div key={index} className="relative group aspect-square">
-                    {media.type === "image" ? (
-                      <img
-                        src={media.preview}
-                        className="w-full h-full object-cover rounded-lg border"
-                        alt=""
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-100 rounded-lg border flex items-center justify-center">
-                        <Video className="text-gray-400" />
-                      </div>
-                    )}
-                    <button
-                      onClick={() => removeMedia(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+              {mediaFiles.length < 5 && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-0.5 hover:border-primary/40 hover:bg-primary/5 transition cursor-pointer"
+                >
+                  <ImagePlus size={18} className="text-gray-400" />
+                  <span className="text-[10px] text-gray-400">Add</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* FOOTER */}
-        <div className="flex justify-end gap-3 p-5 border-t">
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+            className="flex-1 py-2.5 text-sm font-medium rounded-xl border border-gray-200 hover:bg-gray-50 transition cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+            className="flex-1 py-2.5 text-sm font-medium rounded-xl bg-primary text-white hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
-            {isSubmitting ? "Submitting..." : "Submit Review"}
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              "Submit Review"
+            )}
           </button>
         </div>
       </div>

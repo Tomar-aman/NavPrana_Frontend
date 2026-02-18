@@ -1,7 +1,19 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { ShoppingCart, Menu, X, User } from "lucide-react";
+import {
+  ShoppingCart,
+  Menu,
+  X,
+  User,
+  LogOut,
+  Package,
+  ChevronDown,
+  Home,
+  ShoppingBag,
+  Info,
+  MessageSquare,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +24,13 @@ import LogoImage from "@/assets/logo-ghee.svg";
 import { logout } from "@/redux/features/authSlice";
 import { getProfile } from "@/redux/features/profileSlice";
 import { getCart } from "@/redux/features/cartSlice";
+
+const NAV_LINKS = [
+  { label: "Home", path: "/", icon: Home },
+  { label: "Products", path: "/products", icon: ShoppingBag },
+  { label: "About", path: "/about", icon: Info },
+  { label: "Contact", path: "/contact", icon: MessageSquare },
+];
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -82,9 +101,16 @@ const Header = () => {
   const capitalize = (text = "") =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
+  const initials =
+    profile?.first_name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() || "U";
+
   return (
-    <motion.header className="fixed top-0 w-full z-50 bg-white border-b shadow-sm">
-      {/* 🔝 TOP BAR */}
+    <motion.header className="fixed top-0 w-full z-50">
+      {/* TOP BAR */}
       <AnimatePresence>
         {!hideTopBar && (
           <motion.div
@@ -93,7 +119,7 @@ const Header = () => {
             exit={{ height: 0, opacity: 0 }}
             className="bg-primary flex items-center overflow-hidden"
           >
-            <div className="animate-marquee whitespace-nowrap text-white text-sm font-medium">
+            <div className="animate-marquee whitespace-nowrap text-white text-xs font-medium tracking-wide">
               <span className="mx-8">🥛 Boosts Immunity</span>
               <span className="mx-8">🌿 Improves Digestion</span>
               <span className="mx-8">🔥 Increases Energy</span>
@@ -104,157 +130,236 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* 🔻 MAIN HEADER */}
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/">
-            <Image
-              src={LogoImage}
-              alt="NavPrana Organics"
-              width={160}
-              height={60}
-              className="w-40"
-            />
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-10">
-            {[
-              { label: "Home", path: "/" },
-              { label: "Products", path: "/products" },
-              { label: "About", path: "/about" },
-              { label: "Contact", path: "/contact" },
-            ].map((item) => {
-              const isActive = pathname === item.path;
-
-              return (
-                <Link
-                  key={item.label}
-                  href={item.path}
-                  className={`relative font-medium transition-colors
-                    ${isActive ? "text-primary" : "text-gray-800"}
-                    group
-                  `}
-                >
-                  {item.label}
-
-                  {/* Hover / Active Bottom Border */}
-                  <span
-                    className={`
-                      absolute left-0 -bottom-1 h-[2px] bg-primary
-                      transition-all duration-300
-                      ${isActive ? "w-full" : "w-0 group-hover:w-full"}
-                    `}
-                  />
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Right Side */}
-          <div className="flex items-center gap-4">
-            {/* Cart */}
-            <Link href="/cart" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              {cartItemQuantity > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs h-5 w-5 rounded-full flex items-center justify-center">
-                  {cartItemQuantity}
-                </span>
-              )}
+      {/* MAIN HEADER */}
+      <div className="bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div className="container mx-auto px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="shrink-0">
+              <Image
+                src={LogoImage}
+                alt="NavPrana Organics"
+                width={160}
+                height={60}
+                className="w-36 md:w-40"
+              />
             </Link>
 
-            {/* Auth */}
-            {!isAuthenticated ? (
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-1">
+              {NAV_LINKS.map((item) => {
+                const isActive = pathname === item.path;
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.path}
+                    className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all ${isActive
+                        ? "text-primary bg-primary/5"
+                        : "text-gray-600 hover:text-foreground hover:bg-gray-50"
+                      }`}
+                  >
+                    {item.label}
+
+                    {/* Active indicator dot */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeNav"
+                        className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Right Side */}
+            <div className="flex items-center gap-2">
+              {/* Cart */}
               <Link
-                href="/auth"
-                className="px-4 py-2 border rounded border-primary-border"
+                href="/cart"
+                className="relative p-2 rounded-xl hover:bg-gray-50 transition"
               >
-                Login
-              </Link>
-            ) : (
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => {
-                    setIsProfileOpen(!isProfileOpen);
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center gap-2 border px-4 py-2 rounded hover:bg-gray-100"
-                >
-                  <User size={16} />
-                  <span className="hidden sm:inline">
-                    {capitalize(profile?.first_name)}
+                <ShoppingCart className="h-5 w-5 text-gray-700" />
+                {cartItemQuantity > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-primary text-white text-[10px] font-bold h-[18px] min-w-[18px] px-1 rounded-full flex items-center justify-center">
+                    {cartItemQuantity}
                   </span>
-                </button>
+                )}
+              </Link>
 
-                <AnimatePresence>
-                  {isProfileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-white border rounded shadow"
-                    >
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        My Profile
-                      </Link>
-                      <Link
-                        href="/order"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        My Orders
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
-                      >
-                        Logout
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
+              {/* Auth */}
+              {!isAuthenticated ? (
+                <Link
+                  href="/auth"
+                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition shadow-sm"
+                >
+                  Sign In
+                </Link>
+              ) : (
+                <div className="relative" ref={profileRef}>
+                  <button
+                    onClick={() => {
+                      setIsProfileOpen(!isProfileOpen);
+                      setIsOpen(false);
+                    }}
+                    className={`flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-xl transition cursor-pointer ${isProfileOpen
+                        ? "bg-gray-100"
+                        : "hover:bg-gray-50"
+                      }`}
+                  >
+                    {/* Avatar circle */}
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      {profile?.profile_picture ? (
+                        <img
+                          src={profile.profile_picture}
+                          alt=""
+                          className="w-8 h-8 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-primary">
+                          {initials}
+                        </span>
+                      )}
+                    </div>
+                    <span className="hidden sm:inline text-sm font-medium text-foreground max-w-[80px] truncate">
+                      {capitalize(profile?.first_name)}
+                    </span>
+                    <ChevronDown
+                      size={14}
+                      className={`hidden sm:block text-gray-400 transition-transform ${isProfileOpen ? "rotate-180" : ""
+                        }`}
+                    />
+                  </button>
 
-            {/* Mobile Toggle */}
-            <button
-              className="md:hidden"
-              onClick={() => {
-                setIsOpen(!isOpen);
-                setIsProfileOpen(false);
-              }}
-            >
-              {isOpen ? <X /> : <Menu />}
-            </button>
+                  <AnimatePresence>
+                    {isProfileOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-gray-100 shadow-lg overflow-hidden"
+                      >
+                        {/* User info */}
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-semibold text-foreground truncate">
+                            {capitalize(profile?.first_name)}{" "}
+                            {capitalize(profile?.last_name)}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {profile?.email}
+                          </p>
+                        </div>
+
+                        {/* Links */}
+                        <div className="py-1.5">
+                          <Link
+                            href="/profile"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-gray-50 transition"
+                          >
+                            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <User size={14} className="text-primary" />
+                            </div>
+                            My Profile
+                          </Link>
+                          <Link
+                            href="/order"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-gray-50 transition"
+                          >
+                            <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                              <Package size={14} className="text-blue-600" />
+                            </div>
+                            My Orders
+                          </Link>
+                        </div>
+
+                        {/* Logout */}
+                        <div className="border-t border-gray-100 py-1.5">
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition cursor-pointer"
+                          >
+                            <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
+                              <LogOut size={14} className="text-red-500" />
+                            </div>
+                            Log Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Mobile Toggle */}
+              <button
+                className="md:hidden p-2 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                onClick={() => {
+                  setIsOpen(!isOpen);
+                  setIsProfileOpen(false);
+                }}
+              >
+                {isOpen ? (
+                  <X size={20} className="text-gray-700" />
+                ) : (
+                  <Menu size={20} className="text-gray-700" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 📱 Mobile Menu */}
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden bg-white border-t overflow-hidden"
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="md:hidden bg-white/95 backdrop-blur-md border-b border-gray-100 overflow-hidden"
           >
-            <div className="px-4 py-3 flex flex-col gap-3">
-              <Link href="/" onClick={() => setIsOpen(false)}>
-                Home
-              </Link>
-              <Link href="/products" onClick={() => setIsOpen(false)}>
-                Products
-              </Link>
-              <Link href="/about" onClick={() => setIsOpen(false)}>
-                About
-              </Link>
-              <Link href="/contact" onClick={() => setIsOpen(false)}>
-                Contact
-              </Link>
+            <div className="px-4 py-3 space-y-1">
+              {NAV_LINKS.map((item) => {
+                const isActive = pathname === item.path;
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition ${isActive
+                        ? "text-primary bg-primary/5"
+                        : "text-gray-600 hover:bg-gray-50"
+                      }`}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? "bg-primary/10" : "bg-gray-100"
+                        }`}
+                    >
+                      <Icon
+                        size={16}
+                        className={isActive ? "text-primary" : "text-gray-500"}
+                      />
+                    </div>
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {/* Mobile login button */}
+              {!isAuthenticated && (
+                <Link
+                  href="/auth"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 mt-2 py-3 bg-primary text-white text-sm font-medium rounded-xl"
+                >
+                  Sign In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

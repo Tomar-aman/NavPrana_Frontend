@@ -2,7 +2,7 @@
 
 import { memo, useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import GoogleSignInButton from "./GoogleSignInButton";
 
 const LoginForm = memo(
@@ -41,57 +41,73 @@ const LoginForm = memo(
     };
 
     return (
-      <div className="border border-gray-400 rounded-xl shadow-sm bg-card p-6">
-        <h2 className="text-2xl font-bold text-center mb-1">Welcome Back</h2>
-        <p className="text-center text-muted-foreground mb-6">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <h2 className="text-xl font-semibold text-foreground mb-1">Welcome back</h2>
+        <p className="text-sm text-muted-foreground mb-6">
           Sign in to your account to continue
         </p>
 
         <div className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-1">Email *</label>
+            <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+              Email
+            </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                <Mail size={15} className="text-gray-500" />
+              </div>
               <input
                 type="email"
                 placeholder="you@example.com"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full pl-10 pr-3 py-2 border border-primary-border outline-none rounded-lg focus:ring-2 focus:ring-primary"
+                onChange={(e) => {
+                  setForm({ ...form, email: e.target.value });
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
+                className={`w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.email ? "border-red-400" : "border-gray-200"
+                  }`}
               />
             </div>
             {errors.email && (
-              <p className="text-xs text-red-600 mt-1">{errors.email}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
             )}
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium mb-1">Password *</label>
+            <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+              Password
+            </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                <Lock size={15} className="text-gray-500" />
+              </div>
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full pl-10 pr-10 py-2 border border-primary-border outline-none rounded-lg focus:ring-2 focus:ring-primary"
+                onChange={(e) => {
+                  setForm({ ...form, password: e.target.value });
+                  if (errors.password) setErrors({ ...errors, password: "" });
+                }}
+                className={`w-full pl-14 pr-12 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${errors.password ? "border-red-400" : "border-gray-200"
+                  }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-muted-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition"
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
+                  <EyeOff size={16} />
                 ) : (
-                  <Eye className="h-4 w-4" />
+                  <Eye size={16} />
                 )}
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-red-600 mt-1">{errors.password}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.password}</p>
             )}
           </div>
 
@@ -99,7 +115,7 @@ const LoginForm = memo(
           <div className="flex justify-end">
             <Link
               href="/forgot-password"
-              className="text-sm text-primary hover:underline"
+              className="text-xs font-medium text-primary hover:text-primary/80 transition"
             >
               Forgot password?
             </Link>
@@ -107,7 +123,10 @@ const LoginForm = memo(
 
           {/* API Error */}
           {error && (
-            <div className="bg-red-50 border border-red-500/30 text-red-600 text-sm rounded-lg px-3 py-2">
+            <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                <span className="text-xs font-bold">!</span>
+              </div>
               {error}
             </div>
           )}
@@ -116,9 +135,9 @@ const LoginForm = memo(
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full py-2 rounded-lg bg-primary text-primary-foreground
-              flex items-center justify-center gap-2
-              disabled:opacity-70 hover:bg-primary/90 transition font-medium cursor-pointer"
+            className="w-full py-3 rounded-xl bg-primary text-primary-foreground
+              flex items-center justify-center gap-2 text-sm
+              disabled:opacity-70 hover:bg-primary/90 transition font-medium cursor-pointer shadow-sm"
           >
             {loading ? (
               <>
@@ -126,7 +145,10 @@ const LoginForm = memo(
                 Signing in...
               </>
             ) : (
-              "Sign In"
+              <>
+                Sign In
+                <ArrowRight size={16} />
+              </>
             )}
           </button>
 

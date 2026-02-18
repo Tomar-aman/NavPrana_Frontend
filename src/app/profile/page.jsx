@@ -1,28 +1,28 @@
 ﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useState } from "react";
 import {
   User,
   Mail,
   Phone,
   MapPin,
   Edit2,
-  Package,
-  Camera,
-  Calendar,
   Settings,
   Plus,
   Home,
   Pencil,
   Trash2,
+  LogOut,
+  Lock,
+  Package,
+  ChevronRight,
 } from "lucide-react";
 
 import { sendAddress } from "@/services/profile/post-profile";
-// import OrderTab from "../../../components/OrderTab";
 import SettingsTab from "../../../components/SettingsTab";
 import AddressModal from "../../../components/AddressModal";
 import ChangePasswordModal from "../../../components/ChangePasswordModal";
+import EditProfileModal from "../../../components/EditProfileModal";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,22 +30,19 @@ import {
   editAddress,
   fetchAddresses,
 } from "@/redux/features/addressSlice";
-import { updateProfile } from "@/redux/features/profileSlice";
 import { changePassword } from "@/redux/features/passwordSlice";
 import { logout } from "@/redux/features/authSlice";
 import { useRouter } from "next/navigation";
 import PrivateRoute from "../../../components/PrivateRoute";
 
 const Page = () => {
-  const {
-    data: profile,
-    //  loading
-  } = useSelector((state) => state.profile);
-
+  const { data: profile } = useSelector((state) => state.profile);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState("profile");
-  const [isEditing, setIsEditing] = useState(false);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -53,41 +50,10 @@ const Page = () => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [firstName, setFirstName] = useState(profile?.first_name || "");
-  const [lastName, setLastName] = useState(profile?.last_name || "");
-  const [email, setEmail] = useState(profile?.email || "");
-  const [phone, setPhone] = useState(profile?.phone_number || "");
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [editAddressData, setEditAddressData] = useState(null);
-  const router = useRouter();
-  const fileInputRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
   const { list: address, loading } = useSelector((state) => state.address);
-  const profileSectionRef = useRef(null);
-  const handleChangePassword = async () => {
-    try {
-      await dispatch(
-        changePassword({
-          old_password: oldPassword,
-          new_password: newPassword,
-          confirm_password: confirmPassword,
-        }),
-      ).unwrap();
-
-      toast.success("Password changed successfully");
-      setShowPasswordModal(false);
-
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (err) {
-      toast.error(err);
-    }
-  };
-  useEffect(() => {
-    dispatch(fetchAddresses());
-  }, [dispatch]);
 
   const [formData, setFormData] = useState({
     address_line1: "",
@@ -99,17 +65,51 @@ const Page = () => {
     is_default: false,
   });
 
+  useEffect(() => {
+    dispatch(fetchAddresses());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (editAddressData) {
+      setFormData(editAddressData);
+    }
+  }, [editAddressData]);
+
+  const initials =
+    profile?.first_name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("") || "U";
+
+  const phone = profile?.phone_number || "";
+
+  /* ---------- HANDLERS ---------- */
+
+  const handleChangePassword = async () => {
+    try {
+      await dispatch(
+        changePassword({
+          old_password: oldPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        }),
+      ).unwrap();
+      toast.success("Password changed successfully");
+      setShowPasswordModal(false);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+
   const handleOnsubmitAddress = async () => {
     try {
       await sendAddress(formData);
-
-      // 🔥 IMPORTANT
       dispatch(fetchAddresses());
-
       toast.success("Address added successfully");
       setShowAddressModal(false);
-
-      // reset form
       setFormData({
         address_line1: "",
         address_line2: "",
@@ -124,55 +124,6 @@ const Page = () => {
     }
   };
 
-  // 🔥 Open file dialog
-  const handleCameraClick = () => {
-    fileInputRef.current?.click();
-  };
-  useEffect(() => {
-    if (profile) {
-      setFirstName(profile.first_name || "");
-      setLastName(profile.last_name || "");
-      setEmail(profile.email || "");
-      setPhone(profile.phone_number || "");
-    }
-  }, [profile]);
-
-  // 📂 Handle file selection
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setSelectedFile(file);
-  };
-
-  // 🅰️ Avatar letters
-  const initials =
-    profile?.first_name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("") || "U";
-
-  const handleEditProfile = async () => {
-    try {
-      const formData = new FormData();
-
-      formData.append("first_name", firstName);
-      formData.append("last_name", lastName);
-      formData.append("phone_number", phone);
-
-      if (selectedFile) {
-        formData.append("profile_picture", selectedFile);
-      }
-
-      await dispatch(updateProfile(formData)).unwrap();
-
-      toast.success("Profile updated successfully");
-      setIsEditing(false);
-    } catch (err) {
-      toast.error(Object.values(err)[0]?.[0] || "Failed to update profile");
-    } I
-  };
-
   const handleDeleteAddress = async (id) => {
     try {
       await dispatch(deleteAddress(id)).unwrap();
@@ -182,15 +133,9 @@ const Page = () => {
     }
   };
 
-  useEffect(() => {
-    if (editAddressData) {
-      setFormData(editAddressData); // 🔥 pre-fill modal
-    }
-  }, [editAddressData]);
-
   const handleUpdateAddress = async () => {
     try {
-      const res = await dispatch(
+      await dispatch(
         editAddress({
           id: editAddressData.id,
           data: {
@@ -204,7 +149,6 @@ const Page = () => {
           },
         }),
       ).unwrap();
-
       toast.success("Address updated");
     } catch (err) {
       toast.error(err?.error || err?.message || "Failed to update address");
@@ -212,330 +156,282 @@ const Page = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout()); // 1️⃣ clear redux + token
-    router.replace("/auth"); // 2️⃣ redirect to login
+    dispatch(logout());
+    router.replace("/auth");
   };
 
-  // const orders = [
-  //   {
-  //     id: "ORD-001",
-  //     date: "Dec 28, 2024",
-  //     status: "Delivered",
-  //     total: "₹1,299",
-  //     items: 2,
-  //   },
-  //   {
-  //     id: "ORD-002",
-  //     date: "Dec 15, 2024",
-  //     status: "Shipped",
-  //     total: "₹899",
-  //     items: 1,
-  //   },
-  // ];
+  /* ---------- RENDER ---------- */
 
   return (
     <PrivateRoute>
-      <div className="min-h-screen flex flex-col bg-gray-50 my-20">
-        <main className="flex-1 py-10 px-4">
-          <div className="max-w-5xl mx-auto space-y-8">
-            {/* ================= PROFILE HEADER ================= */}
-            <div className="bg-white rounded-xl shadow overflow-hidden">
-              <div className="h-28 bg-primary/50" />
-              <div className="-mt-14 px-6 pb-6 flex flex-col md:flex-row items-center gap-4">
-                <div className="relative">
-                  {/* Avatar */}
-                  <div className="h-28 w-28 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold overflow-hidden">
-                    {selectedFile ? (
-                      // 🔹 1. Selected image preview (highest priority)
-                      <img
-                        src={URL.createObjectURL(selectedFile)}
-                        alt="Selected Preview"
-                        className="h-full w-full object-cover"
-                      />
-                    ) : profile?.profile_picture ? (
-                      // 🔹 2. Existing profile image from API
-                      <img
-                        src={profile.profile_picture}
-                        alt="Profile"
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      // 🔹 3. Fallback initials
-                      <span className="text-gray-700">{initials}</span>
-                    )}
-                  </div>
+      <div className="min-h-screen bg-gray-50/80 pt-28 pb-16 px-4">
+        <div className="max-w-4xl mx-auto">
 
-                  {/* Hidden file input */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
+          {/* ============ HEADER CARD ============ */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            {/* Cover */}
+            <div className="h-24 bg-gradient-to-r from-primary/30 via-primary/20 to-primary/10" />
 
-                  {/* Camera Button */}
-                  {isEditing && (
-                    <button
-                      onClick={handleCameraClick}
-                      className="absolute bottom-1 right-1 bg-primary p-1.5 rounded-full text-white hover:bg-primary/90"
-                    >
-                      <Camera size={14} />
-                    </button>
+            <div className="-mt-12 px-6 pb-6 flex flex-col sm:flex-row items-center gap-5">
+              {/* Avatar */}
+              <div className="relative shrink-0">
+                <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center text-2xl font-bold overflow-hidden">
+                  {profile?.profile_picture ? (
+                    <img
+                      src={profile.profile_picture}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-primary/70">{initials}</span>
                   )}
                 </div>
-
-                <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-2xl font-bold">{profile?.first_name}</h1>
-                  <p className="text-gray-500 flex items-center gap-2 justify-center md:justify-start">
-                    <Calendar size={14} />
-                    Member since
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setIsEditing(!isEditing);
-                    // smooth scroll to profile section
-                    setTimeout(() => {
-                      profileSectionRef.current?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }, 100);
-                  }}
-                  className="border border-primary-border px-4 py-2 rounded-lg flex items-center bg-white gap-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  <Edit2 size={16} />
-                  Edit Profile
-                </button>
               </div>
-            </div>
 
-            {/* ================= TABS ================= */}
-            <div className="bg-white rounded-xl shadow p-2 flex gap-2 max-w-md">
-              {[
-                { key: "profile", label: "Profile", icon: User },
-                // { key: "orders", label: "Orders", icon: Package },
-                { key: "settings", label: "Settings", icon: Settings },
-              ].map(({ key, label, icon: Icon }) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveTab(key)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition cursor-pointer
-        ${activeTab === key
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                >
-                  <Icon size={16} />
-                  <span className="hidden sm:inline">{label}</span>
-                </button>
-              ))}
-            </div>
+              {/* Name + info */}
+              <div className="flex-1 text-center sm:text-left">
+                <h1 className="text-xl font-semibold text-foreground">
+                  {profile?.first_name} {profile?.last_name}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {profile?.email}
+                </p>
+              </div>
 
-            {/* ================= PROFILE TAB ================= */}
-            {activeTab === "profile" && (
-              <div
-                className="grid md:grid-cols-2 gap-6"
-                ref={profileSectionRef}
+              {/* Edit button */}
+              <button
+                onClick={() => setShowEditProfileModal(true)}
+                className="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition cursor-pointer border border-gray-200 text-foreground hover:bg-gray-50"
               >
-                {/* Personal Information */}
-                <div className="bg-white p-6 rounded-xl shadow space-y-4">
-                  <h2 className="font-semibold flex items-center gap-2 text-lg">
-                    <User size={18} /> Personal Information
-                  </h2>
+                <Edit2 size={15} /> Edit Profile
+              </button>
+            </div>
+          </div>
 
-                  {/* Full Name */}
-                  <div className="flex flex-col md:flex-row gap-2">
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">
+          {/* ============ TABS ============ */}
+          <div className="flex gap-1 mt-6 mb-6 bg-white rounded-xl border border-gray-100 p-1 max-w-xs">
+            {[
+              { key: "profile", label: "Profile", icon: User },
+              { key: "settings", label: "Settings", icon: Settings },
+            ].map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition cursor-pointer ${activeTab === key
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
+                  }`}
+              >
+                <Icon size={15} />
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* ============ PROFILE TAB ============ */}
+          {activeTab === "profile" && (
+            <div className="grid lg:grid-cols-5 gap-6">
+
+              {/* ---- Personal Information (3 cols) ---- */}
+              <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 className="text-base font-semibold text-foreground mb-5 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <User size={16} className="text-primary" />
+                  </div>
+                  Personal Information
+                </h2>
+
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
                         First Name
                       </label>
-                      <input
-                        disabled={!isEditing}
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        className="w-full border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
-                      />
+                      <p className="mt-0.5 text-sm text-foreground font-medium">
+                        {profile?.first_name || "—"}
+                      </p>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">
+                    <div className="bg-gray-50 rounded-xl px-4 py-3">
+                      <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
                         Last Name
                       </label>
-                      <input
-                        disabled={!isEditing}
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        className="w-full border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
-                      />
+                      <p className="mt-0.5 text-sm text-foreground font-medium">
+                        {profile?.last_name || "—"}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Email */}
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-600">
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <Mail
-                        className="absolute left-3 top-3 text-gray-400"
-                        size={16}
-                      />
-                      <input
-                        disabled={!isEditing}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
-                      />
+                  <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Mail size={15} className="text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">Email Address</p>
+                      <p className="text-sm text-foreground truncate">{profile?.email || "—"}</p>
                     </div>
                   </div>
 
-                  {/* Phone */}
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-600">
-                      Phone Number
-                    </label>
-                    <div className="relative">
-                      <Phone
-                        className="absolute left-3 top-3 text-gray-400"
-                        size={16}
-                      />
-                      <input
-                        disabled={!isEditing}
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-10 border border-primary-border px-3 py-2 rounded-lg disabled:bg-gray-50"
-                      />
+                  <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Phone size={15} className="text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">Phone Number</p>
+                      <p className="text-sm text-foreground">{phone || "Not added"}</p>
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  {isEditing && (
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        className="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-primary/90 transition cursor-pointer"
-                        onClick={handleEditProfile}
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setIsEditing(false)}
-                        className="flex-1 border py-2 rounded-lg hover:bg-gray-50 transition cursor-pointer"
-                      >
-                        Cancel
-                      </button>
+              {/* ---- Quick Actions (2 cols) ---- */}
+              <div className="lg:col-span-2 space-y-4">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-100">
+                  <h3 className="text-sm font-semibold text-foreground px-5 pt-5 pb-3">
+                    Quick Actions
+                  </h3>
+
+                  <button
+                    onClick={() => router.push("/order")}
+                    className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                      <Package size={16} className="text-blue-600" />
                     </div>
-                  )}
+                    <span className="flex-1 text-sm font-medium text-foreground text-left">My Orders</span>
+                    <ChevronRight size={16} className="text-gray-400" />
+                  </button>
+
+                  <button
+                    onClick={() => setShowPasswordModal(true)}
+                    className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50 transition cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+                      <Lock size={16} className="text-amber-600" />
+                    </div>
+                    <span className="flex-1 text-sm font-medium text-foreground text-left">Change Password</span>
+                    <ChevronRight size={16} className="text-gray-400" />
+                  </button>
+
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-red-50 transition cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
+                      <LogOut size={16} className="text-red-500" />
+                    </div>
+                    <span className="flex-1 text-sm font-medium text-red-600 text-left">Log Out</span>
+                    <ChevronRight size={16} className="text-gray-400" />
+                  </button>
+                </div>
+              </div>
+
+              {/* ---- Addresses (full width) ---- */}
+              <div className="lg:col-span-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <MapPin size={16} className="text-primary" />
+                    </div>
+                    Shipping Addresses
+                  </h2>
+                  <button
+                    onClick={() => setShowAddressModal(true)}
+                    className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition cursor-pointer"
+                  >
+                    <Plus size={16} />
+                    Add New
+                  </button>
                 </div>
 
-                {/* ================= ADDRESS ================= */}
-                <div className="bg-white p-6 rounded-xl shadow space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h2 className="font-semibold flex items-center gap-2 text-lg">
-                      <MapPin size={18} /> Shipping Addresses
-                    </h2>
-
-                    <button
-                      onClick={() => setShowAddressModal(true)}
-                      className="flex items-center gap-2 border border-dashed border-primary text-primary px-4 py-2 rounded-lg hover:bg-primary/10 transition cursor-pointer"
-                    >
-                      <Plus size={16} /> Add Address
-                    </button>
+                {address.length === 0 ? (
+                  <div className="text-center py-10 text-muted-foreground">
+                    <MapPin size={32} className="mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">No addresses added yet</p>
                   </div>
-
-                  {/* Address List */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {address.map((addr, index) => (
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {address.map((addr) => (
                       <div
                         key={addr.id}
                         onClick={() => setSelectedAddressId(addr.id)}
-                        className={`border border-primary-border rounded-xl p-4 cursor-pointer transition relative group
-          
-          ${index === 0 ? "md:col-span-2 bg-primary/5" : "bg-white"}
-          
-          ${selectedAddressId === addr.id
-                            ? "border-primary ring-1 ring-primary/30"
-                            : "hover:border-gray-300"
-                          }
-        `}
+                        className={`relative rounded-xl border p-4 cursor-pointer transition group ${selectedAddressId === addr.id
+                            ? "border-primary bg-primary/5"
+                            : "border-gray-100 bg-gray-50 hover:border-gray-200"
+                          }`}
                       >
-                        {/* Top Actions */}
-                        <div className="absolute top-3 right-3 flex items-center gap-1  transition">
+                        {/* Actions */}
+                        <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition">
                           <button
-                            className="p-1.5 rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
-                            title="Edit address"
+                            className="p-1.5 rounded-lg hover:bg-white text-gray-500 cursor-pointer"
+                            title="Edit"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setEditAddressData(addr); // 🔥 store selected address
+                              setEditAddressData(addr);
                               setShowAddressModal(true);
                             }}
                           >
-                            <Pencil size={15} />
+                            <Pencil size={14} />
                           </button>
-
                           <button
-                            className="p-1.5 rounded-md text-red-600 hover:bg-red-50 cursor-pointer"
-                            title="Delete address"
+                            className="p-1.5 rounded-lg hover:bg-white text-red-500 cursor-pointer"
+                            title="Delete"
                             onClick={(e) => {
-                              e.stopPropagation(); // ✅ prevent card click
+                              e.stopPropagation();
                               handleDeleteAddress(addr.id);
                             }}
                           >
-                            <Trash2 size={15} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
 
-                        {/* Default Badge */}
-                        {addr.is_default && (
-                          <span className="absolute top-3 left-3 text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                            Default
-                          </span>
-                        )}
-
-                        {/* Address Content */}
-                        <div className="flex items-start gap-3 mt-6">
-                          <span className="text-primary mt-1">
-                            <Home size={20} />
-                          </span>
-
-                          <div className="space-y-1">
-                            <p className="font-medium text-gray-800">
-                              {addr.address_line1}
-                            </p>
-
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <Home size={15} className="text-primary" />
+                          </div>
+                          <div className="text-sm min-w-0 pr-12">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-foreground truncate">
+                                {addr.address_line1}
+                              </p>
+                              {addr.is_default && (
+                                <span className="text-[10px] font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded shrink-0">
+                                  Default
+                                </span>
+                              )}
+                            </div>
                             {addr.address_line2 && (
-                              <p className="text-sm text-gray-500">
+                              <p className="text-muted-foreground truncate">
                                 {addr.address_line2}
                               </p>
                             )}
-
-                            <p className="text-sm text-gray-500">
+                            <p className="text-muted-foreground">
                               {addr.city}, {addr.state} – {addr.postal_code}
-                            </p>
-
-                            <p className="text-sm text-gray-500">
-                              {addr.country}
                             </p>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                )}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ================= ORDERS TAB ================= */}
-            {/* {activeTab === "orders" && <OrderTab orders={orders} />} */}
+          {/* ============ SETTINGS TAB ============ */}
+          {activeTab === "settings" && (
+            <SettingsTab
+              onChangePassword={() => setShowPasswordModal(true)}
+              onLogout={handleLogout}
+            />
+          )}
 
-            {/* ================= SETTINGS TAB ================= */}
-            {activeTab === "settings" && (
-              <SettingsTab
-                onChangePassword={() => setShowPasswordModal(true)}
-                onLogout={handleLogout}
-              />
-            )}
-          </div>
+          {/* ============ MODALS ============ */}
+          <EditProfileModal
+            isOpen={showEditProfileModal}
+            onClose={() => setShowEditProfileModal(false)}
+            profile={profile}
+          />
+
           {showPasswordModal && (
             <ChangePasswordModal
               isOpen={showPasswordModal}
@@ -555,6 +451,7 @@ const Page = () => {
               onSubmit={handleChangePassword}
             />
           )}
+
           {showAddressModal && (
             <AddressModal
               isOpen={showAddressModal}
@@ -570,7 +467,7 @@ const Page = () => {
               }
             />
           )}
-        </main>
+        </div>
       </div>
     </PrivateRoute>
   );

@@ -9,6 +9,7 @@ import SignupForm from "./SignupForm";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
+import { Leaf } from "lucide-react";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("signin");
@@ -22,7 +23,6 @@ const Page = () => {
 
   const dispatch = useDispatch();
   const router = useRouter();
-  // const { loadProfile } = useProfile();
 
   const [signinForm, setSigninForm] = useState({
     email: "",
@@ -38,19 +38,17 @@ const Page = () => {
   });
 
   const handleSignIn = async () => {
-    if (signinLoading) return; // ✅ extra safety
+    if (signinLoading) return;
 
     try {
-      setSigninLoading(true); // ✅ FIRST LINE
+      setSigninLoading(true);
 
       await dispatch(loginUser(signinForm)).unwrap();
 
       toast.success("Login successful");
       router.push("/");
     } catch (err) {
-      // toast.error(err || "Login failed");
       const message = err?.message || err?.error || "Invalid email or password";
-
       setLoginError(message);
     } finally {
       setSigninLoading(false);
@@ -77,7 +75,6 @@ const Page = () => {
       toast.success("OTP sent");
     } catch (err) {
       if (typeof err === "object" && err !== null) {
-        // Map backend field names to form field names
         const fieldMap = {
           first_name: "firstName",
           last_name: "lastName",
@@ -117,29 +114,35 @@ const Page = () => {
   };
 
   return (
-    <div className=" flex flex-col">
-      <main className="flex-1 flex items-center justify-center pt-40 pb-30 px-4">
+    <div className="flex flex-col">
+      <main className="flex-1 flex items-center justify-center pt-32 pb-20 px-4">
         <div className="w-full max-w-md">
+
+          {/* Brand */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 mb-3">
+              <Leaf size={24} className="text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">NavPrana</h1>
+            <p className="text-sm text-muted-foreground mt-1">Pure wellness, naturally delivered</p>
+          </div>
+
           {/* Tabs */}
-          <div className="grid grid-cols-2 border border-gray-400 rounded-lg overflow-hidden mb-8">
-            <button
-              onClick={() => setActiveTab("signin")}
-              className={`py-2 font-medium transition ${activeTab === "signin"
-                ? "bg-primary text-primary-foreground"
-                : "bg-background text-foreground hover:bg-muted"
-                }`}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setActiveTab("signup")}
-              className={`py-2 font-medium transition ${activeTab === "signup"
-                ? "bg-primary text-primary-foreground"
-                : "bg-background text-foreground hover:bg-muted"
-                }`}
-            >
-              Sign Up
-            </button>
+          <div className="bg-gray-100 rounded-xl p-1 mb-6">
+            <div className="grid grid-cols-2 gap-1">
+              {["signin", "signup"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative py-2.5 text-sm font-medium rounded-lg transition-all cursor-pointer ${activeTab === tab
+                      ? "bg-white text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                    }`}
+                >
+                  {tab === "signin" ? "Sign In" : "Sign Up"}
+                </button>
+              ))}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
@@ -147,10 +150,10 @@ const Page = () => {
             {activeTab === "signin" && (
               <motion.div
                 key="signin"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 <LoginForm
                   form={signinForm}
@@ -168,10 +171,10 @@ const Page = () => {
             {activeTab === "signup" && (
               <motion.div
                 key="signup"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 30 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 <SignupForm
                   form={signupForm}
