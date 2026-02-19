@@ -9,12 +9,13 @@ import {
   MapPin,
   CreditCard,
   Download,
-  Share2,
   ShoppingBag,
   Truck,
   IndianRupee,
   AlertTriangle,
   CheckCircle,
+  ArrowLeft,
+  Home,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -24,55 +25,56 @@ import OrderProgress from "../../../../components/OrderProgress";
 import { getInvoice } from "@/redux/features/invoiceSlice";
 import PrivateRoute from "../../../../components/PrivateRoute";
 import AddReviewModal from "../../../../components/AddReviewModal";
+import NavPranaLoader from "../../../../components/NavPranaLoader";
 
 /* ---------------- STATUS CONFIG ---------------- */
 const STATUS_CONFIG = {
   Accepted: {
     icon: CheckCircle,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
+    color: "bg-blue-50",
+    iconColor: "text-blue-500",
     message: "Your order has been accepted and will be processed shortly.",
   },
   Paid: {
     icon: IndianRupee,
-    iconBg: "bg-green-100",
+    color: "bg-green-50",
     iconColor: "text-green-600",
     message: "Your payment was successful.",
   },
   Delivered: {
     icon: CheckCircle2,
-    iconBg: "bg-green-100",
+    color: "bg-green-50",
     iconColor: "text-green-600",
     message: "Your order has been delivered.",
   },
   Processing: {
     icon: Clock,
-    iconBg: "bg-yellow-100",
+    color: "bg-yellow-50",
     iconColor: "text-yellow-600",
     message: "Your order is being processed.",
   },
   Pending: {
     icon: Clock,
-    iconBg: "bg-yellow-100",
+    color: "bg-yellow-50",
     iconColor: "text-yellow-600",
     message: "Your payment is pending.",
   },
   Shipped: {
     icon: Truck,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
+    color: "bg-blue-50",
+    iconColor: "text-blue-500",
     message: "Your order has been shipped.",
   },
   Failed: {
     icon: AlertTriangle,
-    iconBg: "bg-red-100",
-    iconColor: "text-red-600",
+    color: "bg-red-50",
+    iconColor: "text-red-500",
     message: "Payment failed. Please try again.",
   },
   Cancelled: {
     icon: XCircle,
-    iconBg: "bg-red-100",
-    iconColor: "text-red-600",
+    color: "bg-red-50",
+    iconColor: "text-red-500",
     message: "This order was cancelled.",
   },
 };
@@ -96,11 +98,7 @@ export default function Page() {
   };
 
   if (detailLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600">
-        Loading order details...
-      </div>
-    );
+    return <NavPranaLoader />;
   }
 
   if (!orderData) return null;
@@ -118,136 +116,159 @@ export default function Page() {
 
   return (
     <PrivateRoute>
-      <div className="min-h-screen bg-primary/2 mt-20">
-        <main className="px-4 py-6 sm:py-10">
+      <div className="min-h-screen bg-background mt-20">
+        <main className="px-4 py-6 sm:py-8">
           <div className="max-w-4xl mx-auto">
-            {/* STATUS HEADER */}
-            <div className="text-center mb-8 px-2">
+            {/* Back */}
+            <Link
+              href="/order"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition mb-5"
+            >
+              <ArrowLeft size={15} /> Back to Orders
+            </Link>
+
+            {/* Status Header */}
+            <div className="text-center mb-6">
               <div
-                className={`mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mb-4 ${statusUI.iconBg}`}
+                className={`mx-auto w-14 h-14 ${statusUI.color} rounded-2xl flex items-center justify-center mb-3`}
               >
-                <StatusIcon
-                  className={`w-8 h-8 sm:w-10 sm:h-10 ${statusUI.iconColor}`}
-                />
+                <StatusIcon className={`w-7 h-7 ${statusUI.iconColor}`} />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Order Details</h1>
-              <p className="text-gray-600 mt-2 text-sm sm:text-base">
+              <h1 className="text-2xl font-bold">Order Details</h1>
+              <p className="text-sm text-muted-foreground mt-1">
                 {statusUI.message}
               </p>
             </div>
 
-            {/* ORDER META */}
-            <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6 mb-6 flex flex-col sm:flex-row gap-4 justify-between">
+            {/* Order Meta */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 mb-4 flex flex-col sm:flex-row gap-3 justify-between">
               <div>
-                <p className="text-sm text-gray-500">Order ID</p>
-                <p className="text-lg sm:text-xl font-bold text-green-700 break-all">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+                  Order ID
+                </p>
+                <p className="text-sm font-bold text-primary break-all mt-0.5">
                   {orderData.transaction_id}
                 </p>
               </div>
               <div className="sm:text-right">
-                <p className="text-sm text-gray-500">Order Date</p>
-                <p className="font-medium">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+                  Order Date
+                </p>
+                <p className="text-sm font-medium mt-0.5">
                   {formatDate(orderData.created_at)}
                 </p>
               </div>
             </div>
 
-            {/* ORDER STATUS */}
-            <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6 mb-6 overflow-x-auto">
-              <h2 className="font-semibold mb-4">Order Status</h2>
+            {/* Order Progress */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 mb-4 overflow-x-auto">
+              <h2 className="text-sm font-semibold mb-3">Order Status</h2>
               <OrderProgress status={orderData.status_display} />
             </div>
 
-            {/* ADDRESS + PAYMENT */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {/* ADDRESS */}
-              <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6">
-                <h3 className="font-semibold flex items-center gap-2 mb-3">
-                  <MapPin className="text-green-700" /> Delivery Address
-                </h3>
-                <p className="font-medium">{orderData.address.address_line1}</p>
-                {orderData.address.address_line2 && (
-                  <p className="text-sm text-gray-600">
-                    {orderData.address.address_line2}
+            {/* Address + Payment */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Address */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+                    <MapPin size={15} className="text-green-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold">Delivery Address</h3>
+                </div>
+                <div className="text-xs space-y-0.5 ml-10">
+                  <p className="font-medium text-foreground">
+                    {orderData.address.address_line1}
                   </p>
-                )}
-                <p className="text-sm text-gray-600">
-                  {orderData.address.city}, {orderData.address.state} –{" "}
-                  {orderData.address.postal_code}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {orderData.address.country}
-                </p>
+                  {orderData.address.address_line2 && (
+                    <p className="text-muted-foreground">
+                      {orderData.address.address_line2}
+                    </p>
+                  )}
+                  <p className="text-muted-foreground">
+                    {orderData.address.city}, {orderData.address.state} –{" "}
+                    {orderData.address.postal_code}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {orderData.address.country}
+                  </p>
+                </div>
               </div>
 
-              {/* PAYMENT */}
-              <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6">
-                <h3 className="font-semibold flex items-center gap-2 mb-3">
-                  <CreditCard className="text-green-700" /> Payment Details
-                </h3>
-                <p className="font-medium">
-                  {orderData.latest_transaction?.payment_method}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Ref: {orderData.latest_transaction?.bank_reference}
-                </p>
+              {/* Payment */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <CreditCard size={15} className="text-blue-500" />
+                  </div>
+                  <h3 className="text-sm font-semibold">Payment Details</h3>
+                </div>
+                <div className="text-xs space-y-0.5 ml-10">
+                  <p className="font-medium text-foreground">
+                    {orderData.latest_transaction?.payment_method}
+                  </p>
+                  <p className="text-muted-foreground">
+                    Ref: {orderData.latest_transaction?.bank_reference}
+                  </p>
+                </div>
 
                 <div
-                  className={`mt-4 rounded-lg p-3 flex items-center gap-2 text-sm
-                ${orderData.payment_status_display === "Paid"
-                      ? "bg-green-50 border border-green-200 text-green-700"
-                      : "bg-red-50 border border-red-200 text-red-700"
+                  className={`mt-3 ml-10 inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg border ${orderData.payment_status_display === "Paid"
+                    ? "bg-green-50 border-green-200 text-green-700"
+                    : "bg-red-50 border-red-200 text-red-600"
                     }`}
                 >
                   {orderData.payment_status_display === "Paid" ? (
-                    <CheckCircle2 size={16} />
+                    <CheckCircle2 size={12} />
                   ) : (
-                    <XCircle size={16} />
+                    <XCircle size={12} />
                   )}
                   Payment {orderData.payment_status_display}
                 </div>
               </div>
             </div>
 
-            {/* ITEMS */}
-            <div className="bg-white rounded-xl border border-primary-border p-4 sm:p-6 mb-6">
-              <h2 className="font-semibold mb-4">Order Items</h2>
+            {/* Items */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 mb-4">
+              <h2 className="text-sm font-semibold mb-3">Order Items</h2>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {orderData.items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col sm:flex-row gap-4 bg-gray-50 rounded-lg p-3"
+                    className="flex gap-3 bg-gray-50 rounded-xl p-3"
                   >
-                    <div className="relative w-20 h-20 rounded-lg overflow-hidden">
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0">
                       <Image
                         src={item.product.image}
                         alt={item.product.name}
                         fill
-                        sizes="80px"
+                        sizes="64px"
                         className="object-cover"
                       />
                     </div>
 
-                    <div className="flex-1">
-                      <p className="font-medium">{item.product.name}</p>
-                      <p className="text-sm text-gray-600">
-                        Size: {item.product.size}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold truncate">
+                        {item.product.name}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        Qty: {item.quantity}
-                      </p>
+                      <div className="flex gap-3 mt-1">
+                        <span className="text-[11px] text-muted-foreground bg-white px-1.5 py-0.5 rounded">
+                          Size: {item.product.size}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground bg-white px-1.5 py-0.5 rounded">
+                          Qty: {item.quantity}
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right self-end sm:self-center">
-                      {/* MRP */}
+
+                    <div className="text-right self-center shrink-0">
                       {item.product.max_price && (
-                        <p className="text-sm text-gray-400 line-through">
+                        <p className="text-[10px] text-muted-foreground line-through">
                           ₹{item.product.max_price * item.quantity}
                         </p>
                       )}
-
-                      {/* FINAL PRICE */}
-                      <p className="font-semibold text-green-700">
+                      <p className="text-xs font-bold text-foreground">
                         ₹{item.item_total}
                       </p>
                     </div>
@@ -255,35 +276,32 @@ export default function Page() {
                 ))}
               </div>
 
-              {/* PRICE */}
-              <div className="border-t border-primary-border mt-4 pt-4 space-y-2 text-sm">
+              {/* Price Summary */}
+              <div className="border-t border-gray-100 mt-4 pt-3 space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span>MRP</span>
+                  <span className="text-muted-foreground">MRP</span>
                   <span>₹{orderData.total_amount}</span>
                 </div>
-
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-green-600 font-medium">
                   <span>Discount</span>
                   <span>-₹{orderData.discount_amount}</span>
                 </div>
-                <div className="flex justify-between font-bold text-base sm:text-lg">
+                <div className="flex justify-between font-bold text-sm border-t border-gray-100 pt-2">
                   <span>Total</span>
-                  <span className="text-green-700">
-                    ₹{orderData.final_amount}
-                  </span>
+                  <span className="text-foreground">₹{orderData.final_amount}</span>
                 </div>
               </div>
             </div>
-            {/* DELIVERED SUCCESS + REVIEW */}
+
+            {/* Delivered + Review */}
             {orderData.status_display === "Delivered" && (
-              <div className="my-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-green-50 border border-green-200 rounded-lg p-3">
-                <div className="flex items-center gap-2 text-green-700 text-sm font-medium">
-                  <CheckCircle2 size={18} />
+              <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-green-50 border border-green-100 rounded-xl p-3">
+                <div className="flex items-center gap-1.5 text-green-700 text-xs font-medium">
+                  <CheckCircle2 size={14} />
                   Order delivered successfully
                 </div>
-
                 <button
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition cursor-pointer"
                   onClick={() => setShowReviewModal(true)}
                 >
                   ✍️ Write Review
@@ -291,8 +309,8 @@ export default function Page() {
               </div>
             )}
 
-            {/* ACTIONS */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={handleDownload}
                 disabled={
@@ -300,33 +318,24 @@ export default function Page() {
                   orderData?.status_display === "Cancelled" ||
                   orderData?.status_display === "Failed"
                 }
-                className="px-4 py-2 rounded-lg flex items-center gap-2
-    disabled:opacity-50 disabled:cursor-not-allowed
-    bg-primary text-white justify-center"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                <Download size={16} />
+                <Download size={15} />
                 {loading ? "Generating..." : "Download Invoice"}
               </button>
 
-              {/* <button
-                disabled
-                className="border px-4 py-2 rounded-lg flex items-center gap-2
-              cursor-not-allowed opacity-50 justify-center"
-              >
-                <Share2 size={16} /> Share Order
-              </button> */}
-
               <Link
                 href="/products"
-                className="bg-primary text-white px-6 py-2 rounded-lg flex items-center gap-2 justify-center"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-gray-200 hover:bg-gray-50 transition"
               >
-                <ShoppingBag size={16} />
+                <ShoppingBag size={15} />
                 Continue Shopping
               </Link>
             </div>
           </div>
         </main>
-        {/* REVIEW MODAL */}
+
+        {/* Review Modal */}
         <AddReviewModal
           isOpen={showReviewModal}
           onClose={() => setShowReviewModal(false)}

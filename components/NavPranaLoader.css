@@ -3,10 +3,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #f4fff4;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     position: fixed;
     inset: 0;
     z-index: 9999;
+    animation: loaderFadeIn 0.3s ease-out;
 }
 
 .foliage-container {
@@ -16,7 +19,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    animation: loaderScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .center-text {
@@ -34,38 +37,28 @@
     animation: float-around 4s infinite ease-in-out;
 }
 
-.leaf-1 {
-    animation-delay: 0s;
+.leaf-1 { animation-delay: 0s; }
+.leaf-2 { animation-delay: 0.66s; }
+.leaf-3 { animation-delay: 1.33s; }
+.leaf-4 { animation-delay: 2s; }
+.leaf-5 { animation-delay: 2.66s; }
+.leaf-6 { animation-delay: 3.33s; }
+
+@keyframes loaderFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
-.leaf-2 {
-    animation-delay: 0.66s;
-}
-
-.leaf-3 {
-    animation-delay: 1.33s;
-}
-
-.leaf-4 {
-    animation-delay: 2s;
-}
-
-.leaf-5 {
-    animation-delay: 2.66s;
-}
-
-.leaf-6 {
-    animation-delay: 3.33s;
+@keyframes loaderScaleIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes breathe {
-
-    0%,
-    100% {
+    0%, 100% {
         transform: scale(1);
         opacity: 0.8;
     }
-
     50% {
         transform: scale(1.1);
         opacity: 1;
@@ -78,15 +71,8 @@
         transform: rotate(0deg) translateX(50px) rotate(0deg);
         opacity: 0;
     }
-
-    20% {
-        opacity: 1;
-    }
-
-    80% {
-        opacity: 1;
-    }
-
+    20% { opacity: 1; }
+    80% { opacity: 1; }
     100% {
         transform: rotate(360deg) translateX(50px) rotate(-360deg);
         opacity: 0;

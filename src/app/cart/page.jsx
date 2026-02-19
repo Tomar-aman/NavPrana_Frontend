@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { generateSlug } from "@/utils/slug";
 import PrivateRoute from "../../../components/PrivateRoute";
 
-/* 🔹 Get featured image safely */
 const getFeaturedImage = (images = []) => {
   return (
     images.find((img) => img.is_feature)?.image ||
@@ -27,13 +26,11 @@ const Page = () => {
   const { list: products } = useSelector((state) => state.product);
   const { items: cartItems, loading } = useSelector((state) => state.cart);
 
-  /* 🔹 Fetch products & cart */
   useEffect(() => {
     dispatch(fetchProducts());
     dispatch(getCart());
   }, [dispatch]);
 
-  /* 🔹 Merge cart items with product data */
   const mergedCartItems = useMemo(() => {
     return cartItems.map((cartItem) => {
       const product = products.find((p) => p.id === cartItem.product);
@@ -41,7 +38,6 @@ const Page = () => {
     });
   }, [cartItems, products]);
 
-  /* 🔹 Quantity handlers */
   const handleIncrease = (item) => {
     dispatch(updateCart({ cartId: item.id, quantity: item.quantity + 1 }));
   };
@@ -56,7 +52,6 @@ const Page = () => {
     dispatch(deleteCart(id));
   };
 
-  /* 🔹 Price calculations */
   const subtotal = mergedCartItems.reduce((sum, item) => {
     if (!item.product) return sum;
     return sum + Number(item.product.price) * item.quantity;
@@ -75,201 +70,189 @@ const Page = () => {
 
   return (
     <PrivateRoute>
-      <div className="flex flex-col my-15 sm:my-20">
-        <main className="flex-1 py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
-            <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+      <div className="min-h-screen bg-background mt-20">
+        <main className="max-w-5xl mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-xs font-semibold text-primary uppercase tracking-wider mb-3">
+              <ShoppingBag size={14} />
               Shopping Cart
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+              Your Cart
+              {mergedCartItems.length > 0 && (
+                <span className="text-muted-foreground text-lg font-normal ml-2">
+                  ({mergedCartItems.length} item{mergedCartItems.length !== 1 ? "s" : ""})
+                </span>
+              )}
             </h1>
+          </div>
 
-            {/* EMPTY CART */}
-            {mergedCartItems.length === 0 && !loading ? (
-              <div className="border border-primary-border rounded-xl shadow p-8 text-center bg-white">
-                <div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                  <ShoppingBag className="h-10 w-10 text-gray-400" />
-                </div>
-                <h2 className="text-2xl font-semibold mt-4">
-                  Your cart is empty
-                </h2>
-                <p className="text-gray-500 mt-1">
-                  Add some products to get started
-                </p>
-                <Link href="/products">
-                  <button className="mt-6 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90">
-                    Browse Products
-                  </button>
-                </Link>
+          {/* Empty Cart */}
+          {mergedCartItems.length === 0 && !loading ? (
+            <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center">
+              <div className="mx-auto w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
+                <ShoppingBag className="h-7 w-7 text-muted-foreground" />
               </div>
-            ) : (
-              <div className="grid lg:grid-cols-3 gap-8">
-                {/* CART ITEMS */}
-                <div className="lg:col-span-2 space-y-4">
-                  {mergedCartItems.map((item) => {
-                    if (!item.product) return null;
+              <h2 className="text-xl font-semibold mb-1">Your cart is empty</h2>
+              <p className="text-sm text-muted-foreground mb-5">
+                Add some products to get started
+              </p>
+              <Link href="/products">
+                <button className="px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition">
+                  Browse Products
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Cart Items */}
+              <div className="lg:col-span-2 space-y-3">
+                {mergedCartItems.map((item) => {
+                  if (!item.product) return null;
+                  const imageUrl = getFeaturedImage(item.product.images);
 
-                    const imageUrl = getFeaturedImage(item.product.images);
+                  return (
+                    <div
+                      key={item.id}
+                      className="bg-white rounded-2xl border border-gray-100 p-4 hover:border-gray-200 transition"
+                    >
+                      <div className="flex gap-4">
+                        {/* Image */}
+                        <div
+                          className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-gray-50 cursor-pointer"
+                          onClick={() =>
+                            router.push(`/product-details/${generateSlug(item.product.name)}`)
+                          }
+                        >
+                          <Image
+                            src={imageUrl}
+                            alt={item.product.name}
+                            fill
+                            sizes="96px"
+                            className="object-cover"
+                          />
+                          {item.product.discount_precent && (
+                            <span className="absolute top-1 left-1 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+                              {parseInt(item.product.discount_precent)}%
+                            </span>
+                          )}
+                        </div>
 
-                    return (
-                      <div
-                        key={item.id}
-                        className="border border-primary-border rounded-xl bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition"
-                      >
-                        <div className="flex flex-col sm:flex-row gap-4">
-                          {/* IMAGE */}
-                          <div
-                            className="relative w-full sm:w-24 h-48 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-primary-border"
-                            onClick={() =>
-                              router.push(`/product-details/${generateSlug(item.product.name)}`)
-                            }
-                          >
-                            <Image
-                              src={imageUrl}
-                              alt={item.product.name}
-                              fill
-                              sizes="(max-width: 640px) 100vw, 96px"
-                              className="object-cover"
-                            />
-
-                            {item.product.discount_precent && (
-                              <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded">
-                                {parseInt(item.product.discount_precent)}% OFF
-                              </span>
-                            )}
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between gap-2">
+                            <div className="min-w-0">
+                              <h3
+                                className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-primary transition"
+                                onClick={() =>
+                                  router.push(`/product-details/${generateSlug(item.product.name)}`)
+                                }
+                              >
+                                {item.product.name}
+                              </h3>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                Size: <span className="font-medium text-foreground">{item.product.size}</span>
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => handleDelete(item.id)}
+                              className="text-muted-foreground hover:text-red-500 transition shrink-0 p-1"
+                            >
+                              <Trash2 size={15} />
+                            </button>
                           </div>
 
-                          {/* CONTENT */}
-                          <div className="flex-1 flex flex-col justify-between ">
-                            {/* TITLE + DELETE */}
-                            <div className="flex justify-between gap-3">
-                              <div>
-                                <h3
-                                  className="font-semibold text-base sm:text-lg leading-snug cursor-pointer hover:text-primary"
-                                  onClick={() =>
-                                    router.push(
-                                      `/product-details/${generateSlug(item.product.name)}`,
-                                    )
-                                  }
-                                >
-                                  {item.product.name}
-                                </h3>
-                                <p className="text-sm text-gray-500 mt-1">
-                                  Size: <b>{item.product.size}</b>
-                                </p>
-                              </div>
-
+                          <div className="flex items-center justify-between mt-3">
+                            {/* Quantity */}
+                            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                               <button
-                                onClick={() => handleDelete(item.id)}
-                                className="text-red-500 hover:text-red-600 self-start"
+                                onClick={() => handleDecrease(item)}
+                                className="px-2.5 py-1.5 hover:bg-gray-50 transition"
                               >
-                                <Trash2 className="h-5 w-5" />
+                                <Minus size={12} />
+                              </button>
+                              <span className="px-3 text-sm font-semibold">{item.quantity}</span>
+                              <button
+                                onClick={() => handleIncrease(item)}
+                                className="px-2.5 py-1.5 hover:bg-gray-50 transition"
+                              >
+                                <Plus size={12} />
                               </button>
                             </div>
 
-                            {/* QTY + PRICE */}
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                              {/* QUANTITY */}
-                              <div className="flex items-center gap-3 border border-primary-border rounded-lg px-2 py-1 w-fit">
-                                <button
-                                  onClick={() => handleDecrease(item)}
-                                  className="p-1 hover:bg-gray-100 rounded"
-                                >
-                                  <Minus className="h-3 w-3" />
-                                </button>
-
-                                <span className="w-8 text-center font-medium">
-                                  {item.quantity}
-                                </span>
-
-                                <button
-                                  onClick={() => handleIncrease(item)}
-                                  className="p-1 hover:bg-gray-100 rounded"
-                                >
-                                  <Plus className="h-3 w-3" />
-                                </button>
-                              </div>
-
-                              {/* PRICE */}
-                              <div className="text-left sm:text-right">
-                                {item.product.max_price && (
-                                  <p className="text-xs text-gray-400 line-through">
-                                    ₹{item.product.max_price * item.quantity}
-                                  </p>
-                                )}
-
-                                <p className="text-lg font-semibold text-primary">
-                                  ₹{item.product.price * item.quantity}
+                            {/* Price */}
+                            <div className="text-right">
+                              <p className="text-sm font-semibold text-foreground">
+                                ₹{item.product.price * item.quantity}
+                              </p>
+                              {item.product.max_price && (
+                                <p className="text-[11px] text-muted-foreground line-through">
+                                  ₹{item.product.max_price * item.quantity}
                                 </p>
-
-                                {item.product.max_price && (
-                                  <p className="text-xs text-green-600 font-medium">
-                                    Save ₹
-                                    {(item.product.max_price -
-                                      item.product.price) *
-                                      item.quantity}
-                                  </p>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* ORDER SUMMARY */}
-                <div className="lg:col-span-1">
-                  <div className="border border-primary-border rounded-xl shadow p-6 sticky top-4 bg-white">
-                    <h2 className="text-xl font-semibold mb-4">
-                      Order Summary
-                    </h2>
-
-                    <div className="space-y-3 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">MRP Total</span>
-                        <span className="line-through">₹{mrpSubtotal}</span>
-                      </div>
-
-                      <div className="flex justify-between text-green-600">
-                        <span>Discount</span>
-                        <span>-₹{discountTotal}</span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Shipping</span>
-                        <span>
-                          {shipping === 0 ? (
-                            <span className="text-green-600">Free</span>
-                          ) : (
-                            `₹${shipping}`
-                          )}
-                        </span>
-                      </div>
-
-                      <div className="border-t border-primary-border pt-3 flex justify-between text-lg font-bold">
-                        <span>Total</span>
-                        <span className="text-primary">₹{total}</span>
-                      </div>
                     </div>
+                  );
+                })}
+              </div>
 
-                    <button
-                      className="w-full mt-4 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 flex items-center justify-center gap-2 cursor-pointer"
-                      onClick={() => router.push("/checkout")}
-                    >
-                      Proceed to Checkout
-                      <ArrowRight className="h-4 w-4" />
-                    </button>
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-2xl border border-gray-100 p-5 sticky top-24">
+                  <h2 className="text-base font-semibold mb-4">Order Summary</h2>
 
-                    <Link href="/products">
-                      <button className="w-full mt-3 px-6 py-3 border border-primary-border rounded-lg hover:bg-gray-100 cursor-pointer">
-                        Continue Shopping
-                      </button>
-                    </Link>
+                  <div className="space-y-2.5 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">MRP Total</span>
+                      <span className="line-through text-muted-foreground">₹{mrpSubtotal}</span>
+                    </div>
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>Discount</span>
+                      <span>-₹{discountTotal}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span>
+                        {shipping === 0 ? (
+                          <span className="text-green-600 font-medium">Free</span>
+                        ) : (
+                          `₹${shipping}`
+                        )}
+                      </span>
+                    </div>
+                    <div className="border-t border-gray-100 pt-2.5 flex justify-between text-base font-bold">
+                      <span>Total</span>
+                      <span className="text-foreground">₹{total}</span>
+                    </div>
                   </div>
+
+                  {discountTotal > 0 && (
+                    <p className="text-xs text-green-700 font-semibold bg-green-50 rounded-lg px-2.5 py-1.5 mt-2">
+                      🎉 You save ₹{discountTotal}
+                    </p>
+                  )}
+
+                  <button
+                    className="w-full mt-4 flex items-center justify-center gap-2 py-2.5 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition cursor-pointer"
+                    onClick={() => router.push("/checkout")}
+                  >
+                    Proceed to Checkout
+                    <ArrowRight size={15} />
+                  </button>
+
+                  <Link href="/products">
+                    <button className="w-full mt-2 py-2.5 border border-gray-200 text-sm font-medium rounded-xl hover:bg-gray-50 transition cursor-pointer">
+                      Continue Shopping
+                    </button>
+                  </Link>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </main>
       </div>
     </PrivateRoute>

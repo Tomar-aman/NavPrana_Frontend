@@ -46,8 +46,6 @@ const Page = () => {
 
   const totalPages = Math.ceil((orderList?.count || 0) / 10);
 
-  /* ---------------- HELPERS ---------------- */
-
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -56,14 +54,13 @@ const Page = () => {
     });
 
   const statusStyle = {
-    Processing: "bg-yellow-100 text-yellow-700",
-    Delivered: "bg-green-100 text-green-700",
-    Shipped: "bg-blue-100 text-blue-700",
-    Cancelled: "bg-red-100 text-red-700",
-    Pending: "bg-gray-100 text-gray-700",
-    // ✅ NEW
-    Accepted: "bg-emerald-100 text-emerald-700",
-    Failed: "bg-red-100 text-red-700",
+    Processing: "bg-yellow-50 text-yellow-700 border-yellow-200",
+    Delivered: "bg-green-50 text-green-700 border-green-200",
+    Shipped: "bg-blue-50 text-blue-700 border-blue-200",
+    Cancelled: "bg-red-50 text-red-700 border-red-200",
+    Pending: "bg-gray-50 text-gray-700 border-gray-200",
+    Accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    Failed: "bg-red-50 text-red-700 border-red-200",
   };
 
   const statusIcon = {
@@ -72,7 +69,6 @@ const Page = () => {
     Shipped: Truck,
     Cancelled: XCircle,
     Pending: RefreshCw,
-    // ✅ NEW
     Accepted: ShieldCheck,
     Failed: AlertTriangle,
   };
@@ -90,8 +86,6 @@ const Page = () => {
   const currentStatus =
     statusOptions.find((s) => s.value === statusFilter) || statusOptions[0];
 
-  /* ---------------- FILTER ---------------- */
-
   const filteredOrders = orders.filter((order) => {
     const matchesSearch = order.id.toString().includes(searchQuery);
     const matchesStatus =
@@ -101,88 +95,71 @@ const Page = () => {
 
   const getPagination = (current, total) => {
     const pages = [];
-
-    // If pages are small, show all
     if (total <= 6) {
       for (let i = 1; i <= total; i++) pages.push(i);
       return pages;
     }
-
-    // Always show first page
     pages.push(1);
-
-    // Left dots
     if (current > 3) pages.push("...");
-
-    // Middle pages (current -1, current, current +1)
     const start = Math.max(2, current - 1);
     const end = Math.min(total - 2, current + 1);
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    // Right dots
+    for (let i = start; i <= end; i++) pages.push(i);
     if (current < total - 3) pages.push("...");
-
-    // Always show second last & last
     pages.push(total - 1);
     pages.push(total);
-
     return [...new Set(pages)];
   };
 
   return (
     <PrivateRoute>
-      <div className="min-h-screen bg-gray-50 px-4 py-30">
+      <div className="min-h-screen bg-background px-4 py-24">
         <div className="max-w-5xl mx-auto">
-          {/* HEADER */}
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Package className="text-primary" />
-              My Orders
-            </h1>
-
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-xs font-semibold text-primary uppercase tracking-wider mb-2">
+                <Package size={14} />
+                My Orders
+              </div>
+              <h1 className="text-2xl md:text-3xl font-bold">
+                Order History
+              </h1>
+            </div>
             <Link
               href="/products"
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg"
+              className="inline-flex items-center gap-2 bg-primary text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-primary/90 transition"
             >
-              <ShoppingBag size={16} />
+              <ShoppingBag size={15} />
               Continue Shopping
             </Link>
           </div>
 
-          {/* FILTERS */}
-          <div className="bg-white p-4 rounded-lg border border-primary-border mb-6 flex gap-4">
-            {/* SEARCH */}
+          {/* Filters */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-3 mb-5 flex gap-3">
             <div className="relative flex-1">
-              <Search
-                className="absolute left-3 top-3 text-gray-400"
-                size={16}
-              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={15} />
               <input
-                className="w-full pl-10 border border-primary-border rounded px-3 py-2"
+                className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition"
                 placeholder="Search by order ID"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            {/* STATUS FILTER */}
-            <div className="relative w-48">
+            <div className="relative w-44">
               <button
                 onClick={() => setOpen((p) => !p)}
-                className="w-full border border-primary-border rounded px-3 py-2 bg-white flex items-center justify-between"
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 bg-white flex items-center justify-between text-sm cursor-pointer"
               >
                 <span className="flex items-center gap-2">
-                  <currentStatus.icon size={16} />
+                  <currentStatus.icon size={14} />
                   {currentStatus.label}
                 </span>
-                <ChevronDown size={16} />
+                <ChevronDown size={14} />
               </button>
 
               {open && (
-                <div className="absolute z-10 mt-1 w-full bg-white border border-primary-border rounded shadow cursor-pointer">
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
                   {statusOptions.map((option) => (
                     <button
                       key={option.value}
@@ -190,9 +167,9 @@ const Page = () => {
                         setStatusFilter(option.value);
                         setOpen(false);
                       }}
-                      className="w-full px-3 py-2 flex items-center gap-2 hover:bg-primary hover:text-white cursor-pointer text-left"
+                      className="w-full px-3 py-2 flex items-center gap-2 text-sm hover:bg-primary hover:text-white cursor-pointer text-left transition"
                     >
-                      <option.icon size={16} />
+                      <option.icon size={14} />
                       {option.label}
                     </button>
                   ))}
@@ -201,169 +178,172 @@ const Page = () => {
             </div>
           </div>
 
-          {/* ORDERS */}
+          {/* Orders */}
           {fetchLoading ? (
-            <p className="text-center text-gray-500">Loading orders...</p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center">
+              <p className="text-sm text-muted-foreground">Loading orders...</p>
+            </div>
           ) : filteredOrders.length === 0 ? (
-            <p className="text-center text-gray-500">No orders found</p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center">
+              <div className="mx-auto w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-3">
+                <Package className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium mb-1">No orders found</p>
+              <p className="text-xs text-muted-foreground">
+                Try adjusting your filters or search query
+              </p>
+            </div>
           ) : (
-            filteredOrders.map((order) => {
-              const Icon = statusIcon[order.status_display];
+            <div className="space-y-3">
+              {filteredOrders.map((order) => {
+                const Icon = statusIcon[order.status_display];
 
-              return (
-                <div
-                  key={order.id}
-                  className="bg-white border border-primary-border rounded-xl p-5 mb-4"
-                >
-                  {/* TOP ROW */}
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="font-bold text-primary">
-                        ORD - {order.id}
-                      </span>
-
-                      <span
-                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${statusStyle[order.status_display]
-                          }`}
-                      >
-                        {Icon && <Icon size={12} />}
-                        {order.status_display}
-                      </span>
+                return (
+                  <div
+                    key={order.id}
+                    className="bg-white rounded-2xl border border-gray-100 p-4 hover:border-gray-200 transition"
+                  >
+                    {/* Top Row */}
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-sm font-bold text-primary">
+                          ORD - {order.id}
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md border ${statusStyle[order.status_display] || "bg-gray-50 text-gray-700 border-gray-200"
+                            }`}
+                        >
+                          {Icon && <Icon size={10} />}
+                          {order.status_display}
+                        </span>
+                      </div>
+                      <p className="text-sm font-bold text-foreground">
+                        ₹{order.final_amount}
+                      </p>
                     </div>
 
-                    {/* TOTAL PRICE */}
-                    <p className="font-bold text-lg text-primary">
-                      ₹{order.final_amount}
+                    {/* Date */}
+                    <p className="text-[11px] text-muted-foreground flex items-center gap-1 mb-3">
+                      <Calendar size={11} />
+                      Ordered on {formatDate(order.created_at)}
                     </p>
-                  </div>
 
-                  {/* DATE */}
-                  <p className="text-sm text-gray-500 flex items-center gap-1 mb-3">
-                    <Calendar size={14} />
-                    Ordered on {formatDate(order.created_at)}
-                  </p>
-
-                  {/* PRODUCT INFO + VIEW */}
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={order.first_product_image}
-                        alt="Product"
-                        className="w-12 h-12 rounded object-cover"
-                      />
-
-                      <div>
-                        <p className="text-sm font-medium text-gray-800">
-                          {order.first_product_name ||
-                            order.items?.[0]?.product?.name ||
-                            "Product"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {order.items_count} item(s)
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* VIEW DETAILS */}
-                    <Link
-                      href={`/order-details/${order.id}`}
-                      className="flex items-center gap-1 text-sm border px-3 py-1.5 rounded-lg hover:bg-gray-50 border-primary-border"
-                    >
-                      <Eye size={14} />
-                      View Details
-                      <ArrowRight size={14} />
-                    </Link>
-                  </div>
-
-                  {/* DELIVERED SUCCESS + REVIEW */}
-                  {order.status_display === "Delivered" && (
-                    <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-green-50 border border-green-200 rounded-lg p-3">
-                      <div className="flex items-center gap-2 text-green-700 text-sm font-medium">
-                        <CheckCircle2 size={18} />
-                        Order delivered successfully
+                    {/* Product + View */}
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2.5">
+                        <img
+                          src={order.first_product_image}
+                          alt="Product"
+                          className="w-10 h-10 rounded-lg object-cover"
+                        />
+                        <div>
+                          <p className="text-xs font-medium text-foreground">
+                            {order.first_product_name ||
+                              order.items?.[0]?.product?.name ||
+                              "Product"}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {order.items_count} item(s)
+                          </p>
+                        </div>
                       </div>
 
-                      <button
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition"
-                        onClick={() => {
-                          setReviewData({
-                            orderId: order.id,
-                            productId: order.items?.[0]?.product?.id || order.items?.[0]?.product_id || order.id,
-                            productName: order.first_product_name || order.items?.[0]?.product?.name || "Product",
-                            productImage: order.first_product_image,
-                          });
-                          setShowReviewModal(true);
-                        }}
+                      <Link
+                        href={`/order-details/${order.id}`}
+                        className="flex items-center gap-1 text-xs font-medium border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition"
                       >
-                        ✍️ Write Review
-                      </button>
+                        <Eye size={12} />
+                        View
+                        <ArrowRight size={12} />
+                      </Link>
                     </div>
-                  )}
-                </div>
-              );
-            })
+
+                    {/* Delivered + Review */}
+                    {order.status_display === "Delivered" && (
+                      <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-green-50 border border-green-100 rounded-xl p-3">
+                        <div className="flex items-center gap-1.5 text-green-700 text-xs font-medium">
+                          <CheckCircle2 size={14} />
+                          Order delivered successfully
+                        </div>
+                        <button
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition cursor-pointer"
+                          onClick={() => {
+                            setReviewData({
+                              orderId: order.id,
+                              productId: order.items?.[0]?.product?.id || order.items?.[0]?.product_id || order.id,
+                              productName: order.first_product_name || order.items?.[0]?.product?.name || "Product",
+                              productImage: order.first_product_image,
+                            });
+                            setShowReviewModal(true);
+                          }}
+                        >
+                          ✍️ Write Review
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-1.5 mt-8 flex-wrap">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+              >
+                ←
+              </button>
+
+              {getPagination(currentPage, totalPages).map((page, index) =>
+                page === "..." ? (
+                  <span
+                    key={`dots-${index}`}
+                    className="px-2 py-1.5 text-xs text-muted-foreground"
+                  >
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition ${currentPage === page
+                        ? "bg-primary text-white border-primary"
+                        : "border-gray-200 hover:bg-gray-50"
+                      }`}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+              >
+                →
+              </button>
+            </div>
+          )}
+
+          {reviewData && (
+            <AddReviewModal
+              isOpen={showReviewModal}
+              onClose={() => {
+                setShowReviewModal(false);
+                setReviewData(null);
+              }}
+              orderId={reviewData.orderId}
+              productId={reviewData.productId}
+              productName={reviewData.productName}
+              productImage={reviewData.productImage}
+            />
           )}
         </div>
-        {/* PAGINATION */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
-            {/* Previous */}
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="px-3 py-2 border border-primary-border rounded-lg disabled:opacity-40"
-            >
-              ←
-            </button>
-
-            {/* Page Numbers */}
-            {getPagination(currentPage, totalPages).map((page, index) =>
-              page === "..." ? (
-                <span
-                  key={`dots-${index}`}
-                  className="px-3 py-2 text-gray-500 select-none"
-                >
-                  …
-                </span>
-              ) : (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-4 py-2 rounded-lg border border-primary-border text-sm font-medium transition
-            ${currentPage === page
-                      ? "bg-primary text-white border-primary"
-                      : "hover:bg-gray-100"
-                    }`}
-                >
-                  {page}
-                </button>
-              ),
-            )}
-
-            {/* Next */}
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="px-3 py-2 border border-primary-border rounded-lg disabled:opacity-40"
-            >
-              →
-            </button>
-          </div>
-        )}
-
-        {reviewData && (
-          <AddReviewModal
-            isOpen={showReviewModal}
-            onClose={() => {
-              setShowReviewModal(false);
-              setReviewData(null);
-            }}
-            orderId={reviewData.orderId}
-            productId={reviewData.productId}
-            productName={reviewData.productName}
-            productImage={reviewData.productImage}
-          />
-        )}
       </div>
     </PrivateRoute>
   );
