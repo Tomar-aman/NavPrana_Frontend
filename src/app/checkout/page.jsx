@@ -214,7 +214,7 @@ const Page = () => {
   return (
     <PrivateRoute>
 
-      <div className="min-h-screen bg-background py-20 px-4">
+      <div className="min-h-screen bg-background pt-28 pb-20 px-4">
         {/* Confetti */}
         {showConfetti && (
           <div className="fixed inset-0 pointer-events-none z-50">
@@ -238,8 +238,8 @@ const Page = () => {
 
         <div className="max-w-5xl mx-auto">
           {/* Back */}
-          <Link href="/cart" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition mb-5">
-            <ArrowLeft size={15} /> Back to Cart
+          <Link href="/cart" className="inline-flex items-center gap-2 text-sm font-medium text-foreground bg-white border border-gray-200 px-4 py-2 rounded-xl hover:bg-gray-50 transition mb-5">
+            <ArrowLeft size={16} /> Back to Cart
           </Link>
 
           <h1 className="text-2xl md:text-3xl font-bold mb-6">Checkout</h1>
@@ -367,29 +367,39 @@ const Page = () => {
               <h2 className="text-base font-semibold mb-4">Order Summary</h2>
 
               {/* Cart Items */}
-              <div className="space-y-3 max-h-36 overflow-auto">
+              <div className="space-y-3 max-h-48 overflow-auto">
                 {mergedCartItems.map((item) => {
                   if (!item.product) return null;
                   const mrp = Number(item.product.max_price || item.product.price);
                   const price = Number(item.product.price);
-                  const save = (mrp - price) * item.quantity;
+                  const hasDiscount = mrp > price;
 
                   return (
-                    <div key={item.id} className="flex gap-3 pb-3 border-b border-gray-100 last:border-0">
-                      <Image
-                        src={item.product.images?.[0]?.image || "/placeholder.png"}
-                        width={48}
-                        height={48}
-                        className="rounded-lg object-cover"
-                        alt=""
-                      />
+                    <div key={item.id} className="flex gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                      <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-50 shrink-0">
+                        <Image
+                          src={item.product.images?.[0]?.image || "/placeholder.png"}
+                          fill
+                          className="object-cover"
+                          alt=""
+                        />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium truncate">{item.product.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {item.quantity} × ₹{price}
-                        </p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-xs font-semibold">₹{price}</span>
+                          {hasDiscount && (
+                            <>
+                              <span className="text-[10px] text-muted-foreground line-through">₹{mrp}</span>
+                              <span className="text-[10px] font-semibold text-green-600">
+                                {parseInt(item.product.discount_precent)}% off
+                              </span>
+                            </>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">Qty: {item.quantity}</p>
                       </div>
-                      <p className="text-xs font-semibold shrink-0">₹{price * item.quantity}</p>
+                      <p className="text-xs font-bold shrink-0 self-center">₹{price * item.quantity}</p>
                     </div>
                   );
                 })}
