@@ -1,24 +1,27 @@
 ﻿"use client";
 
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import PrivateRoute from "../../../components/PrivateRoute";
-import NavPranaLoader from "../../../components/NavPranaLoader";
+import { hideLoader } from "@/redux/features/uiSlice";
 
 const PaymentPage = () => {
   const { orderData } = useSelector((state) => state.order);
   const router = useRouter();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     // If no payment session exists (user pressed back / refreshed), redirect away
     const timeout = setTimeout(() => {
       if (!orderData?.payment_session_id) {
+        dispatch(hideLoader());
         router.replace("/checkout");
       }
-    }, 1500); // small delay to let Redux state hydrate
+    }, 1500);
 
     return () => clearTimeout(timeout);
-  }, [orderData, router]);
+  }, [orderData, router, dispatch]);
 
   useEffect(() => {
     if (!orderData?.payment_session_id) return;
@@ -42,6 +45,9 @@ const PaymentPage = () => {
         mode: process.env.NEXT_PUBLIC_CASHFREE_MODE || "sandbox",
       });
 
+      // Hide global loader right before Cashfree UI opens
+      dispatch(hideLoader());
+
       cashfree.checkout({
         paymentSessionId: orderData.payment_session_id,
 
@@ -56,11 +62,11 @@ const PaymentPage = () => {
     return () => {
       document.body.removeChild(script);
     };
-  }, [orderData, router]);
+  }, [orderData, router, dispatch]);
 
   return (
     <PrivateRoute>
-      <NavPranaLoader />
+      <div className="min-h-screen" />
     </PrivateRoute>
   );
 };

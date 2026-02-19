@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import PrivateRoute from "../../../components/PrivateRoute";
+import { showLoader } from "@/redux/features/uiSlice";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -48,6 +49,7 @@ const Page = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editAddressData, setEditAddressData] = useState(null);
+
 
   const [formData, setFormData] = useState({
     address_line1: "",
@@ -135,9 +137,11 @@ const Page = () => {
     };
 
     try {
+      dispatch(showLoader());
       await dispatch(createOrder(payload)).unwrap();
       router.push("/payment");
     } catch (err) {
+      dispatch({ type: "ui/hideLoader" });
       toast.error(err?.error || err?.message || "Order creation failed. Please try again.");
     }
   };
@@ -209,6 +213,7 @@ const Page = () => {
 
   return (
     <PrivateRoute>
+
       <div className="min-h-screen bg-background py-20 px-4">
         {/* Confetti */}
         {showConfetti && (
