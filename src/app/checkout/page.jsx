@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import AddressModal from "../../../components/AddressModal";
 import { sendAddress } from "@/services/profile/post-profile";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const Page = () => {
   const dispatch = useDispatch();

@@ -43,24 +43,27 @@ export async function generateMetadata({ params }) {
     `${SITE_URL}/opengraph-image`;
 
   return {
-    title: `${product.name} — Buy Pure Desi Ghee Online`,
+    title: `${product.name} — ₹${product.price} | Buy Pure Desi Ghee Online`,
     description:
       product.description ||
       product.details ||
-      `Buy ${product.name} from NavPrana Organics. 100% pure, traditional Bilona method desi ghee. Free shipping available.`,
+      `Buy ${product.name} at ₹${product.price} from NavPrana Organics. 100% pure, traditional Bilona method desi ghee. FSSAI certified, free shipping above ₹999.`,
     keywords: [
       product.name,
       "desi ghee",
       "organic ghee",
       "bilona ghee",
-      "NavPrana",
+      "pure ghee price",
       "buy ghee online",
+      "NavPrana",
+      "ghee review",
+      "best desi ghee",
     ],
     openGraph: {
-      title: `${product.name} | NavPrana Organics`,
+      title: `${product.name} — ₹${product.price} | NavPrana Organics`,
       description:
         product.details ||
-        `Buy ${product.name} — 100% pure organic desi ghee from NavPrana Organics.`,
+        `Buy ${product.name} at ₹${product.price}. 100% pure organic Bilona desi ghee. Free shipping above ₹999.`,
       url: `/product-details/${slug}`,
       images: [
         {
@@ -70,14 +73,14 @@ export async function generateMetadata({ params }) {
           alt: product.name,
         },
       ],
-      type: "website",
+      type: "product",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} | NavPrana Organics`,
+      title: `${product.name} — ₹${product.price} | NavPrana Organics`,
       description:
         product.details ||
-        `Buy ${product.name} — pure organic desi ghee from NavPrana.`,
+        `Buy ${product.name} — pure organic desi ghee. FSSAI certified.`,
       images: [featuredImage],
     },
     alternates: {
@@ -109,29 +112,88 @@ function ProductJsonLd({ product, slug }) {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "INR",
-      availability: "https://schema.org/InStock",
+      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${SITE_URL}/product-details/${slug}`,
+      priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       seller: {
         "@type": "Organization",
         name: "NavPrana Organics",
       },
     },
+    category: "Food & Beverages > Dairy > Ghee",
+    sku: `NP-${product.id}`,
+    mpn: `NP-${product.id}`,
+    itemCondition: "https://schema.org/NewCondition",
   };
+
+  if (product.max_price && Number(product.max_price) > Number(product.price)) {
+    jsonLd.offers.highPrice = product.max_price;
+  }
 
   if (product.average_rating) {
     jsonLd.aggregateRating = {
       "@type": "AggregateRating",
       ratingValue: product.average_rating,
       bestRating: "5",
+      worstRating: "1",
       reviewCount: product.reviews?.length || 1,
     };
   }
 
+  // Add individual reviews if available
+  if (product.reviews?.length > 0) {
+    jsonLd.review = product.reviews.slice(0, 5).map((r) => ({
+      "@type": "Review",
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating,
+        bestRating: "5",
+      },
+      author: {
+        "@type": "Person",
+        name: r.user_name || "Verified Buyer",
+      },
+      reviewBody: r.comment || "",
+    }));
+  }
+
+  // BreadcrumbList schema
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Products",
+        item: `${SITE_URL}/products`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.name,
+        item: `${SITE_URL}/product-details/${slug}`,
+      },
+    ],
+  };
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+    </>
   );
 }
 

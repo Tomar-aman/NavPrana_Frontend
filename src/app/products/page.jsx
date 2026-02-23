@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const getFeaturedImage = (images = []) => {

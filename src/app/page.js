@@ -4,13 +4,13 @@ import Products from "../../components/Products";
 import Testimonials from "../../components/Testimonials";
 
 export const metadata = {
-  title: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
+  title: "Buy Pure Desi Ghee Online — 100% Organic Bilona Ghee | NavPrana Organics",
   description:
-    "NavPrana Organics brings you 100% pure, traditional Bilona method desi ghee sourced from the Chambal valley of Madhya Pradesh. Shop premium organic buffalo ghee online — farm-fresh, no preservatives.",
+    "Shop 100% pure organic desi ghee from NavPrana Organics starting at ₹1119. Traditional Bilona method, farm-fresh from Chambal valley, Madhya Pradesh. FSSAI certified, zero additives. Free shipping above ₹999. India's trusted organic food brand.",
   openGraph: {
-    title: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
+    title: "Buy Pure Desi Ghee Online — NavPrana Organics | Organic Bilona Ghee",
     description:
-      "Shop 100% pure organic desi ghee from NavPrana Organics. Traditional Bilona method, farm-fresh from Chambal valley.",
+      "100% pure organic Bilona desi ghee starting at ₹1119. Farm-fresh from Chambal valley. FSSAI certified, free shipping above ₹999.",
     url: "/",
   },
   alternates: {

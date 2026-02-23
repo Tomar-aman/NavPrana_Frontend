@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { generateSlug } from "@/utils/slug";
 import Link from "next/link";

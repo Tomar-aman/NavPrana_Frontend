@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import { ProfileProvider } from "@/Context/ProfileContext";
 import ReduxProvider from "@/redux/provider";
 import Header from "../../components/Header";
@@ -29,32 +29,43 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
+    default: "Buy Pure Desi Ghee Online — NavPrana Organics | 100% Organic Bilona Ghee India",
     template: "%s | NavPrana Organics",
   },
   description:
-    "NavPrana Organics brings you 100% pure, traditional Bilona method desi ghee sourced from the pristine Chambal valley of Madhya Pradesh. Buy premium organic buffalo ghee online — no preservatives, no additives, farm-fresh to your doorstep.",
+    "Buy 100% pure organic desi ghee online from NavPrana Organics. Traditional Bilona method buffalo ghee from Chambal valley, Madhya Pradesh. No preservatives, no additives. Free shipping on orders above ₹999. FSSAI certified, farm-fresh to your doorstep.",
   keywords: [
     "NavPrana",
     "NavPrana Organics",
     "navprana",
     "desi ghee",
+    "pure desi ghee",
     "organic ghee",
     "bilona ghee",
-    "pure ghee",
+    "pure ghee online",
+    "buy ghee online",
+    "ghee price",
+    "best ghee in India",
     "buffalo ghee",
     "desi ghee online",
-    "buy ghee online",
+    "A2 ghee",
+    "ghee for cooking",
+    "ghee for babies",
+    "ghee 1 litre price",
+    "ghee 500ml price",
     "traditional ghee",
     "Chambal ghee",
     "farm fresh ghee",
-    "A2 ghee",
-    "natural ghee India",
-    "ghee Madhya Pradesh",
     "organic food India",
     "pure buffalo ghee",
     "ghee buy online India",
     "NavPrana ghee",
+    "natural ghee India",
+    "ghee Madhya Pradesh",
+    "best organic ghee brand",
+    "pure ghee for health",
+    "chemical free ghee",
+    "organic food online India",
   ],
   authors: [{ name: "NavPrana Organics" }],
   creator: "NavPrana Organics",
@@ -75,15 +86,15 @@ export const metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "NavPrana Organics",
-    title: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
+    title: "Buy Pure Desi Ghee Online — NavPrana Organics | Organic Bilona Ghee",
     description:
-      "100% pure, traditional Bilona method desi ghee from the Chambal valley. No preservatives, no additives. Farm-fresh organic ghee delivered to your doorstep.",
+      "100% pure organic Bilona desi ghee from Chambal valley. No preservatives, no additives. FSSAI certified. Free shipping above ₹999.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NavPrana Organics — Pure Desi Ghee | Buy Organic Bilona Ghee Online",
+    title: "Buy Pure Desi Ghee Online — NavPrana Organics | Organic Bilona Ghee",
     description:
-      "100% pure, traditional Bilona method desi ghee from the Chambal valley. Farm-fresh organic ghee delivered to your doorstep.",
+      "100% pure organic Bilona desi ghee from Chambal valley. FSSAI certified. Free shipping above ₹999.",
   },
   icons: {
     icon: "/favicon.ico",
@@ -103,7 +114,8 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/opengraph-image`,
   description:
-    "NavPrana Organics is a clean food company bringing pure, traditional Bilona method desi ghee from the Chambal valley of Madhya Pradesh.",
+    "NavPrana Organics is an organic and pure food company bringing traditionally prepared, chemical-free food products to Indian households. Our first product is pure Bilona method desi ghee from the Chambal valley of Madhya Pradesh.",
+  foundingDate: "2025",
   address: {
     "@type": "PostalAddress",
     streetAddress: "L-232, Old H.B Colony",
@@ -124,13 +136,46 @@ const organizationJsonLd = {
   ],
 };
 
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE_URL}/#localbusiness`,
+  name: "NavPrana Organics",
+  image: `${SITE_URL}/opengraph-image`,
+  url: SITE_URL,
+  telephone: "+91-7509531811",
+  email: "support@navprana.com",
+  description:
+    "Buy pure organic desi ghee and natural food products online. Traditional Bilona method, FSSAI certified, free shipping across India.",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "L-232, Old H.B Colony",
+    addressLocality: "Morena",
+    addressRegion: "Madhya Pradesh",
+    postalCode: "476001",
+    addressCountry: "IN",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 26.5,
+    longitude: 78.0,
+  },
+  priceRange: "₹₹",
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    opens: "00:00",
+    closes: "23:59",
+  },
+};
+
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "NavPrana Organics",
   url: SITE_URL,
   description:
-    "Buy pure organic desi ghee online from NavPrana Organics. Traditional Bilona method, farm-fresh from Chambal valley.",
+    "Buy pure organic desi ghee and natural food products online from NavPrana Organics. Traditional Bilona method, farm-fresh from Chambal valley.",
   potentialAction: {
     "@type": "SearchAction",
     target: `${SITE_URL}/products?q={search_term_string}`,
@@ -146,6 +191,12 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessJsonLd),
           }}
         />
         <script
@@ -168,15 +219,19 @@ export default function RootLayout({ children }) {
               {children}
 
               {/* 🔔 Global Toast Notifications */}
-              <ToastContainer
+              <Toaster
                 position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick
-                pauseOnHover
-                draggable
-                theme="light"
+                toastOptions={{
+                  duration: 3000,
+                  style: {
+                    borderRadius: "12px",
+                    padding: "14px 16px",
+                    fontSize: "14px",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+                  },
+                }}
+                richColors
+                closeButton
               />
               <Footer />
               </ErrorBoundary>

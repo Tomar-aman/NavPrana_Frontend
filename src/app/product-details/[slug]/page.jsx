@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { findProductBySlug } from "@/utils/slug";
 import NavPranaLoader from "../../../../components/NavPranaLoader";
 import StickyCartBar from "../../../../components/StickyCartBar";
@@ -128,8 +128,8 @@ const Page = () => {
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={`relative aspect-square rounded-xl overflow-hidden border-2 transition ${selectedImage === i
-                      ? "border-primary ring-2 ring-primary/30"
-                      : "border-gray-200 hover:border-gray-300"
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-gray-200 hover:border-gray-300"
                     }`}
                 >
                   <Image
@@ -283,8 +283,8 @@ const Page = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 text-xs font-medium rounded-lg transition ${activeTab === tab
-                    ? "bg-white text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 {tab.toUpperCase()}

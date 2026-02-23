@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import ResetPasswordModal from "./ResetPasswordModal";
 import Link from "next/link";

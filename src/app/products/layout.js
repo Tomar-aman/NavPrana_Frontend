@@ -1,21 +1,27 @@
 export const metadata = {
-  title: "Shop Pure Desi Ghee — Premium Organic Bilona Ghee",
+  title: "Buy Organic Ghee Online — Pure Bilona Desi Ghee Price List",
   description:
-    "Browse and buy NavPrana's premium collection of 100% pure desi ghee. Traditional Bilona method, no preservatives, no additives. Free shipping available across India.",
+    "Shop NavPrana's pure organic desi ghee collection. Bilona method buffalo ghee 500ml & 1 litre — starting at ₹1119. No preservatives, FSSAI certified. Free shipping above ₹999 across India.",
   keywords: [
     "buy desi ghee online",
-    "organic ghee shop",
+    "organic ghee price",
     "pure buffalo ghee",
     "bilona ghee buy",
-    "NavPrana products",
+    "ghee 1 litre price",
+    "ghee 500ml price",
     "ghee online India",
+    "best ghee brand India",
+    "NavPrana products",
+    "organic ghee shop",
     "premium desi ghee",
     "natural ghee price",
+    "ghee for cooking",
+    "chemical free ghee",
   ],
   openGraph: {
-    title: "Shop Premium Desi Ghee | NavPrana Organics",
+    title: "Shop Pure Desi Ghee Online | NavPrana Organics",
     description:
-      "Buy 100% pure, traditional Bilona method desi ghee online from NavPrana Organics. Free shipping across India.",
+      "Buy 100% pure organic Bilona desi ghee starting at ₹1119. FSSAI certified, free shipping above ₹999.",
     url: "/products",
   },
   alternates: {

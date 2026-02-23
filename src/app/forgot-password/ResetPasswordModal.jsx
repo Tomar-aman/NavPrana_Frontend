@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Lock, Eye, EyeOff } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const ResetPasswordModal = ({ isOpen, email, onClose, onSubmit }) => {
   const [password, setPassword] = useState("");

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { X, Camera, Loader2, User, Mail, Phone } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "@/redux/features/profileSlice";
 

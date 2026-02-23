@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import VerifyOtpModal from "./VerifyOtpModal";
 import LoginForm from "./LoginForm";
@@ -135,8 +135,8 @@ const Page = () => {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`relative py-2.5 text-sm font-medium rounded-lg transition-all cursor-pointer ${activeTab === tab
-                      ? "bg-white text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   {tab === "signin" ? "Sign In" : "Sign Up"}

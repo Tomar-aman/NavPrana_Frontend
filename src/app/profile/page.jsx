@@ -23,7 +23,7 @@ import SettingsTab from "../../../components/SettingsTab";
 import AddressModal from "../../../components/AddressModal";
 import ChangePasswordModal from "../../../components/ChangePasswordModal";
 import EditProfileModal from "../../../components/EditProfileModal";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteAddress,
@@ -355,8 +355,8 @@ const Page = () => {
                         key={addr.id}
                         onClick={() => setSelectedAddressId(addr.id)}
                         className={`relative rounded-xl border p-4 cursor-pointer transition group ${selectedAddressId === addr.id
-                            ? "border-primary bg-primary/5"
-                            : "border-gray-100 bg-gray-50 hover:border-gray-200"
+                          ? "border-primary bg-primary/5"
+                          : "border-gray-100 bg-gray-50 hover:border-gray-200"
                           }`}
                       >
                         {/* Actions */}

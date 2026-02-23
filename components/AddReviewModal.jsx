@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Star, X, Upload, ImagePlus, Video, Loader2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { addReview } from "@/redux/features/reviewSlice";
 
@@ -167,8 +167,8 @@ const AddReviewModal = ({
                 >
                   <Star
                     className={`w-7 h-7 transition-colors ${activeRating >= star
-                        ? "fill-amber-400 text-amber-400"
-                        : "text-gray-200"
+                      ? "fill-amber-400 text-amber-400"
+                      : "text-gray-200"
                       }`}
                   />
                 </button>

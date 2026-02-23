@@ -3,12 +3,11 @@
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import { sendContactQuery } from "@/services/contact/send-query";
-import { getContactFaqs } from "@/services/contact/get-faqs";
+
 import { getContactInfo } from "@/services/contact/get-contact-info";
 import { useDispatch } from "react-redux";
 import { showLoader, hideLoader } from "@/redux/features/uiSlice";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "sonner";
 import contactUsImage from "@/assets/contact_us.png";
 import Image from "next/image";
 
@@ -24,7 +23,7 @@ const Page = () => {
   });
   const [submitStatus, setSubmitStatus] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [faqs, setFaqs] = useState([]);
+
   const [contactInfo, setContactInfo] = useState({
     phone_numbers: [],
     emails: [],
@@ -32,14 +31,7 @@ const Page = () => {
   });
 
   useEffect(() => {
-    const fetchFaqs = async () => {
-      try {
-        const data = await getContactFaqs();
-        setFaqs(data);
-      } catch (err) {
-        toast.error("Failed to load FAQs");
-      }
-    };
+
     const fetchContactInfo = async () => {
       try {
         const data = await getContactInfo();
@@ -49,7 +41,7 @@ const Page = () => {
       }
     };
 
-    fetchFaqs();
+
     fetchContactInfo();
   }, []);
 
@@ -308,34 +300,7 @@ const Page = () => {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8">
-          <h3 className="text-xl font-bold text-center mb-6">
-            Frequently Asked Questions
-          </h3>
 
-          {faqs.length === 0 ? (
-            <div className="text-center text-muted-foreground text-sm">
-              No FAQs available.
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              {faqs.map((faq) => (
-                <div
-                  key={faq.id}
-                  className="p-4 bg-gray-50 rounded-xl"
-                >
-                  <h4 className="text-sm font-semibold text-foreground mb-1.5">
-                    {faq.question}
-                  </h4>
-                  <p className="text-xs text-muted-foreground whitespace-pre-line leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
       </main>
     </div>
   );

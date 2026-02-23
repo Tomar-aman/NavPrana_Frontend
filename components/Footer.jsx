@@ -15,6 +15,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getSocialMediaLinks } from "@/services/contact/get-social-media-links";
+import { toast } from "sonner";
+import { subscribeNewsletter } from "@/services/contact/subscribe";
 
 const SOCIAL_ICON_MAP = {
   facebook: Facebook,
@@ -25,6 +27,8 @@ const SOCIAL_ICON_MAP = {
 
 const Footer = () => {
   const [socialLinks, setSocialLinks] = useState([]);
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -39,6 +43,8 @@ const Footer = () => {
     { label: "Products", path: "/products" },
     { label: "About", path: "/about" },
     { label: "Contact", path: "/contact" },
+    { label: "Blog", path: "/blog" },
+    { label: "FAQ", path: "/faq" },
   ];
 
   const legalLinks = [
@@ -169,14 +175,49 @@ const Footer = () => {
             </p>
             <div className="space-y-2.5">
               <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="w-full pl-4 pr-12 py-3 rounded-xl bg-white/10 border border-white/10 text-sm text-white placeholder:text-white/40 outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition"
-                />
-                <button className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary flex items-center justify-center hover:bg-primary/90 transition cursor-pointer">
-                  <ArrowRight size={14} className="text-white" />
-                </button>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!subscribeEmail.trim()) {
+                      toast.error("Please enter your email address");
+                      return;
+                    }
+                    setSubscribing(true);
+                    try {
+                      await subscribeNewsletter(subscribeEmail.trim());
+                      toast.success("Subscribed successfully! 🎉");
+                      setSubscribeEmail("");
+                    } catch (err) {
+                      toast.error(
+                        err.response?.data?.email?.[0] ||
+                        err.response?.data?.message ||
+                        "Failed to subscribe. Please try again."
+                      );
+                    } finally {
+                      setSubscribing(false);
+                    }
+                  }}
+                  className="flex gap-2 max-w-sm mx-auto"
+                >
+                  <input
+                    type="email"
+                    placeholder="Your email address"
+                    className="w-full pl-4 pr-12 py-3 rounded-xl bg-white/10 border border-white/10 text-sm text-white placeholder:text-white/40 outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition"
+                    value={subscribeEmail}
+                    onChange={(e) => setSubscribeEmail(e.target.value)}
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribing}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary flex items-center justify-center hover:bg-primary/90 transition cursor-pointer disabled:opacity-50"
+                  >
+                    {subscribing ? (
+                      <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <ArrowRight size={14} className="text-white" />
+                    )}
+                  </button>
+                </form>
               </div>
               <p className="text-[11px] text-white/40">
                 We respect your privacy. Unsubscribe anytime.
