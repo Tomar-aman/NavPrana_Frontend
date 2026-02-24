@@ -67,10 +67,11 @@ export default async function sitemap() {
   ];
 
   // Fetch product pages dynamically
-  const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/";
+  const BASE_API = (process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/").replace(/\/+$/, "");
+  
   let productPages = [];
   try {
-    const res = await fetch(`${API_URL}api/v1/product/products/`, {
+    const res = await fetch(`${BASE_API}/api/v1/product/products/`, {
       next: { revalidate: 86400 },
       headers: { "Accept": "application/json" },
     });
@@ -102,7 +103,7 @@ export default async function sitemap() {
   // Fetch blog pages dynamically
   let blogPages = [];
   try {
-    const res = await fetch(`${API_URL}api/v1/blogs/`, {
+    const res = await fetch(`${BASE_API}/api/v1/blogs/`, {
       next: { revalidate: 86400 },
       headers: { "Accept": "application/json" },
     });
