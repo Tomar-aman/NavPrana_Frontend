@@ -1,20 +1,19 @@
 export const metadata = {
-  title: "FAQ — Frequently Asked Questions | NavPrana Organics",
+  title: "Frequently Asked Questions — Pure Desi Ghee & Organic Food",
   description:
-    "Find answers to common questions about NavPrana — our organic food products, pure desi ghee, health benefits, ordering, shipping, returns, and more.",
+    "Find answers to common questions about NavPrana Organics' pure desi ghee, traditional Bilona method, shipping, returns, and how to use organic products for better health.",
   keywords: [
-    "NavPrana FAQ",
-    "organic food questions",
-    "pure ghee FAQ",
-    "is organic food worth it",
-    "bilona ghee purity",
-    "NavPrana shipping",
-    "organic food India",
+    "FAQ",
+    "desi ghee questions",
+    "bilona ghee benefits",
+    "organic food shipping",
+    "NavPrana help",
+    "pure ghee purity",
   ],
   openGraph: {
     title: "FAQ | NavPrana Organics",
     description:
-      "Answers to frequently asked questions about NavPrana organic food products.",
+      "Everything you need to know about our pure, traditional organic products.",
     url: "/faq",
   },
   alternates: {

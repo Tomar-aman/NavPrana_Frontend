@@ -1,27 +1,18 @@
 export const metadata = {
-  title: "Buy Organic Ghee Online — Pure Bilona Desi Ghee Price List",
+  title: "Our Collection — Buy Pure Bilona Desi Ghee Online",
   description:
-    "Shop NavPrana's pure organic desi ghee collection. Bilona method buffalo ghee 500ml & 1 litre — starting at ₹1119. No preservatives, FSSAI certified. Free shipping above ₹999 across India.",
+    "Explore NavPrana's collection of 100% natural, premium desi ghee. Traditional Bilona method buffalo ghee starting from ₹1119. FSSAI certified, zero preservatives, free shipping.",
   keywords: [
-    "buy desi ghee online",
-    "organic ghee price",
-    "pure buffalo ghee",
-    "bilona ghee buy",
-    "ghee 1 litre price",
-    "ghee 500ml price",
-    "ghee online India",
-    "best ghee brand India",
+    "buy pure ghee",
+    "bilona ghee online",
+    "buffalo ghee price",
     "NavPrana products",
-    "organic ghee shop",
-    "premium desi ghee",
-    "natural ghee price",
-    "ghee for cooking",
-    "chemical free ghee",
+    "best ghee brands India",
+    "organic dairy products",
   ],
   openGraph: {
-    title: "Shop Pure Desi Ghee Online | NavPrana Organics",
-    description:
-      "Buy 100% pure organic Bilona desi ghee starting at ₹1119. FSSAI certified, free shipping above ₹999.",
+    title: "Our Collection | NavPrana Organics",
+    description: "Premium desi ghee crafted with love using traditional methods and the finest ingredients.",
     url: "/products",
   },
   alternates: {

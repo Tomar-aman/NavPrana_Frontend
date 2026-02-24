@@ -1,18 +1,17 @@
 export const metadata = {
-  title: "Contact Us — Get in Touch with NavPrana Organics",
+  title: "Contact NavPrana Organics — Support & Inquiries",
   description:
-    "Have questions about our organic ghee or need help with your order? Contact NavPrana Organics via phone, email, or our contact form. We're here to help!",
+    "Have questions about our pure desi ghee? Contact NavPrana Organics for support, bulk orders, or inquiries. We're here to help you on your health journey.",
   keywords: [
-    "NavPrana contact",
-    "NavPrana Organics phone",
-    "contact organic ghee seller",
+    "contact NavPrana",
     "NavPrana customer support",
-    "NavPrana email",
+    "buy ghee in bulk",
+    "organic food contact",
+    "NavPrana Morena office",
   ],
   openGraph: {
-    title: "Contact NavPrana Organics",
-    description:
-      "Reach out to NavPrana Organics for product inquiries, order support, or general questions. We respond within 24 hours.",
+    title: "Contact Us | NavPrana Organics",
+    description: "Get in touch with the NavPrana Team for help with your orders and inquiries.",
     url: "/contact",
   },
   alternates: {

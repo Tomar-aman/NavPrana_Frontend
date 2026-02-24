@@ -79,13 +79,14 @@ export default async function sitemap() {
       const products = data.results || data || [];
       productPages = products.map((product) => ({
         url: `${BASE_URL}/product-details/${generateSlug(product.name)}`,
-        lastModified: new Date(),
+        lastModified: new Date(product.updated_at || new Date()),
         changeFrequency: "weekly",
         priority: 0.8,
       }));
     }
-  } catch {
-    // Fallback: hardcode known product slugs if API is unreachable
+  } catch (error) {
+    console.error("Sitemap: Product fetch failed", error);
+    // Fallback: hardcode known product slugs
     const knownSlugs = [
       "navprana-organics-pure-desi-buffalo-bilona-ghee-500ml",
       "navprana-organics-pure-desi-buffalo-bilona-ghee-1-litre",
@@ -98,5 +99,25 @@ export default async function sitemap() {
     }));
   }
 
-  return [...staticPages, ...productPages];
+  // Fetch blog pages dynamically
+  let blogPages = [];
+  try {
+    const res = await fetch(`${API_URL}api/v1/blogs/`, {
+      next: { revalidate: 86400 },
+      headers: { "Accept": "application/json" },
+    });
+    if (res.ok) {
+      const blogs = await res.json();
+      blogPages = blogs.map((blog) => ({
+        url: `${BASE_URL}/blog/${blog.slug}`,
+        lastModified: new Date(blog.updated_at || blog.created_at || new Date()),
+        changeFrequency: "monthly",
+        priority: 0.6,
+      }));
+    }
+  } catch (error) {
+    console.error("Sitemap: Blog fetch failed", error);
+  }
+
+  return [...staticPages, ...productPages, ...blogPages];
 }

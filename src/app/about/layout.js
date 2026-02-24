@@ -1,23 +1,19 @@
 export const metadata = {
-  title: "About NavPrana Organics — India's Trusted Organic Food Brand",
+  title: "About NavPrana Organics — Our Journey from Chambal to Your Home",
   description:
-    "NavPrana Organics is an organic and pure food company rooted in Village Esah, Morena, Madhya Pradesh. We bring traditionally prepared, chemical-free food — starting with our pure Bilona ghee from the pristine Chambal valley. No preservatives, no shortcuts.",
+    "Learn about NavPrana Organics, a clean food company sourcing pure buffalo ghee from Village Esah, Morena. Discover our mission to bring traditional, unadulterated nutrients to modern kitchens.",
   keywords: [
-    "NavPrana about",
-    "NavPrana Organics story",
-    "organic food company India",
-    "Chambal valley ghee",
+    "About NavPrana",
+    "pure food company India",
+    "Chambal ghee source",
     "Village Esah Morena",
-    "bilona method ghee",
-    "pure food brand India",
-    "organic ghee brand",
-    "chemical free food India",
-    "traditional food company",
+    "traditional food brand",
+    "organic food mission",
   ],
   openGraph: {
-    title: "About NavPrana Organics — Pure Food from the Heart of Chambal",
+    title: "About Us | NavPrana Organics",
     description:
-      "NavPrana is an organic food company on a mission to bring pure, traditionally prepared food from the Chambal valley of Madhya Pradesh.",
+      "Our story of purity, tradition, and bring authenticity from the heart of Chambal.",
     url: "/about",
   },
   alternates: {
