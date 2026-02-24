@@ -1,9 +1,6 @@
 export const metadata = {
-  robots: {
-    index: false,
-    follow: false,
-  },
-  title: "Your Cart",
+  title: "Your Shopping Cart | NavPrana Organics",
+  description: "Review your items and proceed to checkout. Pure wellness, naturally delivered.",
 };
 
 export default function CartLayout({ children }) {
