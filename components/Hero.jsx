@@ -30,10 +30,17 @@ const Hero = () => {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-        {/* Bottom CTA */}
+        {/* Bottom CTA + SEO H1 */}
         <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0">
           <div className="container mx-auto px-6">
-            <div className="max-w-md">
+            <div className="max-w-lg">
+              <h1 className="sr-only">
+                Pure Desi Ghee — NavPrana Organics
+              </h1>
+              <p className="sr-only">
+                100% Organic Bilona Ghee from Chambal Valley, Madhya Pradesh.
+                Farm-fresh. FSSAI Certified. Free shipping above ₹999.
+              </p>
               <Link
                 href="/products"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-foreground text-sm font-semibold rounded-xl hover:bg-white/90 transition shadow-lg backdrop-blur-sm"

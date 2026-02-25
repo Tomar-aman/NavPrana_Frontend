@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     removeAuthToken();
     setUser(null);
-    router.push("/auth");
+    router.push("/signin");
   };
 
   return (

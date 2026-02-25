@@ -13,7 +13,7 @@ const PrivateRoute = ({ children }) => {
     const token = getAuthToken();
 
     if (!token) {
-      router.replace("/auth");
+      router.replace("/signin");
     } else {
       setAuthorized(true);
     }

@@ -32,7 +32,7 @@ const ProductDetailsClient = ({ product }) => {
   const handleAddToCart = (productId) => {
     if (!isAuthenticated) {
       toast.info("Please login to add items to cart");
-      router.push("/auth");
+      router.push("/signin");
       return;
     }
     dispatch(addToCart({ product: productId, quantity }))
@@ -42,23 +42,29 @@ const ProductDetailsClient = ({ product }) => {
         dispatch(getCart());
       })
       .catch((err) => {
-        toast.error(err);
+        toast.error(typeof err === "string" ? err : "Failed to add to cart");
       });
   };
 
   const handleBuyNow = async () => {
     if (!isAuthenticated) {
       toast.info("Please login to buy products");
-      router.push("/auth");
+      router.push("/signin");
       return;
     }
     try {
-      await dispatch(
-        addToCart({ product: product.id, quantity }),
-      ).unwrap();
+      // If already in cart, don't re-add — just go to checkout
+      if (!isInCart) {
+        await dispatch(
+          addToCart({ product: product.id, quantity }),
+        ).unwrap();
+        dispatch(getCart());
+      }
       router.push("/checkout");
     } catch (error) {
-      console.error(error);
+      toast.error(
+        typeof error === "string" ? error : "Something went wrong. Please try again."
+      );
     }
   };
 

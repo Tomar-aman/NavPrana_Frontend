@@ -34,7 +34,7 @@ const ProductsClient = () => {
   const handleAddToCart = (productId) => {
     if (!isAuthenticated) {
       toast.info("Please login to add items to cart");
-      router.push("/auth");
+      router.push("/signin");
       return;
     }
     dispatch(addToCart({ product: productId, quantity: 1 }))
@@ -57,10 +57,10 @@ const ProductsClient = () => {
             <Leaf size={14} />
             Our Collection
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-3">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3">
             Nature&apos;s Finest{" "}
             <span className="text-gradient">Desi Ghee</span>
-          </h2>
+          </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-5">
             Premium desi ghee crafted with love using traditional methods
             and the finest ingredients.
@@ -93,7 +93,7 @@ const ProductsClient = () => {
                 key={product.id}
                 onClick={() =>
                   router.push(
-                    `/product-details/${generateSlug(product.name)}`,
+                    `/products/${generateSlug(product.name)}`,
                   )
                 }
                 className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer flex flex-col h-full"

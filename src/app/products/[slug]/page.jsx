@@ -3,12 +3,14 @@ import { generateSlug, findProductBySlug } from "@/utils/slug";
 import ProductDetailsClient from "./ProductDetailsClient";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
+const BASE_API = (
+  process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/"
+).replace(/\/+$/, "");
 
 async function getProductData() {
-  const BASE_API = (process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/").replace(/\/+$/, "");
   try {
     const res = await fetch(`${BASE_API}/api/v1/product/products/`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -16,6 +18,17 @@ async function getProductData() {
   } catch (error) {
     console.error("Fetch products failed:", error);
     return null;
+  }
+}
+
+// Pre-generate all product pages at build time for fast crawlability by Google
+export async function generateStaticParams() {
+  try {
+    const products = await getProductData();
+    if (!products) return [];
+    return products.map((p) => ({ slug: generateSlug(p.name) }));
+  } catch {
+    return [];
   }
 }
 
@@ -36,12 +49,12 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title,
       description,
-      url: `/product-details/${slug}`,
+      url: `/products/${slug}`,
       images: [{ url: imageUrl }],
       type: "website",
     },
     alternates: {
-      canonical: `/product-details/${slug}`,
+      canonical: `/products/${slug}`,
     },
   };
 }
@@ -69,7 +82,7 @@ const Page = async ({ params }) => {
     },
     offers: {
       "@type": "Offer",
-      url: `${BASE_URL}/product-details/${slug}`,
+      url: `${BASE_URL}/products/${slug}`,
       priceCurrency: "INR",
       price: product.price,
       itemCondition: "https://schema.org/NewCondition",

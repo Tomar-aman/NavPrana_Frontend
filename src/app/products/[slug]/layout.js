@@ -64,7 +64,7 @@ export async function generateMetadata({ params }) {
       description:
         product.details ||
         `Buy ${product.name} at ₹${product.price}. 100% pure organic Bilona desi ghee. Free shipping above ₹999.`,
-      url: `/product-details/${slug}`,
+      url: `/products/${slug}`,
       images: [
         {
           url: featuredImage,
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }) {
       images: [featuredImage],
     },
     alternates: {
-      canonical: `/product-details/${slug}`,
+      canonical: `/products/${slug}`,
     },
   };
 }
@@ -103,7 +103,7 @@ function ProductJsonLd({ product, slug }) {
     name: product.name,
     description: product.description || product.details || "",
     image: featuredImage,
-    url: `${SITE_URL}/product-details/${slug}`,
+    url: `${SITE_URL}/products/${slug}`,
     brand: {
       "@type": "Brand",
       name: "NavPrana Organics",
@@ -113,7 +113,7 @@ function ProductJsonLd({ product, slug }) {
       price: product.price,
       priceCurrency: "INR",
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      url: `${SITE_URL}/product-details/${slug}`,
+      url: `${SITE_URL}/products/${slug}`,
       priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       seller: {
         "@type": "Organization",
@@ -178,7 +178,7 @@ function ProductJsonLd({ product, slug }) {
         "@type": "ListItem",
         position: 3,
         name: product.name,
-        item: `${SITE_URL}/product-details/${slug}`,
+        item: `${SITE_URL}/products/${slug}`,
       },
     ],
   };

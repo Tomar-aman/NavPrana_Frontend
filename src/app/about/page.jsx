@@ -88,10 +88,10 @@ const Page = () => {
             <Heart size={14} />
             Our Story
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-3">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3">
             Purity from the Heart of{" "}
             <span className="text-gradient">Chambal</span>
-          </h2>
+          </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             NavPrana Organics is a clean food company on a mission. Our journey
             begins with the golden elixir—Ghee—sourced directly from the
@@ -102,7 +102,7 @@ const Page = () => {
         {/* Story */}
         <section className="grid lg:grid-cols-2 gap-8 mb-10">
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold">Our Roots in Village Esah</h3>
+            <h2 className="text-2xl font-bold">Our Roots in Village Esah</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               NavPrana Organics was born from a simple realization: the food on
               our city shelves lacked the soul and purity of the village. As
@@ -138,9 +138,9 @@ const Page = () => {
 
         {/* Values */}
         <section className="mb-10">
-          <h3 className="text-xl font-bold text-center mb-6">
+          <h2 className="text-xl font-bold text-center mb-6">
             Our Core Values
-          </h3>
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {values.map((value, index) => (
               <div
@@ -163,9 +163,9 @@ const Page = () => {
 
         {/* Timeline */}
         <section className="mb-10">
-          <h3 className="text-xl font-bold text-center mb-6">
+          <h2 className="text-xl font-bold text-center mb-6">
             Our Journey So Far
-          </h3>
+          </h2>
 
           <motion.div
             className="relative space-y-6"
@@ -216,7 +216,7 @@ const Page = () => {
         <section className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 mb-10">
           <div className="grid lg:grid-cols-2 gap-6 items-center">
             <div>
-              <h3 className="text-xl font-bold mb-4">Origin: Morena, M.P.</h3>
+              <h2 className="text-xl font-bold mb-4">Origin: Morena, M.P.</h2>
               <div className="space-y-3">
                 {[
                   { icon: MapPin, text: "Sourced from Village Esah, Morena (Chambal)", color: "bg-red-50", iconColor: "text-red-500" },
@@ -251,9 +251,9 @@ const Page = () => {
 
         {/* CTA */}
         <section className="text-center bg-primary/5 rounded-2xl border border-gray-100 p-6 md:p-8">
-          <h3 className="text-xl font-bold mb-2">
+          <h2 className="text-xl font-bold mb-2">
             Taste the Purity of Chambal
-          </h3>
+          </h2>
           <p className="text-sm text-muted-foreground mb-5 max-w-xl mx-auto">
             Experience the first offering from NavPrana Organics. Try our
             premium Ghee today.

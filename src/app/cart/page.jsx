@@ -122,7 +122,7 @@ const Page = () => {
                         <div
                           className="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-gray-50 cursor-pointer"
                           onClick={() =>
-                            router.push(`/product-details/${generateSlug(item.product.name)}`)
+                            router.push(`/products/${generateSlug(item.product.name)}`)
                           }
                         >
                           <Image
@@ -146,7 +146,7 @@ const Page = () => {
                               <h3
                                 className="text-sm font-semibold text-foreground truncate cursor-pointer hover:text-primary transition"
                                 onClick={() =>
-                                  router.push(`/product-details/${generateSlug(item.product.name)}`)
+                                  router.push(`/products/${generateSlug(item.product.name)}`)
                                 }
                               >
                                 {item.product.name}
@@ -254,8 +254,8 @@ const Page = () => {
             </div>
           )}
         </main>
-      </div>
-    </PrivateRoute>
+      </div >
+    </PrivateRoute >
   );
 };
 

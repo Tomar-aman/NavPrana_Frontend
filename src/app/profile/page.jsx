@@ -157,7 +157,7 @@ const Page = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    router.replace("/auth");
+    router.replace("/signin");
   };
 
   /* ---------- RENDER ---------- */

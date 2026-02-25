@@ -33,7 +33,7 @@ const Products = () => {
   const handleAddToCart = (productId) => {
     if (!isAuthenticated) {
       toast.info("Please login to add items to cart");
-      router.push("/auth");
+      router.push("/signin");
       return;
     }
     dispatch(
@@ -91,7 +91,7 @@ const Products = () => {
                 key={product.id}
                 onClick={() =>
                   router.push(
-                    `/product-details/${generateSlug(product.name)}`,
+                    `/products/${generateSlug(product.name)}`,
                   )
                 }
                 className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer"

@@ -5,6 +5,8 @@ export default function robots() {
         userAgent: "*",
         allow: "/",
         disallow: [
+          "/signin",
+          "/signup",
           "/auth",
           "/profile",
           "/cart",

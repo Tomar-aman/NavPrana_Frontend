@@ -95,7 +95,7 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout());
     setIsProfileOpen(false);
-    router.replace("/auth");
+    router.replace("/signin");
   };
 
   const capitalize = (text = "") =>
@@ -155,8 +155,8 @@ const Header = () => {
                     key={item.label}
                     href={item.path}
                     className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all ${isActive
-                        ? "text-primary bg-primary/5"
-                        : "text-gray-600 hover:text-foreground hover:bg-gray-50"
+                      ? "text-primary bg-primary/5"
+                      : "text-gray-600 hover:text-foreground hover:bg-gray-50"
                       }`}
                   >
                     {item.label}
@@ -191,7 +191,7 @@ const Header = () => {
               {/* Auth */}
               {!isAuthenticated ? (
                 <Link
-                  href="/auth"
+                  href="/signin"
                   className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition shadow-sm"
                 >
                   Sign In
@@ -204,8 +204,8 @@ const Header = () => {
                       setIsOpen(false);
                     }}
                     className={`flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-xl transition cursor-pointer ${isProfileOpen
-                        ? "bg-gray-100"
-                        : "hover:bg-gray-50"
+                      ? "bg-gray-100"
+                      : "hover:bg-gray-50"
                       }`}
                   >
                     {/* Avatar circle */}
@@ -332,8 +332,8 @@ const Header = () => {
                     href={item.path}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition ${isActive
-                        ? "text-primary bg-primary/5"
-                        : "text-gray-600 hover:bg-gray-50"
+                      ? "text-primary bg-primary/5"
+                      : "text-gray-600 hover:bg-gray-50"
                       }`}
                   >
                     <div
@@ -353,7 +353,7 @@ const Header = () => {
               {/* Mobile login button */}
               {!isAuthenticated && (
                 <Link
-                  href="/auth"
+                  href="/signin"
                   onClick={() => setIsOpen(false)}
                   className="flex items-center justify-center gap-2 mt-2 py-3 bg-primary text-white text-sm font-medium rounded-xl"
                 >

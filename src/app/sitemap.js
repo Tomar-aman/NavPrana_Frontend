@@ -79,7 +79,7 @@ export default async function sitemap() {
       const data = await res.json();
       const products = data.results || data || [];
       productPages = products.map((product) => ({
-        url: `${BASE_URL}/product-details/${generateSlug(product.name)}`,
+        url: `${BASE_URL}/products/${generateSlug(product.name)}`,
         lastModified: new Date(product.updated_at || new Date()),
         changeFrequency: "weekly",
         priority: 0.8,
@@ -93,7 +93,7 @@ export default async function sitemap() {
       "navprana-organics-pure-desi-buffalo-bilona-ghee-1-litre",
     ];
     productPages = knownSlugs.map((slug) => ({
-      url: `${BASE_URL}/product-details/${slug}`,
+      url: `${BASE_URL}/products/${slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
@@ -104,7 +104,7 @@ export default async function sitemap() {
   let blogPages = [];
   try {
     const res = await fetch(`${BASE_API}/api/v1/blogs/`, {
-      next: { revalidate: 86400 },
+      next: { revalidate: 3600 }, // Refresh every 1 hour — so new admin blogs appear quickly
       headers: { "Accept": "application/json" },
     });
     if (res.ok) {
@@ -112,8 +112,8 @@ export default async function sitemap() {
       blogPages = blogs.map((blog) => ({
         url: `${BASE_URL}/blog/${blog.slug}`,
         lastModified: new Date(blog.updated_at || blog.created_at || new Date()),
-        changeFrequency: "monthly",
-        priority: 0.6,
+        changeFrequency: "weekly",
+        priority: 0.7,
       }));
     }
   } catch (error) {

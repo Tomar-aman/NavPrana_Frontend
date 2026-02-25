@@ -187,9 +187,9 @@ const BlogClient = ({ initialBlogs, initialCategories }) => {
 
         {/* Newsletter CTA */}
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-2xl p-8 md:p-10 text-center">
-          <h3 className="text-xl md:text-2xl font-bold mb-2">
+          <h2 className="text-xl md:text-2xl font-bold mb-2">
             Stay Connected with NavPrana
-          </h3>
+          </h2>
           <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
             Get the latest articles on organic food, health tips, new product
             launches, and exclusive offers delivered to your inbox.

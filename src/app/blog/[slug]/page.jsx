@@ -1,13 +1,19 @@
 import { notFound } from "next/navigation";
 import BlogDetailsClient from "./BlogDetailsClient";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
+const BASE_API = (
+  process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/"
+).replace(/\/+$/, "");
+
+// Allow new blog slugs not known at build time to be rendered on-demand
+// This is critical: when you add a new blog from admin, Next.js will
+// server-render it on the first visit EVEN if it wasn't in generateStaticParams
+export const dynamicParams = true;
 
 async function getBlogData(slug) {
-  const BASE_API = (process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/").replace(/\/+$/, "");
   try {
     const res = await fetch(`${BASE_API}/api/v1/blogs/${slug}/`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 1800 }, // Re-fetch every 30 min for fresh content
     });
     if (!res.ok) return null;
     return await res.json();
@@ -17,33 +23,21 @@ async function getBlogData(slug) {
   }
 }
 
-export async function generateMetadata({ params }) {
-  const { slug } = await params;
-  const blog = await getBlogData(slug);
-
-  if (!blog) return {};
-
-  const title = `${blog.title} | NavPrana Blog`;
-  const description = blog.excerpt || blog.title;
-  const imageUrl = blog.thumbnail || `${BASE_URL}/favicon.ico`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `/blog/${slug}`,
-      images: [{ url: imageUrl }],
-      type: "article",
-      publishedTime: blog.created_at,
-      modifiedTime: blog.updated_at,
-      authors: ["NavPrana Team"],
-    },
-    alternates: {
-      canonical: `/blog/${slug}`,
-    },
-  };
+// Pre-generate slugs known at BUILD TIME (makes known pages fast/static)
+// New blogs added from admin will still work thanks to dynamicParams = true
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(`${BASE_API}/api/v1/blogs/`, {
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return [];
+    const blogs = await res.json();
+    return (Array.isArray(blogs) ? blogs : blogs.results || []).map((b) => ({
+      slug: b.slug,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 const Page = async ({ params }) => {
@@ -54,43 +48,7 @@ const Page = async ({ params }) => {
     notFound();
   }
 
-  // JSON-LD Structured Data
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: blog.title,
-    description: blog.excerpt,
-    image: blog.thumbnail ? [blog.thumbnail] : [],
-    datePublished: blog.created_at,
-    dateModified: blog.updated_at || blog.created_at,
-    author: {
-      "@type": "Organization",
-      name: "NavPrana Organics",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "NavPrana Organics",
-      logo: {
-        "@type": "ImageObject",
-        url: `${BASE_URL}/logo-ghee.svg`,
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${BASE_URL}/blog/${slug}`,
-    },
-  };
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <BlogDetailsClient blog={blog} />
-    </>
-  );
+  return <BlogDetailsClient blog={blog} />;
 };
 
 export default Page;
-

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, ArrowLeft, Leaf } from "lucide-react";
+import { Clock, Leaf } from "lucide-react";
 
 const BlogDetailsClient = ({ blog }) => {
   const formatDate = (dateStr) => {
@@ -16,13 +16,29 @@ const BlogDetailsClient = ({ blog }) => {
   return (
     <div className="min-h-screen bg-background mt-20">
       <main className="max-w-3xl mx-auto px-4 py-10">
-        {/* Back Link */}
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition mb-8"
-        >
-          <ArrowLeft size={14} /> Back to Blog
-        </Link>
+        {/* Breadcrumb Navigation */}
+        <nav aria-label="breadcrumb" className="mb-8">
+          <ol className="flex items-center gap-1.5 text-sm text-muted-foreground flex-wrap">
+            <li>
+              <Link href="/" className="hover:text-primary transition">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-gray-300">/</li>
+            <li>
+              <Link href="/blog" className="hover:text-primary transition">
+                Blog
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-gray-300">/</li>
+            <li
+              className="text-foreground font-medium truncate max-w-[200px] sm:max-w-xs"
+              aria-current="page"
+            >
+              {blog.title}
+            </li>
+          </ol>
+        </nav>
 
         {/* Header */}
         <div className="mb-8">

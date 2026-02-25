@@ -34,7 +34,7 @@ const SignupOfferPopup = () => {
   const handleSignup = () => {
     setIsVisible(false);
     sessionStorage.setItem("signup_popup_dismissed", "true");
-    router.push("/auth");
+    router.push("/signup");
   };
 
   if (!isVisible) return null;

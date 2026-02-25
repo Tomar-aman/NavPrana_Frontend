@@ -153,9 +153,9 @@ const Page = () => {
       <main className="container bg-primary/5 mx-auto px-4 py-12 md:px-15">
         {/* Hero Section */}
         <section className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Nature&apos;s <span className="text-gradient">Superfood</span>
-          </h2>
+          </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Discover the incredible health benefits of pure desi ghee - an
             ancient superfood that has been nourishing families for thousands of
@@ -193,9 +193,9 @@ const Page = () => {
 
         {/* Nutritional Facts */}
         <section className="bg-card/30 rounded-3xl p-8 md:p-12 mb-16">
-          <h3 className="text-3xl font-bold text-center mb-8">
+          <h2 className="text-3xl font-bold text-center mb-8">
             Nutritional Profile
-          </h3>
+          </h2>
           <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
             Per 100g serving of our premium desi ghee contains essential
             nutrients your body needs for optimal health.
@@ -218,9 +218,9 @@ const Page = () => {
 
         {/* How to Use */}
         <section className="text-center mb-16">
-          <h3 className="text-3xl font-bold mb-8">
+          <h2 className="text-3xl font-bold mb-8">
             How to Incorporate Ghee in Your Diet
-          </h3>
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
@@ -250,9 +250,9 @@ const Page = () => {
 
         {/* CTA Section */}
         <section className="text-center bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-3xl p-8 md:p-12">
-          <h3 className="text-3xl font-bold mb-4">
+          <h2 className="text-3xl font-bold mb-4">
             Start Your Health Journey Today
-          </h3>
+          </h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
             Experience the incredible benefits of pure desi ghee and transform
             your health naturally.

@@ -157,9 +157,9 @@ const Page = () => {
             <Mail size={14} />
             Contact Us
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold mb-3">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3">
             Get in <span className="text-gradient">Touch</span>
-          </h2>
+          </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             We&apos;d love to hear from you! Whether you have questions about our
             products, or need support with your order, we&apos;re here to help.

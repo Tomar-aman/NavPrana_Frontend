@@ -69,7 +69,8 @@ export const changePassword = createAsyncThunk(
 const passwordSlice = createSlice({
   name: "password",
   initialState: {
-    step: 1, // forgot flow steps
+    step: 1,
+    email: "",   // stored here so it survives across step transitions
     loading: false,
     error: null,
     successMessage: null,
@@ -78,6 +79,7 @@ const passwordSlice = createSlice({
   reducers: {
     resetPasswordState: (state) => {
       state.step = 1;
+      state.email = "";
       state.loading = false;
       state.error = null;
       state.successMessage = null;
@@ -94,6 +96,7 @@ const passwordSlice = createSlice({
       .addCase(sendForgotOtp.fulfilled, (state, action) => {
         state.loading = false;
         state.step = 2;
+        state.email = action.meta.arg.email;  // persist email in Redux
         state.successMessage = action.payload?.message;
       })
       .addCase(sendForgotOtp.rejected, (state, action) => {

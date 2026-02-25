@@ -6,6 +6,14 @@ export const metadata = {
     description: "Get in touch with NavPrana Organics for any queries.",
     url: "/contact",
   },
+  twitter: {
+    card: "summary",
+    title: "Contact Us | NavPrana Organics",
+    description: "Have questions? Get in touch with NavPrana Organics.",
+  },
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactLayout({ children }) {

@@ -6,6 +6,14 @@ export const metadata = {
     description: "Commonly asked questions about our products and services.",
     url: "/faq",
   },
+  twitter: {
+    card: "summary",
+    title: "FAQ | NavPrana Organics",
+    description: "Commonly asked questions about our products and services.",
+  },
+  alternates: {
+    canonical: "/faq",
+  },
 };
 
 export default function FreqAskQuestionsLayout({ children }) {
