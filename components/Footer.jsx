@@ -57,7 +57,6 @@ const Footer = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-10 md:py-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-6 md:gap-8">
-
           {/* Brand Section — 4 cols */}
           <div className="lg:col-span-4 space-y-6">
             <Link href="/">
@@ -78,29 +77,29 @@ const Footer = () => {
             <div className="flex gap-2 pt-1">
               {socialLinks.length > 0
                 ? socialLinks.map((item) => {
-                  const Icon =
-                    SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
-                  return (
-                    <a
-                      key={item.id}
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white transition-all"
-                      aria-label={item.platform_name}
-                    >
-                      {Icon ? <Icon size={16} /> : null}
-                    </a>
-                  );
-                })
+                    const Icon =
+                      SOCIAL_ICON_MAP[item.platform_name.toLowerCase()];
+                    return (
+                      <a
+                        key={item.id}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white transition-all"
+                        aria-label={item.platform_name}
+                      >
+                        {Icon ? <Icon size={16} /> : null}
+                      </a>
+                    );
+                  })
                 : [Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
-                  <span
-                    key={idx}
-                    className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/30"
-                  >
-                    <Icon size={16} />
-                  </span>
-                ))}
+                    <span
+                      key={idx}
+                      className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/30"
+                    >
+                      <Icon size={16} />
+                    </span>
+                  ))}
             </div>
           </div>
 
@@ -190,8 +189,8 @@ const Footer = () => {
                     } catch (err) {
                       toast.error(
                         err.response?.data?.email?.[0] ||
-                        err.response?.data?.message ||
-                        "Failed to subscribe. Please try again."
+                          err.response?.data?.message ||
+                          "Failed to subscribe. Please try again.",
                       );
                     } finally {
                       setSubscribing(false);
@@ -232,8 +231,8 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-5">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-xs text-white/40">
-              © {new Date().getFullYear()} NavPrana Organics. All rights reserved.
-              Made with ❤️ for traditional food lovers.
+              © {new Date().getFullYear()} NavPrana Organics. All rights
+              reserved. Made with ❤️ for traditional food lovers.
             </p>
 
             <div className="flex items-center gap-5">

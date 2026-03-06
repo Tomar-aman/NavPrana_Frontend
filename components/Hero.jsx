@@ -12,10 +12,10 @@ const Hero = () => {
       className="
         relative w-full overflow-hidden
         pt-20
-        h-[45vh]
-        sm:h-[60vh]
-        md:h-[85vh]
-        lg:h-screen
+    h-[45vh]
+    sm:h-[60vh]
+    md:h-[85vh]
+    lg:h-screen
       "
     >
       <div className="relative w-full h-full">
@@ -24,7 +24,7 @@ const Hero = () => {
           alt="NavPrana Organics — Pure Desi Ghee"
           fill
           priority
-          className="object-contain sm:object-cover object-center"
+          className=""
         />
 
         {/* Gradient Overlay */}
@@ -34,9 +34,7 @@ const Hero = () => {
         <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0">
           <div className="container mx-auto px-6">
             <div className="max-w-lg">
-              <h1 className="sr-only">
-                Pure Desi Ghee — NavPrana Organics
-              </h1>
+              <h1 className="sr-only">Pure Desi Ghee — NavPrana Organics</h1>
               <p className="sr-only">
                 100% Organic Bilona Ghee from Chambal Valley, Madhya Pradesh.
                 Farm-fresh. FSSAI Certified. Free shipping above ₹999.
