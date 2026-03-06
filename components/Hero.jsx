@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import pineappleImage from "@/assets/hero_image.png";
+import pineappleImage from "@/assets/hero_image.jpg";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
