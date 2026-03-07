@@ -108,13 +108,18 @@ export default async function sitemap() {
       headers: { "Accept": "application/json" },
     });
     if (res.ok) {
-      const blogs = await res.json();
-      blogPages = blogs.map((blog) => ({
-        url: `${BASE_URL}/blog/${blog.slug}`,
-        lastModified: new Date(blog.updated_at || blog.created_at || new Date()),
-        changeFrequency: "weekly",
-        priority: 0.7,
-      }));
+      const data = await res.json();
+      const blogs = data.results || data || []; // handle both paginated and flat responses
+      blogPages = blogs
+        .filter((blog) => blog.slug) // skip any blogs without a slug
+        .map((blog) => ({
+          url: `${BASE_URL}/blog/${blog.slug}`,
+          lastModified: new Date(blog.updated_at || blog.created_at || new Date()),
+          changeFrequency: "weekly",
+          priority: 0.7,
+        }));
+    } else {
+      console.error(`Sitemap: Blog fetch returned HTTP ${res.status} ${res.statusText}`);
     }
   } catch (error) {
     console.error("Sitemap: Blog fetch failed", error);

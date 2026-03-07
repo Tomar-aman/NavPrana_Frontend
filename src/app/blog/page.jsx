@@ -10,8 +10,10 @@ async function getBlogListingData() {
       fetch(`${BASE_API}/api/v1/blogs/categories/`, { next: { revalidate: 3600 } }),
     ]);
 
-    const blogs = blogsRes.ok ? await blogsRes.json() : [];
-    const categories = catsRes.ok ? await catsRes.json() : [];
+    const blogsData = blogsRes.ok ? await blogsRes.json() : [];
+    const blogs = blogsData.results || blogsData || [];
+    const categoriesData = catsRes.ok ? await catsRes.json() : [];
+    const categories = categoriesData.results || categoriesData || [];
 
     return { blogs, categories };
   } catch (error) {
