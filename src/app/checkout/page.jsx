@@ -96,7 +96,7 @@ const Page = () => {
 
   const productDiscount = mrpSubtotal - subtotal;
   const couponDiscount = couponData?.discount_amount || 0;
-  const shipping = subtotal > 999 ? 0 : 50;
+  const shipping = subtotal > 599 ? 0 : 50;
   const total = subtotal + shipping - couponDiscount;
 
   const handleApplyCoupon = async () => {

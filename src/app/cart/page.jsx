@@ -65,7 +65,7 @@ const Page = () => {
   }, 0);
 
   const discountTotal = mrpSubtotal - subtotal;
-  const shipping = subtotal > 1000 ? 0 : subtotal === 0 ? 0 : 50;
+  const shipping = subtotal > 599 ? 0 : subtotal === 0 ? 0 : 50;
   const total = subtotal + shipping;
 
   return (
