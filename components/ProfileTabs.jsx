@@ -98,7 +98,7 @@ const Page = () => {
     return sum + Number(item.product.price) * item.quantity;
   }, 0);
 
-  const shipping = subtotal > 999 ? 0 : 50;
+  const shipping = subtotal > 599 ? 0 : 50;
 
   const discount = couponData?.discount_amount
     ? couponData.discount_amount <= 100

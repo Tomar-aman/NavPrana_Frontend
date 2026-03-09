@@ -131,8 +131,12 @@ const organizationJsonLd = {
     email: "support@navprana.com",
     availableLanguage: ["English", "Hindi"],
   },
+  alternateName: ["NavPrana", "NavPrana Organics"],
   sameAs: [
     "https://www.instagram.com/navprana/",
+    "https://www.facebook.com/navprana",
+    // "https://twitter.com/navprana",
+    // "https://www.youtube.com/@navprana",
   ],
 };
 
