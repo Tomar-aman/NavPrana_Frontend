@@ -205,21 +205,28 @@ export default function Page() {
                 </div>
                 <div className="text-xs space-y-0.5 ml-10">
                   <p className="font-medium text-foreground">
-                    {orderData.latest_transaction?.payment_method}
+                    {orderData.latest_transaction?.payment_method || "Cash on Delivery"}
                   </p>
-                  <p className="text-muted-foreground">
-                    Ref: {orderData.latest_transaction?.bank_reference}
-                  </p>
+                  {orderData.latest_transaction?.bank_reference && (
+                    <p className="text-muted-foreground">
+                      Ref: {orderData.latest_transaction.bank_reference}
+                    </p>
+                  )}
                 </div>
 
                 <div
-                  className={`mt-3 ml-10 inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg border ${orderData.payment_status_display === "Paid"
-                    ? "bg-green-50 border-green-200 text-green-700"
-                    : "bg-red-50 border-red-200 text-red-600"
-                    }`}
+                  className={`mt-3 ml-10 inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg border ${
+                    orderData.payment_status_display === "Paid"
+                      ? "bg-green-50 border-green-200 text-green-700"
+                      : orderData.payment_status_display === "Pending"
+                      ? "bg-yellow-50 border-yellow-200 text-yellow-700"
+                      : "bg-red-50 border-red-200 text-red-600"
+                  }`}
                 >
                   {orderData.payment_status_display === "Paid" ? (
                     <CheckCircle2 size={12} />
+                  ) : orderData.payment_status_display === "Pending" ? (
+                    <Clock size={12} />
                   ) : (
                     <XCircle size={12} />
                   )}
@@ -286,6 +293,12 @@ export default function Page() {
                   <span>Discount</span>
                   <span>-₹{orderData.discount_amount}</span>
                 </div>
+                {orderData.handling_fee > 0 && (
+                  <div className="flex justify-between text-orange-600 font-medium">
+                    <span>COD Handling Fee</span>
+                    <span>+₹{orderData.handling_fee}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-bold text-sm border-t border-gray-100 pt-2">
                   <span>Total</span>
                   <span className="text-foreground">₹{orderData.final_amount}</span>

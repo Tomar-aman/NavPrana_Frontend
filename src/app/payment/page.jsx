@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,6 +12,13 @@ const PaymentPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // COD orders skip Cashfree entirely — redirect straight to order details
+    if (orderData?.payment_method === "cod" && orderData?.order_id) {
+      dispatch(hideLoader());
+      router.replace(`/order-details/${orderData.order_id}`);
+      return;
+    }
+
     // If no payment session exists (user pressed back / refreshed), redirect away
     const timeout = setTimeout(() => {
       if (!orderData?.payment_session_id) {

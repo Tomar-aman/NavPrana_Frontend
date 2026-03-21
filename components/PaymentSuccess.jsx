@@ -3,23 +3,28 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Sparkles } from "lucide-react";
 
-const PaymentSuccess = () => {
+const PaymentSuccess = ({
+  title = "Payment Successful!",
+  subtitle = "Thank you for your order",
+  transactionId,
+  onRedirect,
+}) => {
   const [showConfetti, setShowConfetti] = useState(true);
 
   useEffect(() => {
-    // Redirect after 3.5s
-    const timer = setTimeout(() => {}, 10000);
+    // Auto-redirect after 4 seconds (caller provides the redirect fn)
+    const redirectTimer = onRedirect ? setTimeout(onRedirect, 4000) : null;
 
-    // Stop confetti
+    // Stop confetti after 2.5s
     const confettiTimer = setTimeout(() => {
       setShowConfetti(false);
     }, 2500);
 
     return () => {
-      clearTimeout(timer);
+      if (redirectTimer) clearTimeout(redirectTimer);
       clearTimeout(confettiTimer);
     };
-  }, []);
+  }, [onRedirect]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4">
@@ -116,10 +121,10 @@ const PaymentSuccess = () => {
             transition={{ delay: 0.5 }}
           >
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
-              Payment Successful!
+              {title}
             </h1>
             <p className="text-lg text-muted-foreground mb-2">
-              Thank you for your order
+              {subtitle}
             </p>
             <p className="text-sm text-muted-foreground">
               Redirecting to order details...
@@ -158,9 +163,9 @@ const PaymentSuccess = () => {
             transition={{ delay: 0.7 }}
           >
             <p className="text-sm text-muted-foreground">
-              Transaction ID:{" "}
+              Order ID:{" "}
               <span className="font-mono font-medium text-foreground">
-                TXN{Date.now().toString().slice(-8)}
+                {transactionId || `TXN${Date.now().toString().slice(-8)}`}
               </span>
             </p>
           </motion.div>

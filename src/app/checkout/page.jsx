@@ -16,6 +16,7 @@ import {
   Trash2,
   Home,
   Plus,
+  Banknote,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -97,7 +98,8 @@ const Page = () => {
   const productDiscount = mrpSubtotal - subtotal;
   const couponDiscount = couponData?.discount_amount || 0;
   const shipping = subtotal > 599 ? 0 : 50;
-  const total = subtotal + shipping - couponDiscount;
+  const codHandlingFee = paymentMethod === "cod" ? 20 : 0;
+  const total = subtotal + shipping + codHandlingFee - couponDiscount;
 
   const handleApplyCoupon = async () => {
     if (!couponCode) {
@@ -134,12 +136,21 @@ const Page = () => {
       })),
       address_id: selectedAddressId,
       coupon_code: couponCode || undefined,
+      payment_method: paymentMethod,
     };
 
     try {
       dispatch(showLoader());
-      await dispatch(createOrder(payload)).unwrap();
-      router.push("/payment");
+      const orderData = await dispatch(createOrder(payload)).unwrap();
+      if (paymentMethod === "cod") {
+        // Store in sessionStorage as fallback if Redux is lost on refresh
+        sessionStorage.setItem("cod_order_id", orderData.order_id);
+        sessionStorage.setItem("cod_transaction_id", orderData.transaction_id);
+        dispatch({ type: "ui/hideLoader" });
+        router.push("/cod-success");
+      } else {
+        router.push("/payment");
+      }
     } catch (err) {
       dispatch({ type: "ui/hideLoader" });
       toast.error(err?.error || err?.message || "Order creation failed. Please try again.");
@@ -208,7 +219,7 @@ const Page = () => {
   const paymentOptions = [
     { id: "upi", label: "UPI", icon: Wallet, color: "bg-violet-50", iconColor: "text-violet-500" },
     { id: "card", label: "Credit / Debit Card", icon: CreditCard, color: "bg-blue-50", iconColor: "text-blue-500" },
-    { id: "cod", label: "Cash on Delivery", icon: Truck, disabled: true, color: "bg-gray-50", iconColor: "text-gray-400", note: "Unavailable" },
+    { id: "cod", label: "Cash on Delivery", icon: Banknote, color: "bg-green-50", iconColor: "text-green-600", note: "+₹20 handling fee" },
   ];
 
   return (
@@ -472,6 +483,12 @@ const Page = () => {
                   <span className="text-muted-foreground">Shipping</span>
                   <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
                 </div>
+                {codHandlingFee > 0 && (
+                  <div className="flex justify-between text-xs text-orange-600 font-medium">
+                    <span>COD Handling Fee</span>
+                    <span>+₹{codHandlingFee}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-bold text-base border-t border-gray-100 pt-2">
                   <span>Total Payable</span>
                   <span className="text-foreground">₹{total}</span>
