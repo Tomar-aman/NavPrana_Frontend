@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
+import { trackAddToCart } from "@/lib/meta-pixel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -37,11 +38,14 @@ const ProductsClient = () => {
       router.push("/signin");
       return;
     }
+    const productObj = products.find((p) => p.id === productId);
     dispatch(addToCart({ product: productId, quantity: 1 }))
       .unwrap()
       .then(() => {
         toast.success("Product added to cart");
         dispatch(getCart());
+        // 📊 Meta Pixel — AddToCart
+        trackAddToCart(productObj, 1);
       })
       .catch((err) => {
         toast.error(err);

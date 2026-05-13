@@ -1,4 +1,4 @@
-﻿// "use client";
+// "use client";
 
 // import { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -137,6 +137,7 @@ import { paymentStatus } from "@/redux/features/paymentSlice";
 import PaymentPending from "../../../components/PaymentPending";
 import PaymentFailed from "../../../components/PaymentFailed";
 import PaymentSuccess from "../../../components/PaymentSuccess";
+import { trackPurchase } from "@/lib/meta-pixel";
 
 const PaymentStatusPage = () => {
   const dispatch = useDispatch();
@@ -187,6 +188,14 @@ const PaymentStatusPage = () => {
 
     if (isSuccess && !hasRedirected.current) {
       hasRedirected.current = true;
+
+      // 📊 Meta Pixel — Purchase event for online payment
+      trackPurchase({
+        orderId: sessionStorage.getItem("order_id"),
+        transactionId: sessionStorage.getItem("transaction_id"),
+        value: paymentData?.amount || 0,
+        currency: "INR",
+      });
 
       const orderId = sessionStorage.getItem("order_id");
       if (!orderId) return;

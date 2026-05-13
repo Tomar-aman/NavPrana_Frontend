@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import PrivateRoute from "../../../components/PrivateRoute";
@@ -33,6 +33,7 @@ import { motion } from "framer-motion";
 import AddressModal from "../../../components/AddressModal";
 import { sendAddress } from "@/services/profile/post-profile";
 import { toast } from "sonner";
+import { trackInitiateCheckout, trackAddPaymentInfo } from "@/lib/meta-pixel";
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -46,6 +47,11 @@ const Page = () => {
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("upi");
+
+  // 📊 Meta Pixel — AddPaymentInfo when payment method changes
+  useEffect(() => {
+    trackAddPaymentInfo(paymentMethod);
+  }, [paymentMethod]);
   const [couponCode, setCouponCode] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -67,6 +73,13 @@ const Page = () => {
     dispatch(fetchProducts());
     dispatch(getCart());
   }, [dispatch]);
+
+  // 📊 Meta Pixel — InitiateCheckout (fires once when checkout page loads with cart data)
+  useEffect(() => {
+    if (mergedCartItems.length > 0 && subtotal > 0) {
+      trackInitiateCheckout(mergedCartItems, subtotal);
+    }
+  }, [mergedCartItems.length > 0 && subtotal > 0]);
 
   useEffect(() => {
     if (success && couponData) {

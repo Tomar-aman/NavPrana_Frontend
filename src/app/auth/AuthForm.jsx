@@ -9,6 +9,7 @@ import SignupForm from "./SignupForm";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
+import { trackCompleteRegistration } from "@/lib/meta-pixel";
 import { Leaf } from "lucide-react";
 
 // Shared auth form — used by both /signin and /signup pages
@@ -99,6 +100,8 @@ const AuthForm = ({ initialTab = "signin" }) => {
       await dispatch(verifyOtp({ email: signupEmail, otp })).unwrap();
       toast.success("Account verified! You're now logged in.");
       setShowOtpModal(false);
+      // 📊 Meta Pixel — CompleteRegistration
+      trackCompleteRegistration("email");
       router.push("/");
     } catch {
       toast.error("Invalid OTP");

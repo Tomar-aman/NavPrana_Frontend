@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   ShoppingCart,
@@ -16,6 +16,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
+import { trackViewContent, trackAddToCart } from "@/lib/meta-pixel";
 import { toast } from "sonner";
 import StickyCartBar from "../../../../components/StickyCartBar";
 
@@ -29,6 +30,11 @@ const ProductDetailsClient = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
 
+  // 📊 Meta Pixel — ViewContent on product view
+  useEffect(() => {
+    trackViewContent(product);
+  }, [product]);
+
   const handleAddToCart = (productId) => {
     if (!isAuthenticated) {
       toast.info("Please login to add items to cart");
@@ -40,6 +46,8 @@ const ProductDetailsClient = ({ product }) => {
       .then(() => {
         toast.success("Product added to cart");
         dispatch(getCart());
+        // 📊 Meta Pixel — AddToCart
+        trackAddToCart(product, quantity);
       })
       .catch((err) => {
         toast.error(typeof err === "string" ? err : "Failed to add to cart");

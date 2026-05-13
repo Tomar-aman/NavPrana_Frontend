@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import AuthInitializer from "../../components/AuthInitializer";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import MetaPixel from "../../components/MetaPixel";
 import GlobalUI from "../../components/GlobalUI";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -220,6 +221,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             __html: JSON.stringify(websiteJsonLd),
           }}
         />
+        {/* Meta Pixel (noscript fallback) */}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=1893858241314981&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -234,6 +245,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
+        <MetaPixel />
         <ReduxProvider>
             <ProfileProvider>
               <ErrorBoundary>

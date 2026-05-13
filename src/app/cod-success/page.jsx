@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import PaymentSuccess from "../../../components/PaymentSuccess";
+import { trackPurchase } from "@/lib/meta-pixel";
 import PrivateRoute from "../../../components/PrivateRoute";
 
 const CodSuccessPage = () => {
@@ -24,6 +25,18 @@ const CodSuccessPage = () => {
       sessionStorage.setItem("cod_transaction_id", orderData.transaction_id);
     }
   }, [orderData]);
+
+  // 📊 Meta Pixel — Purchase event for COD orders
+  useEffect(() => {
+    if (orderId && transactionId) {
+      trackPurchase({
+        orderId,
+        transactionId,
+        value: 0,       // full value isn't available here; GTM/server can enrich
+        currency: "INR",
+      });
+    }
+  }, [orderId, transactionId]);
 
   // If no order data at all, redirect back to checkout
   useEffect(() => {

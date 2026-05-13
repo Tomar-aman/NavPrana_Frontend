@@ -8,6 +8,7 @@ import { getContactInfo } from "@/services/contact/get-contact-info";
 import { useDispatch } from "react-redux";
 import { showLoader, hideLoader } from "@/redux/features/uiSlice";
 import { toast } from "sonner";
+import { trackContact, trackLead } from "@/lib/meta-pixel";
 import contactUsImage from "@/assets/contact_us.png";
 import Image from "next/image";
 
@@ -71,6 +72,9 @@ const Page = () => {
         toast.success(
           "Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.",
         );
+        // 📊 Meta Pixel — Contact + Lead
+        trackContact();
+        trackLead({ contentName: form.subject || "Contact Form" });
         setForm({
           firstName: "",
           lastName: "",
