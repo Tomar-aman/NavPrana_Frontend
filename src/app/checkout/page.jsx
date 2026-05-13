@@ -47,11 +47,6 @@ const Page = () => {
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("upi");
-
-  // 📊 Meta Pixel — AddPaymentInfo when payment method changes
-  useEffect(() => {
-    trackAddPaymentInfo(paymentMethod);
-  }, [paymentMethod]);
   const [couponCode, setCouponCode] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -73,13 +68,6 @@ const Page = () => {
     dispatch(fetchProducts());
     dispatch(getCart());
   }, [dispatch]);
-
-  // 📊 Meta Pixel — InitiateCheckout (fires once when checkout page loads with cart data)
-  useEffect(() => {
-    if (mergedCartItems.length > 0 && subtotal > 0) {
-      trackInitiateCheckout(mergedCartItems, subtotal);
-    }
-  }, [mergedCartItems.length > 0 && subtotal > 0]);
 
   useEffect(() => {
     if (success && couponData) {
@@ -113,6 +101,19 @@ const Page = () => {
   const shipping = subtotal > 599 ? 0 : 50;
   const codHandlingFee = paymentMethod === "cod" ? 20 : 0;
   const total = subtotal + shipping + codHandlingFee - couponDiscount;
+
+  // 📊 Meta Pixel — InitiateCheckout (fires when cart data is available)
+  const hasCartData = mergedCartItems.length > 0 && subtotal > 0;
+  useEffect(() => {
+    if (hasCartData) {
+      trackInitiateCheckout(mergedCartItems, subtotal);
+    }
+  }, [hasCartData]);
+
+  // 📊 Meta Pixel — AddPaymentInfo when payment method changes
+  useEffect(() => {
+    trackAddPaymentInfo(paymentMethod);
+  }, [paymentMethod]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode) {
