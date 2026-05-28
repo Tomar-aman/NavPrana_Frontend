@@ -1,5 +1,6 @@
 import Benefits from "../../components/Benefits";
 import Hero from "../../components/Hero";
+import InstagramReels from "../../components/InstagramReels";
 import Products from "../../components/Products";
 import Testimonials from "../../components/Testimonials";
 
@@ -25,6 +26,7 @@ const Page = () => {
       <main>
         <Hero />
         <Products />
+        <InstagramReels />
         <Benefits />
 
         {/* <Testimonials /> */}

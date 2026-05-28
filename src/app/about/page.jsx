@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -11,10 +12,79 @@ import {
   MapPin,
   Search,
   Sprout,
+  Play,
+  Instagram,
 } from "lucide-react";
 
 import traditionalCowImage from "@/assets/buffalo.png";
 import { motion } from "framer-motion";
+
+// ──────────────────────────────────────────────────────────
+// 🎬 PASTE YOUR TWO FOUNDER INSTAGRAM REEL URLs BELOW
+// ──────────────────────────────────────────────────────────
+const FOUNDER_VIDEOS = [
+  "https://www.instagram.com/p/DXORXgaids3/", // Founder Video 1
+  "https://www.instagram.com/p/DVI-shzCSNv/", // Founder Video 2
+];
+
+const getEmbedUrl = (url) => {
+  if (!url) return "";
+  const cleanUrl = url.replace(/\/+$/, "");
+  return `${cleanUrl}/embed/`;
+};
+
+const FounderVideoCard = ({ url, index }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className="shrink-0 w-full max-w-[320px] mx-auto">
+      {/* Card */}
+      <div className="relative rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-1">
+        {/* Instagram gradient top accent */}
+        <div className="h-[3px] w-full bg-gradient-to-r from-[#f09433] via-[#e6683c] via-[#dc2743] via-[#cc2366] via-[#bc1888] to-[#833ab4]" />
+
+        {/* Iframe container — tall enough for reel content */}
+        <div className="relative w-full" style={{ height: "460px" }}>
+          {/* Loading skeleton */}
+          {!isLoaded && (
+            <div className="absolute inset-0 bg-gray-50 flex flex-col items-center justify-center gap-4 z-10">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#833ab4] flex items-center justify-center">
+                <Instagram size={24} className="text-white animate-pulse" />
+              </div>
+              <div className="space-y-2 w-3/4">
+                <div className="h-2.5 bg-gray-200 rounded-full animate-pulse" />
+                <div className="h-2.5 bg-gray-100 rounded-full animate-pulse w-2/3 mx-auto" />
+              </div>
+              <p className="text-xs text-gray-400">Loading video...</p>
+            </div>
+          )}
+
+          <iframe
+            src={getEmbedUrl(url)}
+            className="absolute inset-0 w-full h-full border-0"
+            loading="lazy"
+            scrolling="no"
+            allowtransparency="true"
+            allow="encrypted-media"
+            title={`Founder Video ${index + 1}`}
+            onLoad={() => setIsLoaded(true)}
+            style={{ overflow: "hidden" }}
+          />
+        </div>
+      </div>
+
+      {/* Caption below the card */}
+      <div className="mt-3 px-1 text-center">
+        <div className="flex items-center justify-center gap-1.5 mt-1.5">
+          <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#833ab4] flex items-center justify-center">
+            <Instagram size={8} className="text-white" />
+          </div>
+          <p className="text-[11px] text-muted-foreground font-medium">@navprana</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Page = () => {
   const values = [
@@ -133,6 +203,28 @@ const Page = () => {
               fill
               className="object-cover"
             />
+          </div>
+        </section>
+
+        {/* Meet the Founders Video Section */}
+        <section className="mb-12">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 rounded-full text-xs font-semibold text-amber-600 uppercase tracking-wider mb-3">
+              <Users size={14} />
+              Hear from Us
+            </div>
+            <h2 className="text-2xl md:text-4xl font-bold mb-3">
+              From Our <span className="text-gradient">Founders</span>
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
+              Watch our founders share the story, values, and vision that drive NavPrana Organics.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {FOUNDER_VIDEOS.map((url, index) => (
+              <FounderVideoCard key={index} url={url} index={index} />
+            ))}
           </div>
         </section>
 

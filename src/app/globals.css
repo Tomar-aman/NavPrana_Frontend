@@ -148,3 +148,8 @@
     display: inline-block;
     animation: marquee 15s linear infinite;
 }
+
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
