@@ -190,16 +190,16 @@ const Page = () => {
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               While we are launching with our premium{" "}
-              <strong>Buffalo Ghee</strong> as our first offering, NavPrana is
+              <strong>pure desi Buffalo A2 Bilona Ghee</strong> as our first offering, NavPrana is
               more than just a dairy brand. We are building a portfolio of
-              organic food products that bring the raw, unadulterated power of
-              nature straight to your kitchen.
+              organic food products — the best bilona ghee in India and beyond — that bring the raw, unadulterated power of
+              nature straight to your kitchen. Buy organic ghee online from NavPrana Organics.
             </p>
           </div>
           <div className="relative h-64 md:h-full min-h-[300px] rounded-2xl overflow-hidden border border-gray-100">
             <Image
               src={traditionalCowImage}
-              alt="Buffaloes in Chambal"
+              alt="Buffaloes in Chambal Valley — Source of NavPrana's pure desi A2 bilona ghee, best organic buffalo ghee in India"
               fill
               className="object-cover"
             />

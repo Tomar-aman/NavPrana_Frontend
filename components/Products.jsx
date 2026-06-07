@@ -54,11 +54,11 @@ const Products = () => {
 
   const trustItems = [
     { icon: Truck, title: "Free Shipping", desc: "On orders above ₹999" },
-    { icon: Shield, title: "Quality Assured", desc: "Lab tested purity" },
-    { icon: Star, title: "5000+ Reviews", desc: "Customer satisfaction" },
-    { icon: Heart, title: "Made with Love", desc: "Traditional methods" },
+    { icon: Shield, title: "Quality Assured", desc: "Lab tested pure desi ghee" },
+    { icon: Star, title: "5000+ Reviews", desc: "Best ghee in India" },
+    { icon: Heart, title: "Bilona Method", desc: "Traditional hand-churned" },
     { icon: Award, title: "FSSAI Certified", desc: "Government approved" },
-    { icon: Leaf, title: "100% Organic", desc: "No preservatives" },
+    { icon: Leaf, title: "100% Organic", desc: "Grass-fed buffalo ghee" },
   ];
 
   return (
@@ -71,11 +71,11 @@ const Products = () => {
             Our Products
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">
-            Pure <span className="text-gradient">Buffalo Ghee</span>
+            Pure Desi <span className="text-gradient">Buffalo Bilona Ghee</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Hand-churned using the traditional Bilona method. Authentic taste
-            and maximum nutrition in every jar.
+            Buy the best A2 bilona ghee in India — hand-churned using the traditional Bilona method.
+            Premium organic ghee with authentic taste and maximum nutrition in every jar.
           </p>
         </div>
 

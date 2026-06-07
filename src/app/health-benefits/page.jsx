@@ -10,13 +10,13 @@ import {
 import Link from "next/link";
 
 export const metadata = {
-  title: "Health Benefits of Pure Desi Ghee",
+  title: "Health Benefits of Pure Desi Bilona Ghee — Best Organic Ghee in India",
   description:
-    "Discover the incredible health benefits of pure desi ghee — heart health, brain function, energy, immune support, skin care, and digestive health. Learn why NavPrana Bilona ghee is nature's superfood.",
+    "Discover the incredible health benefits of pure desi bilona ghee — heart health, brain function, energy, immune support, skin care, and digestive health. Learn why NavPrana's A2 bilona ghee is the best organic ghee in India and a true superfood.",
   openGraph: {
-    title: "Health Benefits of Pure Desi Ghee | NavPrana Organics",
+    title: "Health Benefits of Pure Desi Bilona Ghee | NavPrana Organics — Best Ghee in India",
     description:
-      "Discover the powerful health benefits of traditional Bilona desi ghee — from heart health to brain function.",
+      "Discover the powerful health benefits of traditional A2 bilona desi ghee — from heart health to brain function. Best organic ghee in India.",
     url: "/health-benefits",
   },
   alternates: {
@@ -154,12 +154,12 @@ const Page = () => {
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Nature&apos;s <span className="text-gradient">Superfood</span>
+            Health Benefits of Pure Desi <span className="text-gradient">Bilona Ghee</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Discover the incredible health benefits of pure desi ghee - an
+            Discover the incredible health benefits of pure desi bilona ghee — an
             ancient superfood that has been nourishing families for thousands of
-            years with its powerful nutritional properties.
+            years. Our organic A2 bilona ghee is the best ghee in India for your wellness journey.
           </p>
         </section>
 
@@ -197,8 +197,8 @@ const Page = () => {
             Nutritional Profile
           </h2>
           <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Per 100g serving of our premium desi ghee contains essential
-            nutrients your body needs for optimal health.
+            Per 100g serving of our premium pure desi bilona ghee contains essential
+            nutrients your body needs for optimal health. Buy the best organic ghee in India.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {nutritionalFacts.map((fact, index) => (
@@ -251,11 +251,11 @@ const Page = () => {
         {/* CTA Section */}
         <section className="text-center bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-3xl p-8 md:p-12">
           <h2 className="text-3xl font-bold mb-4">
-            Start Your Health Journey Today
+            Start Your Health Journey with the Best Bilona Ghee in India
           </h2>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Experience the incredible benefits of pure desi ghee and transform
-            your health naturally.
+            Experience the incredible benefits of pure desi bilona ghee and transform
+            your health naturally. Buy organic ghee online from NavPrana Organics.
           </p>
           <Link href="/products">
             <button className="bg-primary py-2 px-4 rounded-xl text-white">

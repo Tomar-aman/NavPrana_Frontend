@@ -40,9 +40,10 @@ const Footer = () => {
 
   const quickLinks = [
     { label: "Home", path: "/" },
-    { label: "Products", path: "/products" },
-    { label: "About", path: "/about" },
+    { label: "Buy Bilona Ghee", path: "/products" },
+    { label: "About Us", path: "/about" },
     { label: "Contact", path: "/contact" },
+    { label: "Ghee Benefits", path: "/health-benefits" },
     { label: "Blog", path: "/blog" },
     { label: "FAQ", path: "/faq" },
   ];
@@ -50,6 +51,7 @@ const Footer = () => {
   const legalLinks = [
     { label: "Privacy Policy", path: "/privacy-policy" },
     { label: "Terms of Service", path: "/terms-of-service" },
+    { label: "Shipping Policy", path: "/shipping-policy" },
   ];
 
   return (
@@ -69,8 +71,8 @@ const Footer = () => {
               />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed max-w-xs">
-              Bringing you the finest pure desi ghee using traditional methods
-              passed down through generations.
+              India's best organic bilona ghee brand — bringing you 100% pure desi ghee
+              using traditional Bilona methods passed down through generations. Buy ghee online from NavPrana.
             </p>
 
             {/* Social Icons */}

@@ -30,26 +30,53 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Buy Pure Desi Ghee Online — NavPrana Organics | 100% Organic Bilona Ghee India",
-    template: "%s | NavPrana Organics",
+    default: "Buy Pure Desi Ghee Online — Best Bilona Ghee in India | NavPrana Organics",
+    template: "%s | NavPrana Organics — Best Organic Ghee India",
   },
   description:
-    "Buy 100% pure organic desi ghee online from NavPrana Organics. Traditional Bilona method buffalo ghee from Chambal valley, Madhya Pradesh. No preservatives, no additives. Free shipping on orders above ₹999. FSSAI certified, farm-fresh to your doorstep.",
+    "Buy 100% pure organic bilona ghee online from NavPrana Organics — India's best desi ghee brand. Traditional Bilona method A2 buffalo ghee from Chambal valley, Madhya Pradesh. Pure desi ghee starting at ₹1119. Grass-fed, FSSAI certified, zero additives. Buy desi ghee online with free shipping above ₹999. Order premium Buffalo A2 Bilona Ghee (500 ml & 1 Ltr) farm-fresh to your doorstep.",
   keywords: [
+    // Brand keywords
     "NavPrana",
     "NavPrana Organics",
     "navprana",
-    "desi ghee",
-    "pure desi ghee",
-    "organic ghee",
+    "NavPrana ghee",
+    // HIGH volume (5000+)
     "bilona ghee",
-    "pure ghee online",
-    "buy ghee online",
-    "ghee price",
     "best ghee in India",
-    "buffalo ghee",
+    // HIGH volume (1000–3000)
+    "organic ghee",
+    "pure desi ghee",
+    "organic india ghee",
+    // MEDIUM volume (500–1000)
+    "a2 bilona ghee",
+    "bilona ghee price",
+    "buy ghee online",
+    // MEDIUM volume (200–500)
     "desi ghee online",
+    "cow ghee online",
+    "pure desi ghee price",
+    "pure ghee online",
+    "A2 ghee online",
+    "grass-fed ghee",
+    // LOW volume (100–200)
+    "best bilona ghee in india",
+    "buy desi ghee online",
+    // LOW volume (<100)
+    "bilona ghee online",
+    "Buy Buffalo Ghee Online",
+    // ZERO-KD long-tail (easy to rank)
+    "Buffalo A2 Bilona Ghee 500 ml",
+    "Buffalo A2 Bilona Ghee 1 Ltr",
+    "pure desi buffalo ghee",
+    "premium desi ghee",
+    "Order 100% pure desi buffalo ghee",
+    "Order pure desi buffalo ghee",
+    // Supporting keywords
+    "buffalo ghee",
     "A2 ghee",
+    "desi ghee",
+    "ghee price",
     "ghee for cooking",
     "ghee for babies",
     "ghee 1 litre price",
@@ -60,13 +87,23 @@ export const metadata = {
     "organic food India",
     "pure buffalo ghee",
     "ghee buy online India",
-    "NavPrana ghee",
     "natural ghee India",
     "ghee Madhya Pradesh",
     "best organic ghee brand",
+    "best organic ghee in India",
     "pure ghee for health",
     "chemical free ghee",
     "organic food online India",
+    "traditional bilona method ghee",
+    "hand churned ghee",
+    "Chambal valley ghee",
+    "FSSAI certified ghee",
+    "ghee benefits",
+    "ghee for weight loss",
+    "desi cow ghee",
+    "ghee online India",
+    "best ghee brand India",
+    "ghee for health",
   ],
   authors: [{ name: "NavPrana Organics" }],
   creator: "NavPrana Organics",
@@ -87,15 +124,16 @@ export const metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "NavPrana Organics",
-    title: "Buy Pure Desi Ghee Online — NavPrana Organics | Organic Bilona Ghee",
+    title: "Buy Pure Desi Bilona Ghee Online — Best Organic Ghee in India | NavPrana",
     description:
-      "100% pure organic Bilona desi ghee from Chambal valley. No preservatives, no additives. FSSAI certified. Free shipping above ₹999.",
+      "India's best organic bilona ghee — 100% pure A2 buffalo desi ghee from Chambal valley. Traditional Bilona method, grass-fed, FSSAI certified. Buy ghee online starting ₹1119. Free shipping above ₹999.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Buy Pure Desi Ghee Online — NavPrana Organics | Organic Bilona Ghee",
+    title: "Buy Pure Desi Bilona Ghee Online — Best Organic Ghee in India | NavPrana",
     description:
-      "100% pure organic Bilona desi ghee from Chambal valley. FSSAI certified. Free shipping above ₹999.",
+      "India's best organic bilona ghee. Pure A2 buffalo desi ghee, Chambal valley. FSSAI certified. Free shipping above ₹999.",
+    creator: "@navprana",
   },
   icons: {
     icon: "/favicon.ico",
@@ -105,6 +143,9 @@ export const metadata = {
     canonical: "/",
   },
   category: "Food & Beverages",
+  other: {
+    "google-site-verification": process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
+  },
 };
 
 // JSON-LD Structured Data
@@ -115,7 +156,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/opengraph-image`,
   description:
-    "NavPrana Organics is an organic and pure food company bringing traditionally prepared, chemical-free food products to Indian households. Our first product is pure Bilona method desi ghee from the Chambal valley of Madhya Pradesh.",
+    "NavPrana Organics is India's best organic bilona ghee brand, bringing traditionally prepared, chemical-free pure desi ghee and food products to Indian households. Our flagship product is 100% pure A2 Buffalo Bilona Ghee from the Chambal valley of Madhya Pradesh — grass-fed, FSSAI certified, and made using the traditional Bilona method.",
   foundingDate: "2025",
   address: {
     "@type": "PostalAddress",
@@ -132,13 +173,68 @@ const organizationJsonLd = {
     email: "support@navprana.com",
     availableLanguage: ["English", "Hindi"],
   },
-  alternateName: ["NavPrana", "NavPrana Organics"],
+  alternateName: ["NavPrana", "NavPrana Organics", "NavPrana Ghee"],
   sameAs: [
     "https://www.instagram.com/navprana/",
     "https://www.facebook.com/navprana",
     // "https://twitter.com/navprana",
     // "https://www.youtube.com/@navprana",
   ],
+  knowsAbout: [
+    "Bilona Ghee",
+    "A2 Bilona Ghee",
+    "Organic Ghee",
+    "Pure Desi Ghee",
+    "Buffalo Ghee",
+    "Traditional Bilona Method",
+    "Grass-fed Ghee",
+    "Organic Food India",
+    "Chambal Valley Products",
+  ],
+  makesOffer: [
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Product",
+        name: "Buffalo A2 Bilona Ghee (500 ml)",
+        description: "Premium pure desi buffalo A2 bilona ghee, 500ml. Traditional Bilona method, grass-fed, FSSAI certified.",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Product",
+        name: "Buffalo A2 Bilona Ghee (1 Ltr)",
+        description: "Premium pure desi buffalo A2 bilona ghee, 1 litre. Traditional Bilona method, grass-fed, FSSAI certified.",
+      },
+    },
+  ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "NavPrana Organic Ghee Collection",
+    itemListElement: [
+      {
+        "@type": "OfferCatalog",
+        name: "Pure Desi Buffalo Bilona Ghee",
+        itemListElement: [
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Buffalo A2 Bilona Ghee (500 ml)",
+            },
+          },
+          {
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Product",
+              name: "Buffalo A2 Bilona Ghee (1 Ltr)",
+            },
+          },
+        ],
+      },
+    ],
+  },
 };
 
 const localBusinessJsonLd = {
@@ -151,7 +247,7 @@ const localBusinessJsonLd = {
   telephone: "+91-7509531811",
   email: "support@navprana.com",
   description:
-    "Buy pure organic desi ghee and natural food products online. Traditional Bilona method, FSSAI certified, free shipping across India.",
+    "Buy pure organic bilona ghee and natural food products online. Best bilona ghee in India — A2 buffalo desi ghee, traditional Bilona method, grass-fed, FSSAI certified, free shipping across India. Order pure desi buffalo ghee starting ₹1119.",
   address: {
     "@type": "PostalAddress",
     streetAddress: "L-232, Old H.B Colony",
@@ -172,25 +268,61 @@ const localBusinessJsonLd = {
     opens: "00:00",
     closes: "23:59",
   },
+  hasMap: "https://maps.google.com/?q=NavPrana+Organics+Morena+Madhya+Pradesh",
+  areaServed: {
+    "@type": "Country",
+    name: "India",
+  },
+  paymentAccepted: ["UPI", "Credit Card", "Debit Card", "Net Banking", "Cash on Delivery"],
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "NavPrana Organics",
+  alternateName: "NavPrana — Best Bilona Ghee in India",
   url: SITE_URL,
   description:
-    "Buy pure organic desi ghee and natural food products online from NavPrana Organics. Traditional Bilona method, farm-fresh from Chambal valley.",
+    "Buy pure organic bilona ghee online — India's best desi ghee brand. A2 buffalo bilona ghee, traditional Bilona method, grass-fed, FSSAI certified. Order pure desi buffalo ghee, organic ghee, and premium desi ghee from Chambal valley.",
   potentialAction: {
     "@type": "SearchAction",
     target: `${SITE_URL}/products?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
+  about: {
+    "@type": "Thing",
+    name: "Organic Bilona Ghee",
+    description: "Pure desi buffalo A2 bilona ghee made using traditional Bilona method from Chambal valley, Madhya Pradesh.",
+  },
+  keywords: "bilona ghee, best ghee in India, organic ghee, pure desi ghee, a2 bilona ghee, buy ghee online, desi ghee online, grass-fed ghee, bilona ghee price, buy buffalo ghee online, pure desi buffalo ghee, premium desi ghee, Buffalo A2 Bilona Ghee",
+};
+
+// ItemList for product rich snippets
+const itemListJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "NavPrana Organics — Pure Desi Bilona Ghee Products",
+  description: "Buy the best bilona ghee in India. Order pure desi buffalo A2 bilona ghee online from NavPrana Organics.",
+  numberOfItems: 2,
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Buffalo A2 Bilona Ghee (500 ml)",
+      url: `${SITE_URL}/products/navprana-organics-pure-desi-buffalo-bilona-ghee-500ml`,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Buffalo A2 Bilona Ghee (1 Ltr)",
+      url: `${SITE_URL}/products/navprana-organics-pure-desi-buffalo-bilona-ghee-1-litre`,
+    },
+  ],
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-IN" suppressHydrationWarning>
       <head>
         {/* Google Tag Manager */}
         <script
@@ -219,6 +351,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(itemListJsonLd),
           }}
         />
         {/* Meta Pixel (noscript fallback) */}

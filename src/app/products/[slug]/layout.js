@@ -43,44 +43,57 @@ export async function generateMetadata({ params }) {
     `${SITE_URL}/opengraph-image`;
 
   return {
-    title: `${product.name} — ₹${product.price} | Buy Pure Desi Ghee Online`,
+    title: `Buy ${product.name} Online — ₹${product.price} | Best Bilona Ghee in India`,
     description:
       product.description ||
       product.details ||
-      `Buy ${product.name} at ₹${product.price} from NavPrana Organics. 100% pure, traditional Bilona method desi ghee. FSSAI certified, free shipping above ₹999.`,
+      `Buy ${product.name} at ₹${product.price} from NavPrana Organics. 100% pure organic A2 bilona ghee, traditional Bilona method. Best desi ghee in India. FSSAI certified, grass-fed, free shipping above ₹999. Order pure desi buffalo ghee online.`,
     keywords: [
       product.name,
-      "desi ghee",
-      "organic ghee",
       "bilona ghee",
-      "pure ghee price",
+      "a2 bilona ghee",
+      "organic ghee",
+      "pure desi ghee",
+      "bilona ghee price",
       "buy ghee online",
+      "best ghee in India",
+      "desi ghee online",
+      "pure desi buffalo ghee",
+      "premium desi ghee",
+      "buy desi ghee online",
+      "buy buffalo ghee online",
+      "Buffalo A2 Bilona Ghee 500 ml",
+      "Buffalo A2 Bilona Ghee 1 Ltr",
+      "best bilona ghee in india",
+      "pure desi ghee price",
+      "grass-fed ghee",
+      "A2 ghee online",
+      "organic india ghee",
       "NavPrana",
-      "ghee review",
-      "best desi ghee",
+      "order pure desi buffalo ghee",
     ],
     openGraph: {
-      title: `${product.name} — ₹${product.price} | NavPrana Organics`,
+      title: `Buy ${product.name} — ₹${product.price} | NavPrana Organics`,
       description:
         product.details ||
-        `Buy ${product.name} at ₹${product.price}. 100% pure organic Bilona desi ghee. Free shipping above ₹999.`,
+        `Buy ${product.name} at ₹${product.price}. 100% pure organic A2 bilona ghee. Best desi ghee in India. Free shipping above ₹999.`,
       url: `/products/${slug}`,
       images: [
         {
           url: featuredImage,
           width: 800,
           height: 800,
-          alt: product.name,
+          alt: `${product.name} — Pure Desi A2 Bilona Ghee by NavPrana Organics`,
         },
       ],
       type: "product",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} — ₹${product.price} | NavPrana Organics`,
+      title: `Buy ${product.name} — ₹${product.price} | NavPrana Organics`,
       description:
         product.details ||
-        `Buy ${product.name} — pure organic desi ghee. FSSAI certified.`,
+        `Buy ${product.name} — pure organic A2 bilona ghee. Best bilona ghee in India. FSSAI certified.`,
       images: [featuredImage],
     },
     alternates: {
@@ -119,11 +132,72 @@ function ProductJsonLd({ product, slug }) {
         "@type": "Organization",
         name: "NavPrana Organics",
       },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "INR",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "IN",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 2,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 3,
+            maxValue: 7,
+            unitCode: "DAY",
+          },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "IN",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+      },
     },
     category: "Food & Beverages > Dairy > Ghee",
     sku: `NP-${product.id}`,
     mpn: `NP-${product.id}`,
     itemCondition: "https://schema.org/NewCondition",
+    additionalProperty: [
+      {
+        "@type": "PropertyValue",
+        name: "Method",
+        value: "Traditional Bilona",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Source",
+        value: "A2 Buffalo Milk",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Origin",
+        value: "Chambal Valley, Madhya Pradesh",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Certification",
+        value: "FSSAI Certified",
+      },
+      {
+        "@type": "PropertyValue",
+        name: "Diet",
+        value: "Grass-fed, Organic",
+      },
+    ],
   };
 
   if (product.max_price && Number(product.max_price) > Number(product.price)) {

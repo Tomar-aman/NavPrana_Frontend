@@ -8,7 +8,7 @@ const Benefits = () => {
       icon: Heart,
       title: "Rich in Nutrients",
       description:
-        "A powerhouse of essential vitamins and healthy fats that naturally supports heart health and overall wellness.",
+        "Pure desi ghee is a powerhouse of essential vitamins and healthy fats that naturally supports heart health and overall wellness.",
       color: "bg-red-50",
       iconColor: "text-red-500",
     },
@@ -16,7 +16,7 @@ const Benefits = () => {
       icon: Zap,
       title: "Boosts Energy",
       description:
-        "Fuel your day with healthy fats that provide long-lasting stamina for active lifestyles.",
+        "Organic bilona ghee fuels your day with healthy fats providing long-lasting stamina for active lifestyles.",
       color: "bg-amber-50",
       iconColor: "text-amber-500",
     },
@@ -24,7 +24,7 @@ const Benefits = () => {
       icon: Shield,
       title: "Supports Immunity",
       description:
-        "Rich in antioxidants and butyric acid to strengthen gut health and immune defense.",
+        "A2 bilona ghee is rich in antioxidants and butyric acid to strengthen gut health and immune defense.",
       color: "bg-blue-50",
       iconColor: "text-blue-500",
     },
@@ -32,7 +32,7 @@ const Benefits = () => {
       icon: Sparkles,
       title: "Pure & Wholesome",
       description:
-        "Zero additives, zero chemicals. Just golden goodness of pure buffalo milk.",
+        "Zero additives, zero chemicals. Premium desi ghee — just golden goodness of pure buffalo milk.",
       color: "bg-purple-50",
       iconColor: "text-purple-500",
     },
@@ -40,15 +40,15 @@ const Benefits = () => {
       icon: Droplets,
       title: "Traditional Bilona",
       description:
-        "Hand-churned using the ancient Bilona technique to preserve aroma and nutrition.",
+        "Hand-churned using the ancient Bilona technique — the best ghee-making method in India for preserving aroma and nutrition.",
       color: "bg-cyan-50",
       iconColor: "text-cyan-500",
     },
     {
       icon: Sun,
-      title: "Farm Fresh",
+      title: "Farm Fresh & Grass-Fed",
       description:
-        "Sourced from free-grazing buffaloes with ethical milking practices and supreme quality.",
+        "Sourced from grass-fed, free-grazing buffaloes with ethical milking practices. Organic ghee at its finest.",
       color: "bg-orange-50",
       iconColor: "text-orange-500",
     },
@@ -69,9 +69,12 @@ const Benefits = () => {
           <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">
             <span className="text-gradient">Nature's Perfect</span> Nutrition
           </h2>
+          <h3 className="text-lg md:text-xl font-semibold text-muted-foreground mb-2">
+            Health Benefits of Pure Desi Bilona Ghee
+          </h3>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover the incredible health benefits of our pure buffalo ghee,
-            made using the ancient Bilona method.
+            Discover the incredible health benefits of our organic bilona ghee —
+            the best A2 buffalo ghee in India, made using the ancient Bilona method.
           </p>
         </div>
 
@@ -111,16 +114,16 @@ const Benefits = () => {
             <div className="relative overflow-hidden rounded-2xl shadow-lg">
               <Image
                 src={organicFarmImage}
-                alt="Organic farm with fresh herbs and natural elements"
+                alt="Organic farm-fresh pure desi bilona ghee — traditional Bilona method A2 buffalo ghee from NavPrana Organics"
                 className="w-full h-64 sm:h-72 md:h-[400px] object-cover hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-5 sm:p-6">
                 <h3 className="text-lg md:text-xl font-bold text-white mb-1">
-                  From Organic Farms to Your Table
+                  From Organic Farms to Your Table — Best Bilona Ghee in India
                 </h3>
                 <p className="text-sm text-white/80">
-                  Sustainable farming and natural processes ensure every jar
-                  carries the pure essence of nature.
+                  Sustainable farming and natural processes ensure every jar of our premium desi ghee
+                  carries the pure essence of nature. Buy organic ghee online from NavPrana.
                 </p>
               </div>
             </div>
