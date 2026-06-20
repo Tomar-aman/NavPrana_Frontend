@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import {
@@ -16,6 +16,9 @@ import {
   Lock,
   Package,
   ChevronRight,
+  Tag,
+  Copy,
+  Check,
 } from "lucide-react";
 
 import { sendAddress } from "@/services/profile/post-profile";
@@ -42,6 +45,28 @@ const Page = () => {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState("profile");
+  const [coupons, setCoupons] = useState([]);
+  const [loadingCoupons, setLoadingCoupons] = useState(false);
+
+  const fetchMyCoupons = async () => {
+    setLoadingCoupons(true);
+    try {
+      const API = (await import("@/services/api")).default;
+      const res = await API.get("api/v1/coupon/my-coupons/");
+      setCoupons(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load your coupons");
+    } finally {
+      setLoadingCoupons(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "coupons") {
+      fetchMyCoupons();
+    }
+  }, [activeTab]);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
@@ -208,10 +233,10 @@ const Page = () => {
             </div>
           </div>
 
-          {/* ============ TABS ============ */}
-          <div className="flex gap-1 mt-6 mb-6 bg-white rounded-xl border border-gray-100 p-1 max-w-xs">
+          <div className="flex gap-1 mt-6 mb-6 bg-white rounded-xl border border-gray-100 p-1 max-w-sm">
             {[
               { key: "profile", label: "Profile", icon: User },
+              { key: "coupons", label: "My Coupons", icon: Tag },
               { key: "settings", label: "Settings", icon: Settings },
             ].map(({ key, label, icon: Icon }) => (
               <button
@@ -414,6 +439,109 @@ const Page = () => {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* ============ MY COUPONS TAB ============ */}
+          {activeTab === "coupons" && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h2 className="text-base font-semibold text-foreground mb-5 flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Tag size={16} className="text-primary" />
+                </div>
+                My Winning Coupons
+              </h2>
+
+              {loadingCoupons ? (
+                <div className="flex justify-center py-10">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : coupons.length === 0 ? (
+                <div className="text-center py-10 text-muted-foreground">
+                  <Tag size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">No coupons won yet. Go spin the lucky wheel!</p>
+                  <button 
+                    onClick={() => router.push("/spin")}
+                    className="mt-4 px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition shadow-sm cursor-pointer"
+                  >
+                    Spin the Wheel
+                  </button>
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {coupons.map((coupon) => {
+                    const isFree500ml = coupon.coupon_code.startsWith("NAV-FREE500-");
+                    return (
+                      <div 
+                        key={coupon.id} 
+                        className={`relative border rounded-2xl p-4 overflow-hidden flex flex-col justify-between transition-all duration-200
+                          ${coupon.is_used 
+                            ? "border-gray-200 bg-gray-50/50 opacity-70" 
+                            : coupon.is_expired
+                            ? "border-red-200 bg-red-50/20"
+                            : "border-primary/20 bg-gradient-to-br from-white to-primary/5 hover:shadow-md hover:border-primary/40"
+                          }`}
+                      >
+                        {/* Coupon Ticket Jagged Border Effect */}
+                        <div className="absolute top-1/2 -left-2 -translate-y-1/2 w-4 h-4 bg-gray-50 rounded-full border-r border-gray-200/50 z-10" />
+                        <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-4 h-4 bg-gray-50 rounded-full border-l border-gray-200/50 z-10" />
+
+                        <div className="flex justify-between items-start gap-4">
+                          <div>
+                            <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-2
+                              ${coupon.is_used 
+                                ? "bg-gray-100 text-gray-500" 
+                                : coupon.is_expired 
+                                ? "bg-red-100 text-red-600" 
+                                : isFree500ml 
+                                ? "bg-amber-100 text-amber-700 animate-pulse" 
+                                : "bg-primary/10 text-primary"
+                              }`}
+                            >
+                              {coupon.is_used ? "Used" : coupon.is_expired ? "Expired" : "Active"}
+                            </span>
+                            <h3 className="font-semibold text-gray-800 text-sm">
+                              {isFree500ml 
+                                ? "Free Ghee 500ml" 
+                                : coupon.discount_type === "percent" 
+                                ? `${parseInt(coupon.percent)}% OFF Entire Order` 
+                                : coupon.discount_type === "shipping" 
+                                ? "Free Shipping" 
+                                : `₹${parseInt(coupon.amount)} OFF`}
+                            </h3>
+                            <p className="text-[11px] text-gray-500 mt-1">
+                              {isFree500ml ? "Valid when 500ml ghee is in cart" : "No minimum amount required"}
+                            </p>
+                          </div>
+                          
+                          {/* Coupon Code Copy Button */}
+                          {!coupon.is_used && !coupon.is_expired && (
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(coupon.coupon_code);
+                                toast.success("Coupon code copied!");
+                              }}
+                              className="p-2 bg-white rounded-xl shadow-sm border border-gray-100 text-gray-600 hover:text-primary hover:border-primary/20 transition cursor-pointer"
+                              title="Copy code"
+                            >
+                              <Copy size={13} />
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="border-t border-dashed border-gray-200 my-3 pt-3 flex justify-between items-center">
+                          <div className="font-mono font-bold text-xs text-primary bg-primary/5 px-2.5 py-1 rounded-lg border border-primary/10">
+                            {coupon.coupon_code}
+                          </div>
+                          <div className="text-[10px] text-gray-400">
+                            Exp: {new Date(coupon.end_date).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

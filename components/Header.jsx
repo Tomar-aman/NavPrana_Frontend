@@ -13,6 +13,8 @@ import {
   ShoppingBag,
   Info,
   MessageSquare,
+  Gift,
+  Tag,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,6 +30,7 @@ import { getCart } from "@/redux/features/cartSlice";
 const NAV_LINKS = [
   { label: "Home", path: "/", icon: Home },
   { label: "Products", path: "/products", icon: ShoppingBag },
+  { label: "Spin & Win 🎡", path: "/spin", icon: Gift },
   { label: "About", path: "/about", icon: Info },
   { label: "Contact", path: "/contact", icon: MessageSquare },
 ];
@@ -254,7 +257,7 @@ const Header = () => {
 
                         {/* Links */}
                         <div className="py-1.5">
-                          <Link
+                           <Link
                             href="/profile"
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-gray-50 transition"
                           >
@@ -262,6 +265,15 @@ const Header = () => {
                               <User size={14} className="text-primary" />
                             </div>
                             My Profile
+                          </Link>
+                          <Link
+                            href="/my-coupons"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-gray-50 transition"
+                          >
+                            <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                              <Tag size={14} className="text-amber-600" />
+                            </div>
+                            My Coupons
                           </Link>
                           <Link
                             href="/order"

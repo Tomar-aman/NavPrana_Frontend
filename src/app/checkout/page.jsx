@@ -472,7 +472,7 @@ const Page = () => {
                 )}
                 {success && couponData && (
                   <p className="text-green-600 text-[11px] mt-1.5 font-medium">
-                    🎉 Coupon <b>{couponData.code}</b> applied!
+                    🎉 Coupon <b>{couponData.coupon_code || couponData.code}</b> applied!
                   </p>
                 )}
               </div>
