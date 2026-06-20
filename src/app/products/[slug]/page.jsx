@@ -10,7 +10,7 @@ const BASE_API = (
 async function getProductData() {
   try {
     const res = await fetch(`${BASE_API}/api/v1/product/products/`, {
-      next: { revalidate: 3600 },
+      cache: "no-store",
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -21,16 +21,7 @@ async function getProductData() {
   }
 }
 
-// Pre-generate all product pages at build time for fast crawlability by Google
-export async function generateStaticParams() {
-  try {
-    const products = await getProductData();
-    if (!products) return [];
-    return products.map((p) => ({ slug: generateSlug(p.name) }));
-  } catch {
-    return [];
-  }
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
