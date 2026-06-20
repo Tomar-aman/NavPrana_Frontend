@@ -1,5 +1,6 @@
 import { generateSlug } from "@/utils/slug";
 
+export const dynamic = "force-dynamic";
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
 const BASE_API = (process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/").replace(/\/+$/, "");
 
