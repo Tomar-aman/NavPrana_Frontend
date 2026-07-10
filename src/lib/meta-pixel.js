@@ -9,7 +9,7 @@
  * Usage:  import { trackAddToCart } from '@/lib/meta-pixel';
  */
 
-const PIXEL_ID = "1893858241314981";
+const PIXEL_ID = "1815246863217774";
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
