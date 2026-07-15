@@ -13,6 +13,26 @@ export const metadata = {
   title: "Health Benefits of Pure Desi Bilona Ghee — Best Organic Ghee in India",
   description:
     "Discover the incredible health benefits of pure desi bilona ghee — heart health, brain function, energy, immune support, skin care, and digestive health. Learn why NavPrana's A2 bilona ghee is the best organic ghee in India and a true superfood.",
+  keywords: [
+    // AEO question keywords — what people ask Google & AI assistants
+    "is ghee good for health",
+    "ghee benefits",
+    "how much ghee per day",
+    "ghee vs butter which is better",
+    "cow ghee vs buffalo ghee",
+    "ghee on empty stomach benefits",
+    "ghee for babies",
+    "ghee with warm milk at night",
+    "how to check pure ghee",
+    "is ghee lactose free",
+    "ghee smoke point",
+    "butyric acid ghee benefits",
+    "ghee for digestion",
+    "ghee for weight loss",
+    "ghee for skin and hair",
+    "ayurvedic benefits of ghee",
+    "desi ghee nutrition facts",
+  ],
   openGraph: {
     title: "Health Benefits of Pure Desi Bilona Ghee | NavPrana Organics — Best Ghee in India",
     description:
@@ -22,6 +42,95 @@ export const metadata = {
   alternates: {
     canonical: "/health-benefits",
   },
+};
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
+
+/**
+ * AEO-targeted Q&As — direct answer in the first sentence, 40–70 words each.
+ * Rendered visibly on the page AND emitted as FAQPage JSON-LD (Google requires
+ * the schema content to be visible on the page).
+ */
+const healthFaqs = [
+  {
+    question: "How much ghee should I eat per day?",
+    answer:
+      "1–2 teaspoons of ghee per day is considered a moderate, healthy intake for most adults. Modern research shows moderate ghee consumption does not significantly increase cardiovascular risk in healthy individuals. Ghee is calorie-dense, so consistency in small amounts — with meals, rotis, or warm milk — works better than large quantities.",
+  },
+  {
+    question: "Is ghee healthier than butter?",
+    answer:
+      "Ghee has two clear advantages over butter: a much higher smoke point (around 250°C / 485°F vs 177°C / 350°F for butter), making it safer for Indian cooking, frying and tadka, and it is virtually lactose-free and casein-free because milk solids are removed. Calorie and fat content are similar, but ghee is richer in butyrate and fat-soluble vitamins A, D, E and K.",
+  },
+  {
+    question: "Which is better — cow ghee or buffalo ghee?",
+    answer:
+      "Both are healthy; they serve different needs. Cow ghee is lighter and easier to digest, making it ideal for daily use. Buffalo ghee is denser and more nutrient-rich — higher in butyric acid, calcium and phosphorus — offering more energy, which suits growing children, active lifestyles, and rich traditional recipes. In Ayurveda, buffalo ghee is valued for strength and better sleep.",
+  },
+  {
+    question: "What are the benefits of eating ghee on an empty stomach?",
+    answer:
+      "A teaspoon of ghee on an empty stomach in the morning supports digestion, lubricates the gut, and provides steady energy. Its healthy fats keep you feeling full longer, which can support weight management. The butyric acid in pure bilona ghee also helps nourish the gut lining and reduce inflammation.",
+  },
+  {
+    question: "Can babies eat ghee?",
+    answer:
+      "Yes — babies can start ghee at around 6 months of age, when solids are introduced. Begin with 2–3 drops (about ¼ teaspoon) stirred into cooled dal or khichdi once a day, increasing slowly with age. Ghee supports a baby's brain development, digestion, immunity, and weight gain. Always consult your pediatrician first, especially if there is a milk allergy.",
+  },
+  {
+    question: "Is ghee lactose-free?",
+    answer:
+      "Yes, pure ghee is virtually lactose-free and casein-free. During the traditional Bilona process, milk solids — which contain the lactose and casein — are separated and removed, leaving pure golden butterfat. This is why most people with lactose intolerance or dairy sensitivity can enjoy ghee comfortably.",
+  },
+  {
+    question: "How can I check if my ghee is pure?",
+    answer:
+      "Pure desi ghee is golden yellow, has a distinct nutty aroma, and develops a natural grainy (danedar) texture at room temperature. It melts instantly on a warm palm or spoon. Check the label: authentic bilona ghee lists a single ingredient — curd-churned butterfat — with no refined oils, additives, colours, or preservatives, and carries FSSAI certification.",
+  },
+  {
+    question: "Does ghee with warm milk at night help?",
+    answer:
+      "Yes — a teaspoon of ghee in warm milk before bed is a time-tested Ayurvedic remedy. It can improve sleep quality, ease constipation by lubricating the digestive tract, soothe joints, and calm the nervous system. Buffalo ghee in particular is considered cooling and sleep-promoting in Ayurveda.",
+  },
+];
+
+// FAQPage JSON-LD — mirrors the visible FAQ section below
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: healthFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
+
+// Article JSON-LD — health content page
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Health Benefits of Pure Desi Bilona Ghee",
+  description:
+    "The science-backed health benefits of pure desi bilona ghee — heart health, brain function, energy, immunity, skin, and digestion — plus nutrition facts and how to use ghee daily.",
+  url: `${SITE_URL}/health-benefits`,
+  image: `${SITE_URL}/opengraph-image`,
+  author: {
+    "@type": "Organization",
+    name: "NavPrana Organics",
+    url: SITE_URL,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "NavPrana Organics",
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/opengraph-image`,
+    },
+  },
+  mainEntityOfPage: `${SITE_URL}/health-benefits`,
 };
 
 const Page = () => {
@@ -135,6 +244,14 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 my-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       {/* Header */}
       {/* <header className="bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between md:px-15">
@@ -244,6 +361,35 @@ const Page = () => {
                 <h4 className="text-lg font-semibold mb-3">{item.title}</h4>
                 <p className="text-sm text-muted-foreground">{item.desc}</p>
               </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ Section — AEO: direct answers to the questions people ask
+            Google & AI assistants about ghee (matches FAQPage JSON-LD above) */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-4">
+            Ghee Health Questions, Answered
+          </h2>
+          <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Straight answers to the most common questions about desi ghee,
+            backed by tradition and modern nutrition science.
+          </p>
+          <div className="max-w-3xl mx-auto space-y-4">
+            {healthFaqs.map((faq, index) => (
+              <details
+                key={index}
+                className="group border border-border/50 rounded-2xl bg-card/50 backdrop-blur-sm p-6"
+              >
+                <summary className="cursor-pointer list-none">
+                  <h3 className="inline text-lg font-semibold">
+                    {faq.question}
+                  </h3>
+                </summary>
+                <p className="mt-4 text-muted-foreground leading-relaxed">
+                  {faq.answer}
+                </p>
+              </details>
             ))}
           </div>
         </section>

@@ -19,18 +19,22 @@ const getFeaturedImage = (images = []) => {
   );
 };
 
-const ProductsClient = () => {
+const ProductsClient = ({ initialProducts = [] }) => {
   const dispatch = useDispatch();
-  const { list: products, loading, error } = useSelector((state) => state.product);
+  const { list: reduxProducts, loading, error } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
   const { isAuthenticated } = useSelector((state) => state.auth);
   const router = useRouter();
 
+  // Server-fetched products render immediately (SEO/AEO: content is in the
+  // initial HTML); Redux list takes over once hydrated for cart interactions.
+  const products = reduxProducts.length > 0 ? reduxProducts : initialProducts;
+
   useEffect(() => {
-    if (products.length === 0) {
+    if (reduxProducts.length === 0) {
       dispatch(fetchProducts());
     }
-  }, [dispatch, products.length]);
+  }, [dispatch, reduxProducts.length]);
 
   const handleAddToCart = (productId) => {
     if (!isAuthenticated) {

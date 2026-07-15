@@ -44,7 +44,8 @@ export async function generateMetadata() {
 const Page = async () => {
   const { blogs, categories } = await getBlogListingData();
 
-  // JSON-LD for Blog
+  // JSON-LD for Blog — includes the actual post list so the listing page
+  // itself surfaces posts to crawlers and answer engines
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -59,6 +60,18 @@ const Page = async () => {
         url: `${BASE_URL}/logo-ghee.svg`,
       },
     },
+    blogPost: blogs.map((blog) => ({
+      "@type": "BlogPosting",
+      headline: blog.title,
+      url: `${BASE_URL}/blog/${blog.slug}`,
+      image: blog.thumbnail || undefined,
+      datePublished: blog.created_at || undefined,
+      dateModified: blog.updated_at || blog.created_at || undefined,
+      author: {
+        "@type": "Organization",
+        name: "NavPrana Organics",
+      },
+    })),
   };
 
   return (
