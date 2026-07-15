@@ -86,7 +86,10 @@ export async function generateMetadata({ params }) {
           alt: `${product.name} — Pure Desi A2 Bilona Ghee by NavPrana Organics`,
         },
       ],
-      type: "product",
+      // NOTE: Next.js Metadata API only accepts specific OG types ("website",
+      // "article", ...) — "product" throws and kills ALL metadata for the page.
+      // Product rich data is provided via the Product JSON-LD below instead.
+      type: "website",
     },
     twitter: {
       card: "summary_large_image",
