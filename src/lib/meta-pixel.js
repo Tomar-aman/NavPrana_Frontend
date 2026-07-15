@@ -1,7 +1,7 @@
 /**
  * Meta Pixel (Facebook Pixel) — Centralized Utility
  *
- * Pixel ID: 1893858241314981
+ * Pixel ID: 1815246863217774
  *
  * This module exposes helpers for every standard and custom event
  * so that individual components never need to touch `window.fbq` directly.

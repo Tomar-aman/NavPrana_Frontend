@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import pineappleImage from "@/assets/hero_image.jpg";
 import cowImage from "@/assets/img_3.png";
+import salesImage from "@/assets/sales.png";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
@@ -11,6 +12,10 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
+    {
+      image: salesImage,
+      alt: "NavPrana Organics - Limited Time Offer - Buy 100% Organic Bilona Ghee Online",
+    },
     {
       image: pineappleImage,
       alt: "NavPrana Organics Pure Desi Bilona Ghee — Best Organic Buffalo Ghee in India",
