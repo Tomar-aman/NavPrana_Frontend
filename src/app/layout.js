@@ -236,50 +236,11 @@ const organizationJsonLd = {
     "Organic Food India",
     "Chambal Valley Products",
   ],
-  makesOffer: [
-    {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Product",
-        name: "Buffalo A2 Bilona Ghee (500 ml)",
-        description: "Premium pure desi buffalo A2 bilona ghee, 500ml. Traditional Bilona method, grass-fed, FSSAI certified.",
-      },
-    },
-    {
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Product",
-        name: "Buffalo A2 Bilona Ghee (1 Ltr)",
-        description: "Premium pure desi buffalo A2 bilona ghee, 1 litre. Traditional Bilona method, grass-fed, FSSAI certified.",
-      },
-    },
-  ],
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "NavPrana Organic Ghee Collection",
-    itemListElement: [
-      {
-        "@type": "OfferCatalog",
-        name: "Pure Desi Buffalo Bilona Ghee",
-        itemListElement: [
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Buffalo A2 Bilona Ghee (500 ml)",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Product",
-              name: "Buffalo A2 Bilona Ghee (1 Ltr)",
-            },
-          },
-        ],
-      },
-    ],
-  },
+  // NOTE: do NOT add makesOffer / hasOfferCatalog with nested Product objects
+  // here — Google detects each nested Product as a standalone item missing
+  // "offers"/"review"/"aggregateRating" and flags a critical issue on EVERY
+  // page. Product rich data lives on /products (ItemList) and /products/[slug]
+  // (full Product schema with offers, ratings, reviews).
 };
 
 const localBusinessJsonLd = {
@@ -342,28 +303,10 @@ const websiteJsonLd = {
   keywords: "cow bilona ghee, best cow ghee in India, a2 cow ghee, buy cow ghee online, bilona ghee, best ghee in India, organic ghee, pure desi ghee, a2 bilona ghee, buy ghee online, desi ghee online, grass-fed ghee, bilona ghee price, buy buffalo ghee online, pure desi buffalo ghee, premium desi ghee",
 };
 
-// ItemList for product rich snippets
-const itemListJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "NavPrana Organics — Pure Desi Bilona Ghee Products",
-  description: "Buy the best bilona ghee in India. Order pure desi buffalo A2 bilona ghee online from NavPrana Organics.",
-  numberOfItems: 2,
-  itemListElement: [
-    {
-      "@type": "ListItem",
-      position: 1,
-      name: "Buffalo A2 Bilona Ghee (500 ml)",
-      url: `${SITE_URL}/products/navprana-organics-pure-desi-buffalo-bilona-ghee-500ml`,
-    },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Buffalo A2 Bilona Ghee (1 Ltr)",
-      url: `${SITE_URL}/products/navprana-organics-pure-desi-buffalo-bilona-ghee-1-litre`,
-    },
-  ],
-};
+// NOTE: the site-wide ItemList schema was removed — it hardcoded 2 products
+// with outdated slugs (drifted from the real catalog) and Google wants
+// ItemList only on list pages. /products emits the real catalog-driven
+// ItemList (with offers) instead.
 
 export default function RootLayout({ children }) {
   return (
@@ -396,12 +339,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteJsonLd),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(itemListJsonLd),
           }}
         />
         {/* Meta Pixel (noscript fallback) */}
