@@ -6,11 +6,9 @@ import Image from "next/image";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "@/redux/features/product";
 import { getCart, updateCart, deleteCart } from "@/redux/features/cartSlice";
 import { useRouter } from "next/navigation";
 import { generateSlug } from "@/utils/slug";
-import PrivateRoute from "../../../components/PrivateRoute";
 
 const getFeaturedImage = (images = []) => {
   return (
@@ -23,20 +21,21 @@ const getFeaturedImage = (images = []) => {
 const Page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { list: products } = useSelector((state) => state.product);
   const { items: cartItems, loading } = useSelector((state) => state.cart);
 
   useEffect(() => {
-    dispatch(fetchProducts());
     dispatch(getCart());
   }, [dispatch]);
 
-  const mergedCartItems = useMemo(() => {
-    return cartItems.map((cartItem) => {
-      const product = products.find((p) => p.id === cartItem.product);
-      return { ...cartItem, product };
-    });
-  }, [cartItems, products]);
+  // The cart API now nests the product, so there is no second catalogue fetch
+  // to wait on before this page can render.
+  const mergedCartItems = useMemo(
+    () => cartItems.map((cartItem) => ({
+      ...cartItem,
+      product: cartItem.product_detail,
+    })),
+    [cartItems],
+  );
 
   const handleIncrease = (item) => {
     dispatch(updateCart({ cartId: item.id, quantity: item.quantity + 1 }));
@@ -69,7 +68,6 @@ const Page = () => {
   const total = subtotal + shipping;
 
   return (
-    <PrivateRoute>
       <div className="min-h-screen bg-background mt-20">
         <main className="max-w-5xl mx-auto px-4 py-8">
           {/* Header */}
@@ -255,7 +253,6 @@ const Page = () => {
           )}
         </main>
       </div >
-    </PrivateRoute >
   );
 };
 

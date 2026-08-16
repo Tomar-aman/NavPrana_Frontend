@@ -36,19 +36,19 @@ const Page = () => {
       zone: "Metro Cities",
       cities: "Delhi, Mumbai, Bangalore, Chennai, Kolkata, Hyderabad",
       duration: "2-3 business days",
-      charges: "Free shipping on orders above ₹999",
+      charges: "Free shipping on orders above ₹599",
     },
     {
       zone: "Tier 1 Cities",
       cities: "Pune, Ahmedabad, Jaipur, Lucknow, Kanpur, Nagpur",
       duration: "3-4 business days",
-      charges: "Free shipping on orders above ₹999",
+      charges: "Free shipping on orders above ₹599",
     },
     {
       zone: "Tier 2 Cities",
       cities: "Agra, Varanasi, Meerut, Nashik, Faridabad",
       duration: "4-5 business days",
-      charges: "Free shipping on orders above ₹999",
+      charges: "Free shipping on orders above ₹599",
     },
     {
       zone: "Remote Areas",

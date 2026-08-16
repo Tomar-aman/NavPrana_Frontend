@@ -31,15 +31,14 @@ const Products = () => {
   }, [dispatch]);
 
   const handleAddToCart = (productId) => {
-    if (!isAuthenticated) {
-      toast.info("Please login to add items to cart");
-      router.push("/signin");
-      return;
-    }
+    // No login wall — signed-out shoppers build a local cart and convert it
+    // during guest checkout.
+    const productDetail = list.find((p) => p.id === productId);
     dispatch(
       addToCart({
         product: productId,
         quantity: 1,
+        productDetail,
       }),
     )
       .unwrap()

@@ -4,11 +4,28 @@ import { getCartAPI } from "@/services/cart/getCart";
 import { deleteCartAPI } from "@/services/cart/deleteCart";
 import { updateCartAPI } from "@/services/cart/updateCart";
 import { logout } from "./authSlice";
+import { getAuthToken } from "@/utils/authToken";
+import {
+  addGuestItem,
+  getGuestCart,
+  removeGuestItem,
+  updateGuestQuantity,
+} from "@/lib/guestCart";
+
+// Signed-out shoppers get a localStorage cart so they can reach checkout
+// without a login wall; it is synced to the account at guest checkout.
+const isSignedIn = () => Boolean(getAuthToken());
 
 /* ================= ADD TO CART ================= */
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ product, quantity }, { rejectWithValue }) => {
+  async ({ product, quantity, productDetail }, { rejectWithValue }) => {
+    if (!isSignedIn()) {
+      if (!productDetail) {
+        return rejectWithValue("Product details missing");
+      }
+      return { cart_items: addGuestItem(productDetail, quantity) };
+    }
     try {
       const res = await addToCartAPI({ product, quantity });
       return res.data; // ✅ FIXED
@@ -24,9 +41,10 @@ export const addToCart = createAsyncThunk(
 export const getCart = createAsyncThunk(
   "cart/getCart",
   async (_, { rejectWithValue }) => {
+    if (!isSignedIn()) return getGuestCart();
     try {
       const res = await getCartAPI();
- 
+
       return res; // ✅ ONLY DATA
     } catch (err) {
       return rejectWithValue(
@@ -40,6 +58,7 @@ export const getCart = createAsyncThunk(
 export const updateCart = createAsyncThunk(
   "cart/updateCart",
   async ({ cartId, quantity }, { rejectWithValue }) => {
+    if (!isSignedIn()) return updateGuestQuantity(cartId, quantity);
     try {
       const res = await updateCartAPI(cartId, { quantity });
       return res.data;
@@ -55,6 +74,10 @@ export const updateCart = createAsyncThunk(
 export const deleteCart = createAsyncThunk(
   "cart/deleteCart",
   async (cartId, { rejectWithValue }) => {
+    if (!isSignedIn()) {
+      removeGuestItem(cartId);
+      return cartId;
+    }
     try {
       await deleteCartAPI(cartId);
       return cartId; // ✅ return id to remove from store

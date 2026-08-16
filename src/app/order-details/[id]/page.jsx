@@ -16,6 +16,7 @@ import {
   CheckCircle,
   ArrowLeft,
   Home,
+  ExternalLink,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -165,6 +166,41 @@ export default function Page() {
               <h2 className="text-sm font-semibold mb-3">Order Status</h2>
               <OrderProgress status={orderData.status_display} />
             </div>
+
+            {/* Shipment Tracking */}
+            {orderData.awb_number && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <Truck size={15} className="text-blue-500" />
+                  </div>
+                  <h3 className="text-sm font-semibold">Shipment Tracking</h3>
+                </div>
+
+                <div className="ml-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+                      {orderData.courier_label}
+                    </p>
+                    <p className="text-sm font-bold text-primary break-all mt-0.5">
+                      AWB: {orderData.awb_number}
+                    </p>
+                  </div>
+
+                  {orderData.tracking_url && (
+                    <a
+                      href={orderData.tracking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition shrink-0"
+                    >
+                      Track on {orderData.courier_label}
+                      <ExternalLink size={12} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Address + Payment */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

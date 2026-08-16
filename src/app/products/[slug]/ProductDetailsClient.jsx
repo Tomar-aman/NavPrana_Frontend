@@ -185,12 +185,9 @@ const ProductDetailsClient = ({ product }) => {
   }, [product]);
 
   const handleAddToCart = (productId) => {
-    if (!isAuthenticated) {
-      toast.info("Please login to add items to cart");
-      router.push("/signin");
-      return;
-    }
-    dispatch(addToCart({ product: productId, quantity }))
+    // Signed-out shoppers get a local cart instead of a detour to /signin —
+    // it is merged into their account during guest checkout.
+    dispatch(addToCart({ product: productId, quantity, productDetail: product }))
       .unwrap()
       .then(() => {
         toast.success("Product added to cart");
@@ -204,15 +201,10 @@ const ProductDetailsClient = ({ product }) => {
   };
 
   const handleBuyNow = async () => {
-    if (!isAuthenticated) {
-      toast.info("Please login to buy products");
-      router.push("/signin");
-      return;
-    }
     try {
       if (!isInCart) {
         await dispatch(
-          addToCart({ product: product.id, quantity }),
+          addToCart({ product: product.id, quantity, productDetail: product }),
         ).unwrap();
         dispatch(getCart());
       }
@@ -450,6 +442,7 @@ const ProductDetailsClient = ({ product }) => {
               isInCart={isInCart}
               onAddToCart={() => handleAddToCart(product.id)}
               onGoToCart={() => router.push("/cart")}
+              onBuyNow={handleBuyNow}
             />
           </div>
         </div>

@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import PrivateRoute from "../../../components/PrivateRoute";
 import { hideLoader } from "@/redux/features/uiSlice";
+import { getCashfree } from "@/lib/cashfree";
+import { toast } from "sonner";
 
 const PaymentPage = () => {
   const { orderData } = useSelector((state) => state.order);
@@ -41,33 +43,32 @@ const PaymentPage = () => {
       sessionStorage.setItem("transaction_id", orderData.transaction_id);
     }
 
-    const script = document.createElement("script");
-    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
-    script.async = true;
+    // Resolves instantly when checkout already warmed the SDK up.
+    let cancelled = false;
 
-    script.onload = () => {
-      if (!window.Cashfree) return;
+    getCashfree()
+      .then((cashfree) => {
+        if (cancelled) return;
 
-      const cashfree = new window.Cashfree({
-        mode: process.env.NEXT_PUBLIC_CASHFREE_MODE || "sandbox",
+        // Hide global loader right before Cashfree UI opens
+        dispatch(hideLoader());
+
+        cashfree.checkout({
+          paymentSessionId: orderData.payment_session_id,
+          onPayment: () => {
+            router.replace("/payment-status");
+          },
+        });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        dispatch(hideLoader());
+        toast.error("Could not open the payment window. Please try again.");
+        router.replace("/checkout");
       });
-
-      // Hide global loader right before Cashfree UI opens
-      dispatch(hideLoader());
-
-      cashfree.checkout({
-        paymentSessionId: orderData.payment_session_id,
-
-        onPayment: (data) => {
-          router.replace("/payment-status");
-        },
-      });
-    };
-
-    document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script);
+      cancelled = true;
     };
   }, [orderData, router, dispatch]);
 

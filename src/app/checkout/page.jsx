@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import PrivateRoute from "../../../components/PrivateRoute";
 import { showLoader } from "@/redux/features/uiSlice";
 import Link from "next/link";
 import Image from "next/image";
@@ -24,7 +23,6 @@ import {
   editAddress,
   fetchAddresses,
 } from "@/redux/features/addressSlice";
-import { fetchProducts } from "@/redux/features/product";
 import { getCart } from "@/redux/features/cartSlice";
 import { applyCoupon, resetCouponState } from "@/redux/features/couponSlice";
 import { createOrder } from "@/redux/features/orderSlice";
@@ -34,6 +32,37 @@ import AddressModal from "../../../components/AddressModal";
 import { sendAddress } from "@/services/profile/post-profile";
 import { toast } from "sonner";
 import { trackInitiateCheckout, trackAddPaymentInfo } from "@/lib/meta-pixel";
+import { loadCashfreeSdk } from "@/lib/cashfree";
+import { clearGuestCart, guestCartSyncPayload } from "@/lib/guestCart";
+import { guestCheckoutAPI } from "@/services/auth/guestCheckout";
+import { syncCartAPI } from "@/services/cart/syncCart";
+import { getAuthToken, setAuthToken } from "@/utils/authToken";
+import GuestDetailsForm from "../../../components/GuestDetailsForm";
+
+const GUEST_REQUIRED = {
+  first_name: "Enter your first name",
+  email: "Enter your email",
+  phone_number: "Enter your phone number",
+  address_line1: "Enter your address",
+  city: "Enter your city",
+  state: "Enter your state",
+  postal_code: "Enter your PIN code",
+};
+
+const validateGuest = (details) => {
+  const errors = {};
+  Object.entries(GUEST_REQUIRED).forEach(([field, message]) => {
+    if (!String(details[field] || "").trim()) errors[field] = message;
+  });
+  if (details.email && !/^\S+@\S+\.\S+$/.test(details.email.trim())) {
+    errors.email = "Enter a valid email address";
+  }
+  const digits = String(details.phone_number || "").replace(/\D/g, "");
+  if (details.phone_number && digits.length < 10) {
+    errors.phone_number = "Enter a valid 10-digit phone number";
+  }
+  return errors;
+};
 
 const Page = () => {
   const dispatch = useDispatch();
@@ -41,9 +70,28 @@ const Page = () => {
   const [couponError, setCouponError] = useState("");
 
   const { list: address } = useSelector((state) => state.address);
-  const { list: products } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
   const { couponData, success } = useSelector((state) => state.coupon);
+  const { createLoading } = useSelector((state) => state.order);
+  const [placingOrder, setPlacingOrder] = useState(false);
+
+  // Signed-in state is read once on mount; a guest becomes signed in only
+  // through handleCreateOrder below, which re-renders via setIsGuest.
+  const [isGuest, setIsGuest] = useState(false);
+  const [guestChecked, setGuestChecked] = useState(false);
+  const [guestDetails, setGuestDetails] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    state: "",
+    postal_code: "",
+    country: "India",
+  });
+  const [guestErrors, setGuestErrors] = useState({});
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("upi");
@@ -64,10 +112,21 @@ const Page = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchAddresses());
-    dispatch(fetchProducts());
+    const signedIn = Boolean(getAuthToken());
+    setIsGuest(!signedIn);
+    setGuestChecked(true);
+
+    if (signedIn) dispatch(fetchAddresses());
     dispatch(getCart());
   }, [dispatch]);
+
+  // Warm up the Cashfree SDK while the user is still filling in checkout, so
+  // the /payment page can open the payment sheet without waiting on a download.
+  useEffect(() => {
+    loadCashfreeSdk().catch(() => {
+      // Offline or blocked — /payment loads it again and handles the failure.
+    });
+  }, []);
 
   useEffect(() => {
     if (success && couponData) {
@@ -77,12 +136,11 @@ const Page = () => {
     }
   }, [success, couponData]);
 
-  const mergedCartItems = useMemo(() => {
-    return cartItems.map((item) => ({
-      ...item,
-      product: products.find((p) => p.id === item.product),
-    }));
-  }, [cartItems, products]);
+  // Product details ride along with the cart response — no catalogue fetch.
+  const mergedCartItems = useMemo(
+    () => cartItems.map((item) => ({ ...item, product: item.product_detail })),
+    [cartItems],
+  );
 
   const subtotal = mergedCartItems.reduce((sum, item) => {
     if (!item.product) return sum;
@@ -98,7 +156,9 @@ const Page = () => {
 
   const productDiscount = mrpSubtotal - subtotal;
   const couponDiscount = couponData?.discount_amount || 0;
-  const shipping = subtotal > 599 ? 0 : 50;
+  // Mirrors Order.calculate_shipping() on the backend — keep the two in sync
+  const shipping =
+    subtotal <= 0 || subtotal > 599 || couponData?.free_shipping ? 0 : 50;
   const codHandlingFee = paymentMethod === "cod" ? 20 : 0;
   const total = subtotal + shipping + codHandlingFee - couponDiscount;
 
@@ -141,14 +201,61 @@ const Page = () => {
   }, [couponCode]);
 
   const handleCreateOrder = async () => {
-    if (!selectedAddressId) return toast.error("Select address");
+    // Guard against a second tap while the first order is still in flight —
+    // without this a double-click creates two orders and two payment sessions.
+    if (placingOrder) return;
+
+    if (isGuest) {
+      const errors = validateGuest(guestDetails);
+      setGuestErrors(errors);
+      if (Object.keys(errors).length > 0) {
+        return toast.error("Please complete your details to continue");
+      }
+    } else if (!selectedAddressId) {
+      return toast.error("Select address");
+    }
+
+    setPlacingOrder(true);
+
+    // Guests get an account + address created behind the scenes first, so the
+    // order call below is identical for both paths.
+    let addressId = selectedAddressId;
+    // cartItems from the closure is the pre-sync (local) list, so track the
+    // rows the order should actually be built from.
+    let orderRows = cartItems;
+
+    if (isGuest) {
+      try {
+        const guest = await guestCheckoutAPI(guestDetails);
+        setAuthToken(guest.access);
+        addressId = guest.address_id;
+
+        const localItems = guestCartSyncPayload();
+        if (localItems.length > 0) {
+          orderRows = await syncCartAPI(localItems);
+          clearGuestCart();
+        }
+        dispatch(getCart());
+        setIsGuest(false);
+      } catch (err) {
+        setPlacingOrder(false);
+        const data = err?.response?.data;
+        if (data?.code === "account_exists") {
+          toast.error(data.error);
+          return router.push("/signin?next=/checkout");
+        }
+        return toast.error(
+          data?.error || "Could not start checkout. Please check your details.",
+        );
+      }
+    }
 
     const payload = {
-      products: cartItems.map((item) => ({
+      products: orderRows.map((item) => ({
         product_id: item.product,
         quantity: item.quantity,
       })),
-      address_id: selectedAddressId,
+      address_id: addressId,
       coupon_code: couponCode || undefined,
       payment_method: paymentMethod,
     };
@@ -167,6 +274,9 @@ const Page = () => {
       }
     } catch (err) {
       dispatch({ type: "ui/hideLoader" });
+      // Only re-enable on failure — on success we are navigating away, and
+      // re-enabling would briefly expose the button again mid-redirect.
+      setPlacingOrder(false);
       toast.error(err?.error || err?.message || "Order creation failed. Please try again.");
     }
   };
@@ -230,6 +340,8 @@ const Page = () => {
     }
   };
 
+  const isPlacing = placingOrder || createLoading;
+
   const paymentOptions = [
     { id: "upi", label: "UPI", icon: Wallet, color: "bg-violet-50", iconColor: "text-violet-500" },
     { id: "card", label: "Credit / Debit Card", icon: CreditCard, color: "bg-blue-50", iconColor: "text-blue-500" },
@@ -237,8 +349,6 @@ const Page = () => {
   ];
 
   return (
-    <PrivateRoute>
-
       <div className="min-h-screen bg-background pt-28 pb-20 px-4">
         {/* Confetti */}
         {showConfetti && (
@@ -272,8 +382,22 @@ const Page = () => {
           <div className="grid lg:grid-cols-3 gap-6">
             {/* LEFT SIDE */}
             <div className="lg:col-span-2 space-y-5">
+              {/* Guests type their details inline; signed-in users pick a
+                  saved address. Nothing is gated behind a login page. */}
+              {isGuest && guestChecked && (
+                <GuestDetailsForm
+                  values={guestDetails}
+                  onChange={setGuestDetails}
+                  errors={guestErrors}
+                />
+              )}
+
               {/* Address Section */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5">
+              <div
+                className={`bg-white rounded-2xl border border-gray-100 p-5 ${
+                  isGuest ? "hidden" : ""
+                }`}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-base font-semibold">Delivery Address</h2>
                   <button
@@ -515,9 +639,10 @@ const Page = () => {
               {/* Place Order */}
               <button
                 onClick={handleCreateOrder}
-                className="mt-4 w-full bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
+                disabled={isPlacing || mergedCartItems.length === 0}
+                className="mt-4 w-full bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Place Order • ₹{total}
+                {isPlacing ? "Placing Order..." : `Place Order • ₹${total}`}
               </button>
 
               <div className="flex justify-center gap-4 mt-3 text-[11px] text-muted-foreground">
@@ -547,7 +672,6 @@ const Page = () => {
           />
         )}
       </div>
-    </PrivateRoute>
   );
 };
 

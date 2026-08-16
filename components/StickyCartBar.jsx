@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Zap } from "lucide-react";
 
-const StickyCartBar = ({ product, isInCart, onAddToCart, onGoToCart }) => {
+const StickyCartBar = ({ product, isInCart, onAddToCart, onGoToCart, onBuyNow }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sentinelRef = useRef(null);
 
@@ -50,24 +50,36 @@ const StickyCartBar = ({ product, isInCart, onAddToCart, onGoToCart }) => {
             </div>
           </div>
 
-          {/* CTA button */}
-          {isInCart ? (
-            <button
-              onClick={onGoToCart}
-              className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition cursor-pointer whitespace-nowrap"
-            >
-              <ShoppingCart size={18} />
-              Go to Cart
-            </button>
-          ) : (
-            <button
-              onClick={() => onAddToCart(product.id)}
-              className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition cursor-pointer whitespace-nowrap"
-            >
-              <ShoppingCart size={18} />
-              Add to Cart
-            </button>
-          )}
+          {/* CTAs — secondary cart action, then the direct-to-checkout button */}
+          <div className="flex items-center gap-2 shrink-0">
+            {isInCart ? (
+              <button
+                onClick={onGoToCart}
+                className="flex items-center gap-2 border border-primary text-primary px-4 py-2.5 rounded-xl font-semibold hover:bg-primary/5 transition cursor-pointer whitespace-nowrap"
+              >
+                <ShoppingCart size={18} />
+                <span className="hidden sm:inline">Go to Cart</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => onAddToCart(product.id)}
+                className="flex items-center gap-2 border border-primary text-primary px-4 py-2.5 rounded-xl font-semibold hover:bg-primary/5 transition cursor-pointer whitespace-nowrap"
+              >
+                <ShoppingCart size={18} />
+                <span className="hidden sm:inline">Add to Cart</span>
+              </button>
+            )}
+
+            {onBuyNow && (
+              <button
+                onClick={onBuyNow}
+                className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition cursor-pointer whitespace-nowrap"
+              >
+                <Zap size={18} />
+                Buy Now
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>
