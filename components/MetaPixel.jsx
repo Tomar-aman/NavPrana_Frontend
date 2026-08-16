@@ -54,7 +54,8 @@ const MetaPixel = () => {
     trackPageView();
   }, [pathname]);
 
-  return null; // renders nothing
+  // The <noscript> fallback lives in app/layout.js so it renders server-side.
+  return null;
 };
 
 export default MetaPixel;

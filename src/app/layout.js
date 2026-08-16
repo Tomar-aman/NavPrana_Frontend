@@ -9,6 +9,7 @@ import Footer from "../../components/Footer";
 import AuthInitializer from "../../components/AuthInitializer";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import MetaPixel from "../../components/MetaPixel";
+import { PIXEL_ID } from "@/lib/meta-pixel";
 import GlobalUI from "../../components/GlobalUI";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -347,7 +348,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             height="1"
             width="1"
             style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=1815246863217774&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />
         </noscript>

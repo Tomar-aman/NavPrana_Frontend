@@ -1,15 +1,18 @@
 /**
  * Meta Pixel (Facebook Pixel) — Centralized Utility
  *
- * Pixel ID: 1815246863217774
- *
  * This module exposes helpers for every standard and custom event
  * so that individual components never need to touch `window.fbq` directly.
  *
  * Usage:  import { trackAddToCart } from '@/lib/meta-pixel';
  */
 
-const PIXEL_ID = "1815246863217774";
+// Set NEXT_PUBLIC_META_PIXEL_ID to point the site at a different Meta account
+// without touching code. NEXT_PUBLIC_* values are baked in at build time, so a
+// rebuild is required after changing it. The literal is the current pixel and
+// acts as a fallback if the env var is missing on a deploy target.
+const PIXEL_ID =
+  process.env.NEXT_PUBLIC_META_PIXEL_ID || "1608795464220542";
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                           */
