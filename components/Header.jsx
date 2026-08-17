@@ -56,8 +56,12 @@ const Header = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getProfile());
-      dispatch(getCart());
     }
+    // Cart loads for guests too. The thunk reads localStorage when there is no
+    // token, so without this a signed-out shopper's cart survived in storage but
+    // stayed invisible after a page reload — badge at 0, and product buttons
+    // back to "Add to Cart" for items already in the cart.
+    dispatch(getCart());
   }, [isAuthenticated, dispatch]);
 
   /* Hide top bar on scroll */

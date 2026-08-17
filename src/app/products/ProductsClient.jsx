@@ -23,7 +23,6 @@ const ProductsClient = ({ initialProducts = [] }) => {
   const dispatch = useDispatch();
   const { list: reduxProducts, loading, error } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
-  const { isAuthenticated } = useSelector((state) => state.auth);
   const router = useRouter();
 
   // Server-fetched products render immediately (SEO/AEO: content is in the
@@ -37,13 +36,17 @@ const ProductsClient = ({ initialProducts = [] }) => {
   }, [dispatch, reduxProducts.length]);
 
   const handleAddToCart = (productId) => {
-    if (!isAuthenticated) {
-      toast.info("Please login to add items to cart");
-      router.push("/signin");
-      return;
-    }
+    // No login wall — signed-out shoppers build a local cart and convert it
+    // during guest checkout. The guest branch of the addToCart thunk needs
+    // productDetail; without it the dispatch is rejected outright.
     const productObj = products.find((p) => p.id === productId);
-    dispatch(addToCart({ product: productId, quantity: 1 }))
+    dispatch(
+      addToCart({
+        product: productId,
+        quantity: 1,
+        productDetail: productObj,
+      }),
+    )
       .unwrap()
       .then(() => {
         toast.success("Product added to cart");
