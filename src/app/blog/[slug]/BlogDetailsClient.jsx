@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, Leaf } from "lucide-react";
+import BlogAnalytics from "./BlogAnalytics";
 
 const BlogDetailsClient = ({ blog }) => {
   const formatDate = (dateStr) => {
@@ -15,6 +16,7 @@ const BlogDetailsClient = ({ blog }) => {
 
   return (
     <div className="min-h-screen bg-background mt-20">
+      <BlogAnalytics blog={blog} />
       <main className="max-w-3xl mx-auto px-4 py-10">
         {/* Breadcrumb Navigation */}
         <nav aria-label="breadcrumb" className="mb-8">
