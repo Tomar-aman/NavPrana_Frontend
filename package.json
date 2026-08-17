@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/typography": "^0.5.19",
     "axios": "^1.13.2",
+    "firebase": "^12.17.1",
     "framer-motion": "^12.26.2",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.544.0",

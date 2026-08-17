@@ -1,12 +1,22 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2, ArrowRight, BadgeCheck } from "lucide-react";
 import Link from "next/link";
 import GoogleSignInButton from "./GoogleSignInButton";
 
 const SignupForm = memo(
-  ({ form, setForm, showPassword, setShowPassword, onSubmit, loading, apiErrors = {} }) => {
+  ({
+    form,
+    setForm,
+    showPassword,
+    setShowPassword,
+    onSubmit,
+    loading,
+    apiErrors = {},
+    phoneVerified = false,
+    onVerifyPhone,
+  }) => {
     const [errors, setErrors] = useState({});
 
     // Merge client-side and API errors (API errors take priority)
@@ -31,6 +41,8 @@ const SignupForm = memo(
         newErrors.phone = "Phone number is required";
       } else if (!/^[0-9]{10}$/.test(form.phone)) {
         newErrors.phone = "Phone must be 10 digits";
+      } else if (onVerifyPhone && !phoneVerified) {
+        newErrors.phone = "Verify your phone number to continue";
       }
 
       if (!form.password) {
@@ -157,8 +169,8 @@ const SignupForm = memo(
                 type="tel"
                 inputMode="numeric"
                 maxLength={10}
-                className={`w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.phone ? "border-red-400" : "border-gray-200"
-                  }`}
+                className={`w-full pl-14 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${onVerifyPhone ? "pr-24" : "pr-4"
+                  } ${allErrors.phone ? "border-red-400" : "border-gray-200"}`}
                 value={form.phone}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, "");
@@ -166,6 +178,26 @@ const SignupForm = memo(
                   clearError("phone");
                 }}
               />
+
+              {/* Verified over SMS by Firebase before the account is created */}
+              {onVerifyPhone &&
+                (phoneVerified ? (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs font-medium text-green-600">
+                    <BadgeCheck size={14} />
+                    Verified
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onVerifyPhone}
+                    disabled={!/^[0-9]{10}$/.test(form.phone || "")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg
+                      bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20
+                      transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Verify
+                  </button>
+                ))}
             </div>
             {allErrors.phone && (
               <p className="text-xs text-red-500 mt-1">{allErrors.phone}</p>

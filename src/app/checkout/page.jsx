@@ -38,6 +38,7 @@ import { guestCheckoutAPI } from "@/services/auth/guestCheckout";
 import { syncCartAPI } from "@/services/cart/syncCart";
 import { getAuthToken, setAuthToken } from "@/utils/authToken";
 import GuestDetailsForm from "../../../components/GuestDetailsForm";
+import PhoneVerifyModal from "../../../components/PhoneVerifyModal";
 
 const GUEST_REQUIRED = {
   first_name: "Enter your first name",
@@ -92,6 +93,13 @@ const Page = () => {
     country: "India",
   });
   const [guestErrors, setGuestErrors] = useState({});
+  // Firebase proof for the number typed above, kept with the number it was
+  // issued for so editing the field invalidates it.
+  const [verifiedPhone, setVerifiedPhone] = useState({ number: "", token: "" });
+  const [showPhoneVerify, setShowPhoneVerify] = useState(false);
+  const isGuestPhoneVerified =
+    Boolean(verifiedPhone.token) &&
+    verifiedPhone.number === String(guestDetails.phone_number || "").replace(/\D/g, "").slice(-10);
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("upi");
@@ -226,7 +234,12 @@ const Page = () => {
 
     if (isGuest) {
       try {
-        const guest = await guestCheckoutAPI(guestDetails);
+        const guest = await guestCheckoutAPI({
+          ...guestDetails,
+          // Optional — the order goes through either way, but a verified
+          // number means delivery updates actually reach the customer.
+          ...(isGuestPhoneVerified ? { firebase_id_token: verifiedPhone.token } : {}),
+        });
         setAuthToken(guest.access);
         addressId = guest.address_id;
 
@@ -389,6 +402,8 @@ const Page = () => {
                   values={guestDetails}
                   onChange={setGuestDetails}
                   errors={guestErrors}
+                  phoneVerified={isGuestPhoneVerified}
+                  onVerifyPhone={() => setShowPhoneVerify(true)}
                 />
               )}
 
@@ -671,6 +686,23 @@ const Page = () => {
             onSubmit={editAddressData ? handleUpdateAddress : handleOnsubmitAddress}
           />
         )}
+
+        {/* Guest phone verification */}
+        <PhoneVerifyModal
+          isOpen={showPhoneVerify}
+          initialPhone={guestDetails.phone_number}
+          title="Verify your phone"
+          subtitle="We'll use this number for delivery updates about your order."
+          onClose={() => setShowPhoneVerify(false)}
+          onVerified={(idToken, e164) => {
+            const national = e164.replace(/\D/g, "").slice(-10);
+            setVerifiedPhone({ number: national, token: idToken });
+            setGuestDetails((prev) => ({ ...prev, phone_number: national }));
+            setGuestErrors((prev) => ({ ...prev, phone_number: "" }));
+            setShowPhoneVerify(false);
+            toast.success("Phone number verified");
+          }}
+        />
       </div>
   );
 };

@@ -6,22 +6,30 @@ import { motion, AnimatePresence } from "framer-motion";
 import VerifyOtpModal from "./VerifyOtpModal";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
+import PhoneLoginForm from "./PhoneLoginForm";
+import PhoneVerifyModal from "../../../components/PhoneVerifyModal";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
+import { loginUser, signupUser, verifyOtp, phoneLogin } from "@/redux/features/authSlice";
 import { trackCompleteRegistration } from "@/lib/meta-pixel";
 import { Leaf } from "lucide-react";
 
 // Shared auth form — used by both /signin and /signup pages
 const AuthForm = ({ initialTab = "signin" }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
+  // "password" or "phone" — only meaningful while the signin tab is showing
+  const [signinMode, setSigninMode] = useState("password");
   const [showPassword, setShowPassword] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
+  const [showPhoneVerify, setShowPhoneVerify] = useState(false);
   const [signupEmail, setSignupEmail] = useState("");
   const [signinLoading, setSigninLoading] = useState(false);
   const [signupLoading, setSignupLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [signupErrors, setSignupErrors] = useState({});
+  // Firebase proof that the number typed on the signup form is really theirs.
+  // Held with the number it was issued for, so editing the field invalidates it.
+  const [verifiedPhone, setVerifiedPhone] = useState({ number: "", token: "" });
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -35,10 +43,23 @@ const AuthForm = ({ initialTab = "signin" }) => {
     password: "",
   });
 
+  // Only counts while the number in the field still matches the one verified.
+  const isPhoneVerified =
+    Boolean(verifiedPhone.token) && verifiedPhone.number === signupForm.phone;
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    setSigninMode("password");
     // Navigate to the clean URL for the chosen tab
     router.replace(tab === "signup" ? "/signup" : "/signin", { scroll: false });
+  };
+
+  /* Passwordless sign-in — Firebase proved the number, our API issues the JWT */
+  const handlePhoneLogin = async (idToken) => {
+    const res = await dispatch(phoneLogin(idToken)).unwrap();
+    if (res?.is_new_user) trackCompleteRegistration("phone");
+    toast.success(res?.message || "Login successful");
+    router.push("/");
   };
 
   const handleSignIn = async () => {
@@ -67,6 +88,8 @@ const AuthForm = ({ initialTab = "signin" }) => {
           email: signupForm.email,
           phone_number: signupForm.phone,
           password: signupForm.password,
+          // Only sent once the number has actually been verified over SMS
+          ...(isPhoneVerified ? { firebase_id_token: verifiedPhone.token } : {}),
         }),
       ).unwrap();
       setSignupEmail(signupForm.email);
@@ -80,13 +103,22 @@ const AuthForm = ({ initialTab = "signin" }) => {
           email: "email",
           phone_number: "phone",
           password: "password",
+          firebase_id_token: "phone",
         };
-        const mapped = {};
-        for (const [key, val] of Object.entries(err)) {
-          const formKey = fieldMap[key] || key;
-          mapped[formKey] = Array.isArray(val) ? val[0] : val;
+        // The API's standardized error shape names the offending field
+        // separately; anything else is a plain field -> message map.
+        if (err.field_name || err.message) {
+          const formKey = fieldMap[err.field_name] || err.field_name;
+          if (formKey) setSignupErrors({ [formKey]: err.message });
+          else toast.error(err.message || "Signup failed");
+        } else {
+          const mapped = {};
+          for (const [key, val] of Object.entries(err)) {
+            const formKey = fieldMap[key] || key;
+            mapped[formKey] = Array.isArray(val) ? val[0] : val;
+          }
+          setSignupErrors(mapped);
         }
-        setSignupErrors(mapped);
       } else {
         toast.error(err || "Signup failed");
       }
@@ -149,15 +181,26 @@ const AuthForm = ({ initialTab = "signin" }) => {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <LoginForm
-                  form={signinForm}
-                  setForm={setSigninForm}
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                  onSubmit={handleSignIn}
-                  loading={signinLoading}
-                  error={loginError}
-                />
+                {signinMode === "phone" ? (
+                  <PhoneLoginForm
+                    onVerified={handlePhoneLogin}
+                    onBack={() => setSigninMode("password")}
+                  />
+                ) : (
+                  <LoginForm
+                    form={signinForm}
+                    setForm={setSigninForm}
+                    showPassword={showPassword}
+                    setShowPassword={setShowPassword}
+                    onSubmit={handleSignIn}
+                    loading={signinLoading}
+                    error={loginError}
+                    onPhoneClick={() => {
+                      setLoginError("");
+                      setSigninMode("phone");
+                    }}
+                  />
+                )}
               </motion.div>
             )}
 
@@ -177,6 +220,8 @@ const AuthForm = ({ initialTab = "signin" }) => {
                   onSubmit={handleSignUp}
                   loading={signupLoading}
                   apiErrors={signupErrors}
+                  phoneVerified={isPhoneVerified}
+                  onVerifyPhone={() => setShowPhoneVerify(true)}
                 />
               </motion.div>
             )}
@@ -188,6 +233,23 @@ const AuthForm = ({ initialTab = "signin" }) => {
           email={signupEmail}
           onClose={() => setShowOtpModal(false)}
           onVerify={handleVerifyOtp}
+        />
+
+        <PhoneVerifyModal
+          isOpen={showPhoneVerify}
+          initialPhone={signupForm.phone}
+          title="Verify your phone"
+          subtitle="Confirm your number so we can reach you about your orders."
+          onClose={() => setShowPhoneVerify(false)}
+          onVerified={(idToken, e164) => {
+            const national = e164.replace(/\D/g, "").slice(-10);
+            setVerifiedPhone({ number: national, token: idToken });
+            // Keep the form showing the number that was actually verified
+            setSignupForm((prev) => ({ ...prev, phone: national }));
+            setSignupErrors((prev) => ({ ...prev, phone: "" }));
+            setShowPhoneVerify(false);
+            toast.success("Phone number verified");
+          }}
         />
       </main>
     </div>

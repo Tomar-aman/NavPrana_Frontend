@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, MapPin } from "lucide-react";
+import { User, MapPin, BadgeCheck } from "lucide-react";
 
 /**
  * Declared at module scope on purpose — defining it inside GuestDetailsForm
@@ -34,7 +34,13 @@ const TextField = ({ id, label, value, onChange, error, ...rest }) => (
  * Contact + delivery details collected on checkout when nobody is signed in.
  * Submitting these creates a silent guest account — no password, no OTP.
  */
-const GuestDetailsForm = ({ values, onChange, errors = {} }) => {
+const GuestDetailsForm = ({
+  values,
+  onChange,
+  errors = {},
+  phoneVerified = false,
+  onVerifyPhone,
+}) => {
   const set = (field) => (e) => onChange({ ...values, [field]: e.target.value });
 
   const fieldProps = (field, id, label, extra = {}) => ({
@@ -88,14 +94,35 @@ const GuestDetailsForm = ({ values, onChange, errors = {} }) => {
               autoComplete: "email",
             })}
           />
-          <TextField
-            {...fieldProps("phone_number", "guest-phone", "Phone", {
-              type: "tel",
-              placeholder: "9876543210",
-              inputMode: "numeric",
-              autoComplete: "tel",
-            })}
-          />
+          <div>
+            <TextField
+              {...fieldProps("phone_number", "guest-phone", "Phone", {
+                type: "tel",
+                placeholder: "9876543210",
+                inputMode: "numeric",
+                autoComplete: "tel",
+                maxLength: 10,
+              })}
+            />
+            {/* Verified over SMS so delivery updates actually reach them */}
+            {onVerifyPhone &&
+              (phoneVerified ? (
+                <p className="flex items-center gap-1 text-[11px] font-medium text-green-600 mt-1.5">
+                  <BadgeCheck size={13} />
+                  Number verified
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onVerifyPhone}
+                  disabled={!/^\d{10}$/.test(String(values.phone_number || "").replace(/\D/g, ""))}
+                  className="text-[11px] font-medium text-primary hover:underline mt-1.5
+                    cursor-pointer disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
+                >
+                  Verify this number with OTP
+                </button>
+              ))}
+          </div>
         </div>
       </div>
 

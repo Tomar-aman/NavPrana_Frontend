@@ -3,6 +3,7 @@ import { loginApi } from "@/services/auth/login";
 import { signUp } from "@/services/auth/signUp";
 import { verifyAPI } from "@/services/auth/verifyOTP";
 import { googleAuthApi } from "@/services/auth/googleAuth";
+import { phoneAuthApi } from "@/services/auth/phoneAuth";
 import { setAuthToken, removeAuthToken, getAuthToken } from "@/utils/authToken";
 
 /* ================= LOGIN ================= */
@@ -67,6 +68,27 @@ export const googleLogin = createAsyncThunk(
       return res;
     } catch (err) {
       const msg = err?.response?.data?.message || err?.response?.data?.error || "Google login failed";
+      return rejectWithValue(msg);
+    }
+  }
+);
+
+/* ================= PHONE LOGIN ================= */
+export const phoneLogin = createAsyncThunk(
+  "auth/phoneLogin",
+  async (idToken, { rejectWithValue }) => {
+    try {
+      const res = await phoneAuthApi(idToken);
+      setAuthToken(res.access);
+      return res;
+    } catch (err) {
+      const data = err?.response?.data;
+      const msg =
+        data?.message ||
+        data?.error ||
+        // DRF field errors arrive as { firebase_id_token: ["..."] }
+        data?.firebase_id_token?.[0] ||
+        "Phone sign-in failed";
       return rejectWithValue(msg);
     }
   }
@@ -164,6 +186,22 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       .addCase(googleLogin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      /* ---------- PHONE LOGIN ---------- */
+      .addCase(phoneLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(phoneLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.token = action.payload.access;
+        state.isAuthenticated = true;
+      })
+      .addCase(phoneLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

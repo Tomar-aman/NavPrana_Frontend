@@ -19,6 +19,7 @@ import {
   Tag,
   Copy,
   Check,
+  BadgeCheck,
 } from "lucide-react";
 
 import { sendAddress } from "@/services/profile/post-profile";
@@ -26,6 +27,9 @@ import SettingsTab from "../../../components/SettingsTab";
 import AddressModal from "../../../components/AddressModal";
 import ChangePasswordModal from "../../../components/ChangePasswordModal";
 import EditProfileModal from "../../../components/EditProfileModal";
+import PhoneVerifyModal from "../../../components/PhoneVerifyModal";
+import { verifyPhoneApi } from "@/services/auth/phoneAuth";
+import { getProfile } from "@/redux/features/profileSlice";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -76,6 +80,7 @@ const Page = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showPhoneVerify, setShowPhoneVerify] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [editAddressData, setEditAddressData] = useState(null);
   const { list: address, loading } = useSelector((state) => state.address);
@@ -107,8 +112,30 @@ const Page = () => {
       .join("") || "U";
 
   const phone = profile?.phone_number || "";
+  const phoneVerified = Boolean(profile?.phone_verified);
 
   /* ---------- HANDLERS ---------- */
+
+  /**
+   * Firebase has already checked the OTP by this point — all that is left is
+   * to hand the token to our API, which attaches the number to this account.
+   * Throwing keeps the modal open with the API's message.
+   */
+  const handleVerifyPhone = async (idToken) => {
+    try {
+      await verifyPhoneApi(idToken);
+    } catch (err) {
+      const data = err?.response?.data;
+      throw (
+        data?.message ||
+        data?.firebase_id_token?.[0] ||
+        "Could not link that number. Please try again."
+      );
+    }
+    dispatch(getProfile());
+    setShowPhoneVerify(false);
+    toast.success("Phone number verified");
+  };
 
   const handleChangePassword = async () => {
     try {
@@ -300,10 +327,27 @@ const Page = () => {
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                       <Phone size={15} className="text-primary" />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">Phone Number</p>
-                      <p className="text-sm text-foreground">{phone || "Not added"}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm text-foreground">{phone || "Not added"}</p>
+                        {phoneVerified && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-green-600">
+                            <BadgeCheck size={13} />
+                            Verified
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    {!phoneVerified && (
+                      <button
+                        onClick={() => setShowPhoneVerify(true)}
+                        className="shrink-0 px-3 py-1.5 rounded-lg bg-primary/10 text-primary
+                          text-xs font-medium hover:bg-primary/20 transition cursor-pointer"
+                      >
+                        {phone ? "Verify" : "Add"}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -558,6 +602,15 @@ const Page = () => {
             isOpen={showEditProfileModal}
             onClose={() => setShowEditProfileModal(false)}
             profile={profile}
+          />
+
+          <PhoneVerifyModal
+            isOpen={showPhoneVerify}
+            initialPhone={phone}
+            title={phone ? "Verify your phone" : "Add your phone"}
+            subtitle="We'll text you a code to confirm the number is yours."
+            onClose={() => setShowPhoneVerify(false)}
+            onVerified={handleVerifyPhone}
           />
 
           {showPasswordModal && (

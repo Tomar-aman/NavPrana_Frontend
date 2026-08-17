@@ -14,6 +14,7 @@ const LoginForm = memo(
     onSubmit,
     loading,
     error,
+    onPhoneClick,
   }) => {
     const [errors, setErrors] = useState({});
 
@@ -152,8 +153,8 @@ const LoginForm = memo(
             )}
           </button>
 
-          {/* Google Sign-In */}
-          <GoogleSignInButton />
+          {/* Google + phone sign-in */}
+          <GoogleSignInButton onPhoneClick={onPhoneClick} />
         </div>
       </div>
     );
