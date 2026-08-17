@@ -72,13 +72,24 @@ posts are inserted via the Django admin.
 2. 10 Signs Your Ghee is Fake
 3. Why Authentic Buffalo A2 Bilona Ghee Is More Expensive
 4. Why Organic Food Matters
-5. Cow Ghee vs Buffalo Ghee (draft — `blog-1-cow-ghee-vs-buffalo-ghee.json`)
-6. Ghee for Babies (draft — `blog-2-ghee-for-babies.json`)
+5. Cow Ghee vs Buffalo Ghee — `cow-ghee-vs-buffalo-ghee-which-is-better`
+6. Ghee for Babies — `ghee-for-babies-when-to-start-benefits-dosage`
+7. Ghee on an Empty Stomach: 30 Days (draft — `blog-3-ghee-empty-stomach-30-days.json`)
+8. How Much Ghee Per Day Is Safe? (draft — `blog-4-how-much-ghee-per-day.json`)
+9. Ghee vs Butter vs Oil (draft — `blog-5-ghee-vs-butter-vs-oil.json`)
+10. Ghee with Warm Milk at Night (draft — `blog-6-ghee-with-warm-milk-at-night.json`)
+
+## Live slugs (for cross-linking)
+
+`health-benefits-of-a2-buffalo-bilona-ghee` · `identify-pure-a2-buffalo-bilona-ghee` ·
+`why-buffalo-a2-bilona-ghee-is-expensive` · `why-organic-food-matters` ·
+`cow-ghee-vs-buffalo-ghee-which-is-better` · `ghee-for-babies-when-to-start-benefits-dosage`
 
 ## High-potential future topics (from July 2026 keyword research)
 
-- How to Check if Your Ghee Is Pure (5 kitchen tests)
-- Ghee on an Empty Stomach: What Happens After 30 Days
-- How Much Ghee Per Day Is Safe? (Ayurveda + modern science)
-- Ghee with Warm Milk at Night: Benefits for Sleep & Digestion
-- Ghee vs Butter vs Oil: The Definitive Indian Kitchen Guide
+- How to Check if Your Ghee Is Pure (5 kitchen tests) — overlaps `identify-pure-a2-buffalo-bilona-ghee`, angle it as at-home tests only
+- Ghee for Weight Loss: Does It Actually Work?
+- Ghee in Pregnancy & After Delivery: Trimester-Wise Guide
+- Ghee for Hair & Skin: Nasya, Massage and Overnight Remedies
+- A2 vs A1 Milk: What the Protein Difference Actually Means
+- How to Store Ghee So It Lasts 12 Months (and why it turns grainy)

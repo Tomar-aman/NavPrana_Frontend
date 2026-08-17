@@ -1,11 +1,17 @@
 import { generateSlug } from "@/utils/slug";
 
-const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/";
+// NOTE: strip trailing slashes and join with an explicit "/" — the env value
+// may or may not end in one. Concatenating it directly produced
+// "https://api.navprana.comapi/v1/..." in production, which killed the fetch
+// and left product pages with no Product JSON-LD at all.
+const API_URL = (
+  process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/"
+).replace(/\/+$/, "");
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
 
 async function getProducts() {
   try {
-    const res = await fetch(`${API_URL}api/v1/product/products/`, {
+    const res = await fetch(`${API_URL}/api/v1/product/products/`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
