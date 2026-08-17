@@ -134,7 +134,14 @@ function ProductJsonLd({ product, slug }) {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "INR",
-      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      // NOTE: the API field is "available_quantity" — there is no "stock" field.
+      // Reading product.stock gave undefined > 0 === false, which advertised
+      // every product as OutOfStock to Google. Fall back to max_quantity, then
+      // to in-stock, so a missing field never silently kills availability.
+      availability:
+        Number(product.available_quantity ?? product.max_quantity ?? 1) > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
       url: `${SITE_URL}/products/${slug}`,
       priceValidUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       seller: {

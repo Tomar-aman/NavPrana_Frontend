@@ -77,7 +77,12 @@ const Page = async () => {
           "@type": "Offer",
           price: product.price,
           priceCurrency: "INR",
-          availability: "https://schema.org/InStock",
+          // Derive from the real catalog field so this page can never
+          // contradict the Product schema on /products/[slug].
+          availability:
+            Number(product.available_quantity ?? product.max_quantity ?? 1) > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
         },
       },
     })),
