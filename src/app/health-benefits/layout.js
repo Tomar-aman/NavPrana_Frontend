@@ -1,21 +1,8 @@
 export const metadata = {
-  title: "Health Benefits of Pure Desi Bilona Ghee — Best Organic Ghee in India",
+  title: "Health Benefits of Bilona Ghee",
   description: "Discover the incredible health benefits of pure desi bilona ghee — heart health, brain function, energy, immune support, skin care, and digestive health. Learn why NavPrana's A2 bilona ghee is the best organic ghee in India. Grass-fed buffalo ghee, traditional Bilona method.",
-  keywords: [
-    "ghee benefits",
-    "bilona ghee benefits",
-    "health benefits of desi ghee",
-    "organic ghee benefits",
-    "A2 bilona ghee health",
-    "pure desi ghee for health",
-    "bilona ghee",
-    "best ghee in India",
-    "organic ghee",
-    "grass-fed ghee benefits",
-    "ghee for weight loss",
-    "ghee for babies",
-    "ghee for cooking",
-  ],
+  // No `keywords` field — Google has ignored <meta name="keywords">
+  // since 2009. Target terms belong in visible headings and body copy.
   openGraph: {
     title: "Health Benefits of Pure Desi Bilona Ghee | NavPrana Organics — Best Ghee in India",
     description:

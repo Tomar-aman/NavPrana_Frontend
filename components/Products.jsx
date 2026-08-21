@@ -1,34 +1,32 @@
 "use client";
-import { ShoppingCart, Star, Truck, Shield, Heart, Leaf, Award, ArrowRight } from "lucide-react";
-import Image from "next/image";
-import AutoCycleImage from "./AutoCycleImage";
+import { Truck, Shield, Star, Heart, Leaf, Award, ArrowRight } from "lucide-react";
+import ProductCard from "./ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { generateSlug } from "@/utils/slug";
 import Link from "next/link";
 
-const getFeaturedImage = (images = []) => {
-  return (
-    images.find((img) => img.is_feature)?.image ||
-    images[0]?.image ||
-    "/placeholder.png"
-  );
-};
-
-const Products = () => {
+const Products = ({ initialProducts = [] }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { list, loading, error } = useSelector((state) => state.product);
+  const { list: reduxProducts, loading, error } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
   const { isAuthenticated } = useSelector((state) => state.auth);
 
+  // Server-fetched products render in the initial HTML (this component is a
+  // client component, so a Redux-only list meant Googlebot saw an empty grid
+  // and the homepage shipped with no product content at all). Redux takes over
+  // after hydration so cart state stays live.
+  const list = reduxProducts.length > 0 ? reduxProducts : initialProducts;
+
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    if (reduxProducts.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, reduxProducts.length]);
 
   const handleAddToCart = (productId) => {
     // No login wall — signed-out shoppers build a local cart and convert it
@@ -54,10 +52,10 @@ const Products = () => {
   const trustItems = [
     { icon: Truck, title: "Free Shipping", desc: "On orders above ₹999" },
     { icon: Shield, title: "Quality Assured", desc: "Lab tested pure desi ghee" },
-    { icon: Star, title: "5000+ Reviews", desc: "Best ghee in India" },
+    { icon: Star, title: "Verified Reviews", desc: "From real customers" },
     { icon: Heart, title: "Bilona Method", desc: "Traditional hand-churned" },
     { icon: Award, title: "FSSAI Certified", desc: "Government approved" },
-    { icon: Leaf, title: "100% Organic", desc: "Grass-fed buffalo ghee" },
+    { icon: Leaf, title: "100% Organic", desc: "Grass-fed cow & buffalo" },
   ];
 
   return (
@@ -70,116 +68,26 @@ const Products = () => {
             Our Products
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">
-            Pure Desi <span className="text-gradient">Buffalo Bilona Ghee</span>
+            Pure Desi <span className="text-gradient">Cow &amp; Buffalo Bilona Ghee</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Buy the best A2 bilona ghee in India — hand-churned using the traditional Bilona method.
-            Premium organic ghee with authentic taste and maximum nutrition in every jar.
+            A2 desi cow ghee for light, everyday cooking, and A2 buffalo ghee for
+            richer, denser nutrition — both hand-churned using the traditional
+            bilona method, with nothing added.
           </p>
         </div>
 
         {/* Product Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          {list.slice(0, 3).map((product) => {
-            const imageUrl = getFeaturedImage(product.images);
-            const isInCart = cartItems.some(
-              (item) => item.product === product.id,
-            );
-            return (
-              <div
-                key={product.id}
-                onClick={() =>
-                  router.push(
-                    `/products/${generateSlug(product.name)}`,
-                  )
-                }
-                className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer"
-              >
-                {/* Image */}
-                <div className="relative w-full h-60 md:h-64 overflow-hidden bg-gray-50">
-                  <AutoCycleImage
-                    images={product.images}
-                    alt={product.name}
-                    className="group-hover:scale-105"
-                  />
-
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-bold rounded-lg bg-primary text-white shadow-sm z-10">
-                    Save {parseInt(product.discount_precent)}%
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-foreground leading-tight">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-1 shrink-0 px-2 py-0.5 bg-primary/10 rounded-md">
-                      <Star size={12} className="text-primary fill-primary" />
-                      <span className="text-xs font-bold text-primary">
-                        {product.average_rating}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {product.features.slice(0, 3).map((feature, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-[11px] font-medium"
-                      >
-                        {feature.feature}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Price + Size */}
-                  <div className="flex items-end justify-between mb-4">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-bold text-foreground">
-                        ₹{product.price}
-                      </span>
-                      <span className="text-sm text-muted-foreground line-through">
-                        ₹{product.max_price}
-                      </span>
-                    </div>
-                    <span className="text-xs text-muted-foreground font-medium bg-gray-50 px-2 py-0.5 rounded">
-                      {product.size}
-                    </span>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="mt-auto">
-                    {isInCart ? (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push("/cart");
-                        }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
-                      >
-                        <ShoppingCart size={15} />
-                        Go to Cart
-                      </button>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product.id);
-                        }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
-                      >
-                        <ShoppingCart size={15} />
-                        Add to Cart
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {list.slice(0, 3).map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              size="lg"
+              isInCart={cartItems.some((item) => item.product === product.id)}
+              onAddToCart={handleAddToCart}
+            />
+          ))}
         </div>
 
         {/* View All */}

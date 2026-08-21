@@ -49,14 +49,18 @@ const Hero = () => {
               src={slide.image}
               alt={slide.alt}
               fill
+              /* Without `sizes`, next/image assumes 100vw and serves the largest
+                 srcset candidate. This is the homepage LCP element. */
+              sizes="100vw"
               priority={index === 0}
+              loading={index === 0 ? undefined : "lazy"}
               className="object-cover object-center"
             />
           </div>
         ))}
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-20 pointer-events-none" />
+        {/* Gradient Overlay — carries the headline text over the photo */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-20 pointer-events-none" />
 
         {/* Navigation Arrows (Visible on hover on desktop) */}
         <button
@@ -84,26 +88,24 @@ const Hero = () => {
           ))}
         </div>
 
-        {/* Bottom CTA + SEO H1 */}
+        {/* Bottom headline + CTA */}
         <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 z-30 pointer-events-none">
           <div className="container mx-auto px-6 pointer-events-auto">
-            <div className="max-lg">
-              <h1 className="sr-only">
-                Buy Pure Desi Cow & Buffalo Ghee Online — Best Bilona Ghee in India | NavPrana Organics
+            <div className="max-w-2xl">
+              {/* NOTE: this h1 must stay VISIBLE. It was previously sr-only,
+                  together with a keyword-stuffed paragraph — hidden text and
+                  keyword stuffing are both named in Google's spam policies, and
+                  it left the homepage with no visible heading at all. */}
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 leading-[1.12] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]">
+                Pure A2 Desi Cow &amp; Buffalo Bilona Ghee
               </h1>
-              <p className="sr-only">
-                Buy 100% organic bilona ghee online from NavPrana Organics — India's best organic ghee brand.
-                Order pure desi cow and buffalo ghee made with the traditional Bilona method. Our premium A2 cow bilona ghee
-                is sourced from grass-fed cows. FSSAI certified, zero additives.
-                Available as Desi Cow A2 Bilona Ghee and Buffalo A2 Bilona Ghee.
-                Buy desi ghee online with free shipping above ₹999. Best cow bilona ghee in India at the best price.
-                Pure desi cow ghee price starting at ₹1019. Order pure desi cow ghee, buffalo ghee online, or A2 cow ghee online
-                from NavPrana — India's most trusted organic india ghee brand. Premium desi cow ghee, grass-fed cow ghee,
-                and organic ghee delivered farm-fresh to your doorstep.
+              <p className="text-sm sm:text-base md:text-lg text-white/90 mb-3 sm:mb-5 max-w-xl leading-relaxed drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+                Hand-churned the traditional bilona way in the Chambal valley of
+                Madhya Pradesh. Grass-fed, FSSAI certified, nothing added.
               </p>
               <Link
                 href="/products"
-                aria-label="Shop Pure Desi Bilona Ghee Online — Buy Best Ghee in India"
+                aria-label="Shop pure desi bilona ghee online"
                 className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-6 sm:py-3 bg-white text-foreground text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-white/90 transition shadow-lg backdrop-blur-sm"
               >
                 Shop Now

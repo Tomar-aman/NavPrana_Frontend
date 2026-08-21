@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getSocialMediaLinks } from "@/services/contact/get-social-media-links";
+import { generateSlug } from "@/utils/slug";
 import { toast } from "sonner";
 import { subscribeNewsletter } from "@/services/contact/subscribe";
 
@@ -25,7 +26,7 @@ const SOCIAL_ICON_MAP = {
   youtube: Youtube,
 };
 
-const Footer = () => {
+const Footer = ({ products = [] }) => {
   const [socialLinks, setSocialLinks] = useState([]);
   const [subscribeEmail, setSubscribeEmail] = useState("");
   const [subscribing, setSubscribing] = useState(false);
@@ -40,13 +41,23 @@ const Footer = () => {
 
   const quickLinks = [
     { label: "Home", path: "/" },
-    { label: "Buy Bilona Ghee", path: "/products" },
-    { label: "About Us", path: "/about" },
-    { label: "Contact", path: "/contact" },
+    { label: "All Products", path: "/products" },
+    { label: "A2 Desi Cow Ghee", path: "/a2-desi-cow-ghee" },
     { label: "Ghee Benefits", path: "/health-benefits" },
     { label: "Blog", path: "/blog" },
+    { label: "About Us", path: "/about" },
+    { label: "Contact", path: "/contact" },
     { label: "FAQ", path: "/faq" },
   ];
+
+  // Individual product links, site-wide. The homepage and /products grids used
+  // to navigate with onClick on a <div>, so Googlebot had no crawlable path to
+  // any product page at all. Built from the real catalogue passed down by the
+  // root layout so the slugs can never drift out of date.
+  const productLinks = products.map((p) => ({
+    label: p.name,
+    path: `/products/${generateSlug(p.name)}`,
+  }));
 
   const legalLinks = [
     { label: "Privacy Policy", path: "/privacy-policy" },
@@ -226,6 +237,30 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
+        {/* Shop — real crawlable links to every product, on every page */}
+        {productLinks.length > 0 && (
+          <nav
+            aria-label="Shop our ghee"
+            className="mt-8 pt-6 border-t border-white/10"
+          >
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
+              Shop Our Ghee
+            </h4>
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-2.5">
+              {productLinks.map((link) => (
+                <li key={link.path}>
+                  <Link
+                    href={link.path}
+                    className="text-sm text-white/70 hover:text-primary transition"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </div>
 
       {/* Bottom Bar */}

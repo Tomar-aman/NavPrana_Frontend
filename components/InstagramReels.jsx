@@ -131,13 +131,15 @@ const InstagramReels = () => {
               From Our Community
             </span>
           </div>
+          {/* "Real Results" implied a health outcome we cannot substantiate —
+              these are Instagram reels, so say that instead. */}
           <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">
-            Real Stories,{" "}
-            <span className="text-gradient">Real Results</span>
+            From our{" "}
+            <span className="text-gradient">kitchen and yours</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Watch what our customers are saying about NavPrana&apos;s
-            pure organic ghee — straight from their experience.
+            Reels from the unit in Morena, and from people cooking with
+            NavPrana ghee at home.
           </p>
         </div>
 

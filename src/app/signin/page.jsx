@@ -1,7 +1,7 @@
 import AuthForm from "../auth/AuthForm";
 
 export const metadata = {
-  title: "Sign In | NavPrana Organics",
+  title: "Sign In",
   description: "Sign in to your NavPrana account to access your orders, cart, and profile.",
   alternates: { canonical: "/signin" },
   robots: { index: false, follow: false },

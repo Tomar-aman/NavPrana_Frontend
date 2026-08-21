@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ProfileProvider } from "@/Context/ProfileContext";
@@ -10,6 +10,7 @@ import AuthInitializer from "../../components/AuthInitializer";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import MetaPixel from "../../components/MetaPixel";
 import { PIXEL_ID } from "@/lib/meta-pixel";
+import { SITE_URL, getProducts } from "@/lib/site";
 import GlobalUI from "../../components/GlobalUI";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -26,125 +27,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
-
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Buy Pure Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
-    template: "%s | NavPrana Organics — Best Organic Ghee India",
+    default: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
+    // Keep this SHORT. Google renders roughly 60 characters, and the previous
+    // template ("| NavPrana Organics — Best Organic Ghee India") pushed /about,
+    // /products, /blog and /faq past 110 characters — /faq ended up with
+    // "NavPrana Organics" in it twice. Child titles must NOT repeat the brand.
+    template: "%s | NavPrana Organics",
   },
   description:
-    "Buy 100% pure organic bilona ghee online from NavPrana Organics — India's best desi ghee brand. Traditional Bilona method A2 Cow and Buffalo ghee from Chambal valley. Pure desi ghee starting at ₹1019. Grass-fed, FSSAI certified, zero additives. Buy desi ghee online with free shipping above ₹999.",
-  keywords: [
-    // Brand keywords
-    "NavPrana",
-    "NavPrana Organics",
-    "navprana",
-    "NavPrana ghee",
-    // Misspellings
-    "nvaprana",
-    "navparna",
-    "navaparna",
-    "navprna",
-    // Competitor targeting
-    "rosier ghee",
-    "two brothers organic farms",
-    "two brother ghee",
-    "anveshan ghee",
-    "avneshan ghee",
-    "kasutam ghee",
-    // Cow Ghee
-    "cow bilona ghee",
-    "desi cow ghee",
-    "a2 cow ghee",
-    "best cow ghee in India",
-    // HIGH volume (5000+)
-    "bilona ghee",
-    "best ghee in India",
-    // HIGH volume (1000–3000)
-    "organic ghee",
-    "pure desi ghee",
-    "organic india ghee",
-    // MEDIUM volume (500–1000)
-    "a2 bilona ghee",
-    "bilona ghee price",
-    "buy ghee online",
-    // MEDIUM volume (200–500)
-    "desi ghee online",
-    "cow ghee online",
-    "pure desi ghee price",
-    "pure ghee online",
-    "A2 ghee online",
-    "grass-fed ghee",
-    // LOW volume (100–200)
-    "best bilona ghee in india",
-    "buy desi ghee online",
-    // LOW volume (<100)
-    "bilona ghee online",
-    "Buy Buffalo Ghee Online",
-    // ZERO-KD long-tail (easy to rank)
-    "Buffalo A2 Bilona Ghee 500 ml",
-    "Buffalo A2 Bilona Ghee 1 Ltr",
-    "pure desi buffalo ghee",
-    "premium desi ghee",
-    "Order 100% pure desi buffalo ghee",
-    "Order pure desi buffalo ghee",
-    // Supporting keywords
-    "buffalo ghee",
-    "A2 ghee",
-    "desi ghee",
-    "ghee price",
-    "ghee for cooking",
-    "ghee for babies",
-    "ghee 1 litre price",
-    "ghee 500ml price",
-    "traditional ghee",
-    "Chambal ghee",
-    "farm fresh ghee",
-    "organic food India",
-    "pure buffalo ghee",
-    "ghee buy online India",
-    "natural ghee India",
-    "ghee Madhya Pradesh",
-    "best organic ghee brand",
-    "best organic ghee in India",
-    "pure ghee for health",
-    "chemical free ghee",
-    "organic food online India",
-    "traditional bilona method ghee",
-    "hand churned ghee",
-    "Chambal valley ghee",
-    "FSSAI certified ghee",
-    "ghee benefits",
-    "ghee for weight loss",
-    "desi cow ghee",
-    "ghee online India",
-    "best ghee brand India",
-    "ghee for health",
-    // AEO question keywords (researched July 2026 — what people ask Google & AI)
-    "is ghee good for health",
-    "ghee vs butter which is better",
-    "cow ghee vs buffalo ghee which is better",
-    "how much ghee per day",
-    "ghee on empty stomach benefits",
-    "ghee for babies",
-    "how to check pure ghee",
-    "ghee with warm milk at night",
-    "is ghee lactose free",
-    "ghee smoke point",
-    // Researched commercial long-tail (2026)
-    "a2 desi cow bilona ghee",
-    "grass fed a2 ghee",
-    "curd churned ghee",
-    "danedar ghee",
-    "artisanal a2 ghee",
-    "ghee made from curd",
-    "single ingredient ghee",
-    "lactose free ghee India",
-    "butyric acid ghee",
-    "sattvik ghee",
-  ],
+    "Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online from NavPrana Organics. Hand-churned the traditional bilona way in the Chambal valley, Madhya Pradesh. Grass-fed, FSSAI certified, nothing added. Free shipping above ₹999.",
+  // NOTE: no `keywords` field, deliberately.
+  //
+  // Google has ignored <meta name="keywords"> since 2009, so the ~110 terms
+  // that used to live here earned nothing. They were also publicly visible in
+  // page source and included competitors' brand names (rosier ghee, anveshan
+  // ghee, two brothers organic farms, kasutam ghee) plus misspellings of our
+  // own — all downside, no upside. Target terms belong in visible headings and
+  // body copy, which is where Google actually reads them.
   authors: [{ name: "NavPrana Organics" }],
   creator: "NavPrana Organics",
   publisher: "NavPrana Organics",
@@ -164,15 +66,15 @@ export const metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "NavPrana Organics",
-    title: "Buy Pure Desi Cow & Buffalo Bilona Ghee Online | NavPrana",
+    title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana",
     description:
-      "India's best organic bilona ghee — 100% pure A2 Cow and Buffalo desi ghee from Chambal valley. Traditional Bilona method, grass-fed, FSSAI certified. Buy ghee online starting ₹1019. Free shipping above ₹999.",
+      "A2 desi cow ghee and A2 buffalo bilona ghee, hand-churned the traditional bilona way in the Chambal valley. Grass-fed, FSSAI certified. Free shipping above ₹999.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Buy Pure Desi Cow & Buffalo Bilona Ghee Online | NavPrana",
+    title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana",
     description:
-      "India's best organic bilona ghee. Pure A2 Cow and Buffalo desi ghee, Chambal valley. FSSAI certified. Free shipping above ₹999.",
+      "A2 desi cow ghee and A2 buffalo bilona ghee from the Chambal valley. Bilona method, FSSAI certified. Free shipping above ₹999.",
     creator: "@navprana",
   },
   icons: {
@@ -189,9 +91,16 @@ export const metadata = {
     canonical: "/",
   },
   category: "Food & Beverages",
-  other: {
-    "google-site-verification": process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
-  },
+  // Only emit the verification tag when the value actually exists — the old
+  // `|| ""` fallback rendered content="" which does nothing. Verify by DNS or
+  // HTML file if you prefer; this is just a convenience.
+  ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
+    ? {
+        verification: {
+          google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+        },
+      }
+    : {}),
 };
 
 // JSON-LD Structured Data
@@ -229,9 +138,10 @@ const organizationJsonLd = {
   knowsAbout: [
     "Bilona Ghee",
     "A2 Bilona Ghee",
+    "A2 Desi Cow Ghee",
+    "Buffalo Ghee",
     "Organic Ghee",
     "Pure Desi Ghee",
-    "Buffalo Ghee",
     "Traditional Bilona Method",
     "Grass-fed Ghee",
     "Organic Food India",
@@ -254,7 +164,7 @@ const localBusinessJsonLd = {
   telephone: "+91-7509531811",
   email: "support@navprana.com",
   description:
-    "Buy pure organic bilona ghee and natural food products online. Best bilona ghee in India — A2 Cow and Buffalo desi ghee, traditional Bilona method, grass-fed, FSSAI certified, free shipping across India. Order pure desi cow ghee starting ₹1019.",
+    "Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online. Traditional bilona method, grass-fed, FSSAI certified, shipped across India from Morena, Madhya Pradesh.",
   address: {
     "@type": "PostalAddress",
     streetAddress: "L-232, Old H.B Colony",
@@ -290,7 +200,7 @@ const websiteJsonLd = {
   alternateName: "NavPrana — Best Bilona Ghee in India",
   url: SITE_URL,
   description:
-    "Buy pure organic bilona ghee online — India's best desi ghee brand. A2 buffalo bilona ghee, traditional Bilona method, grass-fed, FSSAI certified. Order pure desi buffalo ghee, organic ghee, and premium desi ghee from Chambal valley.",
+    "Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online. Traditional bilona method, grass-fed, FSSAI certified, from the Chambal valley of Madhya Pradesh.",
   potentialAction: {
     "@type": "SearchAction",
     target: `${SITE_URL}/products?q={search_term_string}`,
@@ -298,10 +208,10 @@ const websiteJsonLd = {
   },
   about: {
     "@type": "Thing",
-    name: "Organic Bilona Ghee",
-    description: "Pure desi A2 Cow and Buffalo bilona ghee made using traditional Bilona method from Chambal valley, Madhya Pradesh.",
+    name: "A2 Bilona Ghee",
+    description:
+      "Pure A2 desi cow ghee and A2 buffalo ghee made using the traditional bilona method in the Chambal valley, Madhya Pradesh.",
   },
-  keywords: "cow bilona ghee, best cow ghee in India, a2 cow ghee, buy cow ghee online, bilona ghee, best ghee in India, organic ghee, pure desi ghee, a2 bilona ghee, buy ghee online, desi ghee online, grass-fed ghee, bilona ghee price, buy buffalo ghee online, pure desi buffalo ghee, premium desi ghee",
 };
 
 // NOTE: the site-wide ItemList schema was removed — it hardcoded 2 products
@@ -309,21 +219,23 @@ const websiteJsonLd = {
 // ItemList only on list pages. /products emits the real catalog-driven
 // ItemList (with offers) instead.
 
-export default function RootLayout({ children }) {
+// Async so the footer can be given the real catalogue. The site-wide footer
+// is the only place every page can link to individual products from, and
+// hardcoding slugs here is exactly the drift that left the old sitemap
+// fallback pointing at two 404s. getProducts() is ISR-cached and swallows
+// its own errors, so a slow or down API degrades to an empty Shop column.
+export default async function RootLayout({ children }) {
+  const products = await getProducts();
+
   return (
     <html lang="en-IN" suppressHydrationWarning>
       <head>
-        {/* Google Tag Manager */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PKBBHL4K');`,
-          }}
-        />
-        {/* End Google Tag Manager */}
+        {/* NOTE: Google Tag Manager is NOT loaded here any more. It used to be
+            an inline dangerouslySetInnerHTML script in <head>, which blocks the
+            critical rendering path on every page. It now loads via
+            <GoogleTagManager /> at the end of <body> — same container, same
+            dataLayer, but deferred. Only the JSON-LD below stays in <head>;
+            application/ld+json is never executed, so it costs nothing. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -392,10 +304,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 richColors
                 closeButton
               />
-              <Footer />
+              <Footer products={products} />
               </ErrorBoundary>
             </ProfileProvider>
         </ReduxProvider>
+        {/* Deferred third-party tags — loaded after hydration, not in <head>. */}
+        <GoogleTagManager gtmId="GTM-PKBBHL4K" />
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}

@@ -1,6 +1,6 @@
 import { getBlogBySlug } from "@/services/blog/get-blogs";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
+import { SITE_URL } from "@/lib/site";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -20,13 +20,8 @@ export async function generateMetadata({ params }) {
     return {
       title,
       description,
-      keywords: [
-        ...(blog.category ? [blog.category.name] : []),
-        "organic food blog",
-        "health tips",
-        "traditional food",
-        "NavPrana",
-      ],
+      // No `keywords` field — Google has ignored <meta name="keywords">
+      // since 2009. Target terms belong in visible headings and body copy.
       openGraph: {
         title,
         description,

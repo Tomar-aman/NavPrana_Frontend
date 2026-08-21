@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Your Shopping Cart | NavPrana Organics",
+  title: "Your Shopping Cart",
   description: "Review your items and proceed to checkout. Pure wellness, naturally delivered.",
 };
 

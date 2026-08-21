@@ -1,3 +1,22 @@
+/*
+ * =============================================================================
+ * DO NOT RENDER THIS COMPONENT. It is unused on purpose.
+ *
+ * Every testimonial below is fabricated — invented names, invented cities,
+ * invented quotes. One attributes a digestive-health improvement to the product
+ * and another is presented as a doctor's endorsement. Publishing these would
+ * breach the Consumer Protection Act 2019 and the CCPA's Guidelines for
+ * Prevention of Misleading Advertisements, and would also violate Google's
+ * spam policies on fake reviews.
+ *
+ * Real customer reviews already come from the product API and render in the
+ * Product JSON-LD and on the product pages. When there are enough of them to
+ * show on the homepage, build a section that reads from that API — do not
+ * revive this file.
+ *
+ * Safe to delete entirely; git has the history.
+ * =============================================================================
+ */
 import { Star, Quote } from "lucide-react";
 
 const Testimonials = () => {

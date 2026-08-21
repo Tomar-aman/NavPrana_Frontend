@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Shipping Policy | NavPrana Organics",
+  title: "Shipping Policy",
   description: "Review our shipping policy for details on delivery times, shipping costs, and international shipping options.",
   openGraph: {
     title: "Shipping Policy | NavPrana Organics",

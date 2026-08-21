@@ -1,9 +1,9 @@
 export default function manifest() {
   return {
-    name: "NavPrana Organics — Buy Pure Desi Bilona Ghee Online | Best Organic Ghee in India",
+    name: "NavPrana Organics — A2 Desi Cow & Buffalo Bilona Ghee",
     short_name: "NavPrana Organics",
     description:
-      "Buy 100% pure organic bilona ghee online from NavPrana Organics — India's best desi ghee brand. Traditional Bilona method A2 buffalo ghee, grass-fed, FSSAI certified. Order pure desi buffalo ghee, premium desi ghee, and organic ghee from Chambal valley.",
+      "Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online. Hand-churned the traditional bilona way in the Chambal valley, Madhya Pradesh. Grass-fed, FSSAI certified, nothing added.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

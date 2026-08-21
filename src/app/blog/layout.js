@@ -2,18 +2,8 @@ export const metadata = {
   title: "Blog — Organic Living, Health Tips & Traditional Food Wisdom",
   description:
     "Explore the NavPrana blog for articles on organic food, traditional food preparation, clean eating, health benefits of pure ingredients, Ayurvedic nutrition, and sustainable living.",
-  keywords: [
-    "organic food blog",
-    "pure food tips",
-    "traditional Indian food",
-    "organic living",
-    "clean eating India",
-    "bilona ghee",
-    "chemical free food",
-    "Ayurvedic nutrition",
-    "sustainable food",
-    "natural ingredients",
-  ],
+  // No `keywords` field — Google has ignored <meta name="keywords">
+  // since 2009. Target terms belong in visible headings and body copy.
   openGraph: {
     title: "Blog | NavPrana Organics",
     description:

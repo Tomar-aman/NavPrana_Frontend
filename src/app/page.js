@@ -2,86 +2,55 @@ import Benefits from "../../components/Benefits";
 import Hero from "../../components/Hero";
 import InstagramReels from "../../components/InstagramReels";
 import Products from "../../components/Products";
-import Testimonials from "../../components/Testimonials";
+import MilkChooser from "../../components/home/MilkChooser";
+import BilonaProcess from "../../components/home/BilonaProcess";
+import BlogPreviewAndProof from "../../components/home/BlogPreviewAndProof";
+import { getProducts, getBlogList } from "@/lib/site";
 
 export const metadata = {
-  title: "Buy Pure Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
+  title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online",
   description:
-    "Buy pure desi ghee online from NavPrana Organics — India's best organic bilona ghee brand. Order 100% pure A2 Cow & Buffalo bilona ghee starting ₹1019. Traditional Bilona method, grass-fed, FSSAI certified. Premium desi ghee from Chambal valley, Madhya Pradesh. Buy desi ghee online with free shipping above ₹999.",
-  keywords: [
-    // Misspellings
-    "nvaprana",
-    "navparna",
-    "navaparna",
-    "navprna",
-    // Competitor targeting
-    "rosier ghee",
-    "two brothers organic farms",
-    "two brother ghee",
-    "anveshan ghee",
-    "avneshan ghee",
-    "kasutam ghee",
-    // Core keywords
-    "buy ghee online",
-    "bilona ghee",
-    "cow bilona ghee",
-    "desi cow ghee",
-    "a2 cow ghee",
-    "best cow ghee in India",
-    "buy cow ghee online",
-    "pure cow ghee",
-    "cow bilona ghee online",
-    "best ghee in India",
-    "organic ghee",
-    "pure desi ghee",
-    "a2 bilona ghee",
-    "desi ghee online",
-    "bilona ghee price",
-    "buy desi ghee online",
-    "pure ghee online",
-    "grass-fed ghee",
-    "best bilona ghee in india",
-    "bilona ghee online",
-    "pure desi buffalo ghee",
-    "premium desi ghee",
-    "A2 ghee online",
-    "organic india ghee",
-    "Buffalo A2 Bilona Ghee 500 ml",
-    "Buffalo A2 Bilona Ghee 1 Ltr",
-    "buy buffalo ghee online",
-    "cow ghee online",
-    "pure desi ghee price",
-  ],
+    "Buy pure A2 desi cow ghee and buffalo bilona ghee online from NavPrana Organics. Hand-churned the traditional bilona way in the Chambal valley. Grass-fed, FSSAI certified, free shipping above ₹999.",
+  // NOTE: no `keywords` field. Google has ignored <meta name="keywords"> since
+  // 2009, and the previous ~50-term list here included competitors' brand names.
+  // Target terms belong in visible headings and body copy instead.
   openGraph: {
-    title: "Buy Pure Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
+    title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
     description:
-      "India's best organic bilona ghee — 100% pure A2 Cow and Buffalo desi ghee starting ₹1019. Traditional Bilona method, grass-fed, FSSAI certified. Free shipping above ₹999.",
+      "A2 desi cow ghee and buffalo bilona ghee, hand-churned the traditional bilona way in the Chambal valley. Grass-fed, FSSAI certified. Free shipping above ₹999.",
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Buy Pure Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
+    title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
     description:
-      "Order 100% pure organic bilona ghee online. A2 Cow and Buffalo desi ghee, traditional Bilona method. Starting ₹1019. Free shipping above ₹999.",
+      "A2 desi cow ghee and buffalo bilona ghee, hand-churned the traditional bilona way. FSSAI certified. Free shipping above ₹999.",
   },
   alternates: {
     canonical: "/",
   },
 };
 
-const Page = () => {
+const Page = async () => {
+  // Fetched on the server so product names, prices and links are in the initial
+  // HTML. Previously <Products /> loaded the catalogue through a Redux
+  // useEffect, so the homepage server-rendered zero product content.
+  const [products, blogs] = await Promise.all([getProducts(), getBlogList()]);
+
   return (
     <div className="min-h-screen">
-      {/* <Header /> */}
       <main>
+        {/* Order follows the question a visitor asks next:
+            what do you sell → which one is for me → why does it cost this →
+            what does it do for me → can I trust you → tell me more. */}
         <Hero />
-        <Products />
-        <InstagramReels />
+        <Products initialProducts={products} />
+        <MilkChooser products={products} />
+        <BilonaProcess />
         <Benefits />
-
-        {/* <Testimonials /> */}
+        <InstagramReels />
+        <BlogPreviewAndProof blogs={blogs} />
       </main>
-      {/* <Footer /> */}
     </div>
   );
 };

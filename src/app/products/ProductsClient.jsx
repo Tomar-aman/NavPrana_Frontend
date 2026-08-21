@@ -1,8 +1,7 @@
 "use client";
 
-import { generateSlug } from "@/utils/slug";
-import { Star, Leaf, Award, Heart, ShoppingCart } from "lucide-react";
-import AutoCycleImage from "../../../components/AutoCycleImage";
+import { Leaf, Award, Heart } from "lucide-react";
+import ProductCard from "../../../components/ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "@/redux/features/product";
 import { useEffect } from "react";
@@ -10,14 +9,6 @@ import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { trackAddToCart } from "@/lib/meta-pixel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-const getFeaturedImage = (images = []) => {
-  return (
-    images.find((img) => img.is_feature)?.image ||
-    images[0]?.image ||
-    "/placeholder.png"
-  );
-};
 
 const ProductsClient = ({ initialProducts = [] }) => {
   const dispatch = useDispatch();
@@ -69,12 +60,14 @@ const ProductsClient = ({ initialProducts = [] }) => {
             Our Collection
           </div>
           <h1 className="text-3xl md:text-5xl font-bold mb-3">
-            Nature&apos;s Finest{" "}
-            <span className="text-gradient">Desi Ghee</span>
+            Buy Pure A2 Desi{" "}
+            <span className="text-gradient">Cow &amp; Buffalo Bilona Ghee</span>
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-5">
-            Premium desi ghee crafted with love using traditional methods
-            and the finest ingredients.
+            Four sizes across two milk types — A2 desi cow ghee from indigenous
+            breeds, and A2 buffalo ghee from native breed buffaloes. Every jar is
+            hand-churned using the traditional bilona method in the Chambal
+            valley of Madhya Pradesh.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {[
@@ -95,103 +88,15 @@ const ProductsClient = ({ initialProducts = [] }) => {
 
         {/* Products Grid */}
         <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-          {products.map((product) => {
-            const isInCart = cartItems.some(
-              (item) => item.product === product.id,
-            );
-            return (
-              <div
-                key={product.id}
-                onClick={() =>
-                  router.push(
-                    `/products/${generateSlug(product.name)}`,
-                  )
-                }
-                className="group bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer flex flex-col h-full"
-              >
-                {/* Image */}
-                <div className="relative w-full h-56 md:h-60 overflow-hidden bg-gray-50">
-                  <AutoCycleImage
-                    images={product.images}
-                    alt={product.name}
-                    className="group-hover:scale-105"
-                  />
-                  <div className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-bold rounded-lg bg-primary text-white shadow-sm z-10">
-                    Save {parseInt(product.discount_precent)}%
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="p-4 flex flex-col flex-1">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="text-base font-semibold text-foreground leading-tight">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-1 shrink-0 px-2 py-0.5 bg-primary/10 rounded-md">
-                      <Star size={11} className="text-primary fill-primary" />
-                      <span className="text-[11px] font-bold text-primary">
-                        {product.average_rating}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {product.features?.slice(0, 3).map((feature, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-[11px] font-medium"
-                      >
-                        {feature.feature}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-end justify-between mb-3">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl font-bold text-foreground">
-                        ₹{product.price}
-                      </span>
-                      <span className="text-sm text-muted-foreground line-through">
-                        ₹{product.max_price}
-                      </span>
-                    </div>
-                    <span className="text-xs text-muted-foreground font-medium bg-gray-50 px-2 py-0.5 rounded">
-                      {product.size}
-                    </span>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="mt-auto">
-                    {isInCart ? (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push("/cart");
-                        }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
-                      >
-                        <ShoppingCart size={15} />
-                        Go to Cart
-                      </button>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product.id);
-                        }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
-                      >
-                        <ShoppingCart size={15} />
-                        Add to Cart
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              size="sm"
+              isInCart={cartItems.some((item) => item.product === product.id)}
+              onAddToCart={handleAddToCart}
+            />
+          ))}
         </section>
 
         {/* Why Choose */}

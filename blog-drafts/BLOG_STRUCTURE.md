@@ -16,15 +16,15 @@ Three things decide whether a post ranks and converts, in this order:
 |---|---|---|
 | `title` | string | Benefit-driven, may include year/hook in parentheses. ~60–75 chars. |
 | `slug` | string | kebab-case, keyword-rich, permanent (never change after publish). |
-| `excerpt` | string | 1–2 sentences, ~150–250 chars. Shown on blog cards. Must create curiosity + name the benefit. |
-| `content` | HTML string | See content structure below. |
+| `excerpt` | string | 1–2 sentences, ~150–250 chars. Shown on blog cards. Must create curiosity + name the benefit. **Single line, no `\n`.** |
+| `content` | HTML string | See content structure below. **One single line, zero `\n` sequences.** |
 | `thumbnail` | image upload | 1200×630 PNG/JPG, named after the slug. Real photo preferred — see image rules. |
 | `category` | FK | One of: Awareness (5), Ayurveda (4), Clean Eating (3), Food Wisdom (6), Organic Living (2), Our Process (1). |
 | `read_time` | string | e.g. `"6 min"` — ~200 words/min. |
 | `is_featured` | bool | `true` only for high-priority conversion posts. |
 | `meta_title` | string | ≤60 chars, ends with `\| NavPrana`. |
-| `meta_description` | string | ≤160 chars, includes primary keyword + hook (e.g. "Free shipping ₹999+"). |
-| `image_prompt` | string | AI image-generation prompt for the thumbnail — stored in the draft JSON so the image can be (re)generated anytime. Not a DB field. |
+| `meta_description` | string | ≤160 chars, includes primary keyword + hook (e.g. "Free shipping ₹999+"). **Single line, no `\n`.** There is no `description` field in the API; this and `excerpt` are the description fields. |
+| `image_prompt` | string | AI image-generation prompt for the thumbnail — stored in the draft JSON so the image can be (re)generated anytime. Not a DB field. Must carry the brand palette + jar block; see image rules. |
 | `sources` | list | Draft-JSON only (not a DB field). Every external URL cited in the post, with what it backs up. See sourcing rules. |
 | `author` | string | Draft-JSON only until the DB adds the field. Real human name + credential. Never "Admin" or "Team". |
 
@@ -127,6 +127,16 @@ on E-E-A-T. Unsourced health claims are the fastest way to lose these rankings.
 | PMC (full text) | `https://www.ncbi.nlm.nih.gov/pmc/` | Free full-text papers to read before citing |
 | Ministry of Ayush | `https://www.ayush.gov.in/` | Classical Ayurvedic positioning of ghrita |
 | CCRAS | `https://ccras.nic.in/` | Ayurvedic research citations |
+| ICAR-NBAGR breed registry | `https://nbagr.res.in/` | Registered indigenous cattle breeds (Gir, Sahiwal, Tharparkar). **Note: the `nbagr.icar.gov.in` subdomain is unreachable, use `res.in`.** |
+| NDDB — animal breeding | `https://www.nddb.coop/services/animalbreeding` | Indian crossbreeding history, why "desi-looking" does not mean A2A2 |
+| DAHD (Dept. of Animal Husbandry & Dairying) | `https://dahd.gov.in/` | Livestock and dairy policy, census data |
+
+**Checked and rejected:** `nbagr.icar.gov.in` (connection fails) and the EFSA beta-casomorphin
+report deep link `efsa.europa.eu/en/efsajournal/pub/231r` (returns 403 to automated checks).
+Do not cite either until re-verified.
+
+**Useful PubMed searches** (return 203 to `curl`, which is PubMed's bot response, not a broken link):
+`?term=A1+A2+beta-casein+milk` · `?term=ghee+oxidative+stability` · `?term=conjugated+linoleic+acid+body+fat`
 
 ### Claims in our existing posts that still need a citation
 
@@ -226,9 +236,9 @@ One-way links build no cluster. Current clusters:
 
 ## Image rules
 
-**Prefer real photographs of our own process and product** for the purity, process and comparison posts.
-Original imagery is an E-E-A-T signal; a generic AI food render is not, and reverse image search
-increasingly flags them. Use AI thumbnails for conceptual/lifestyle posts where no real photo exists.
+**Prefer real photographs of our own product and process.** Original imagery is an E-E-A-T signal,
+a generic AI food render is not, and reverse image search increasingly flags them. Use AI only for
+conceptual or lifestyle scenes where no real photo exists.
 
 Either way:
 
@@ -237,13 +247,89 @@ Either way:
 - Filename = slug (`ghee-during-pregnancy-benefits-dosage.jpg`)
 - Compress to under 200 KB; WebP if the CMS accepts it
 
-### `image_prompt` rules (AI fallback)
+### Brand palette (extracted from `src/assets/logo-ghee.svg`, verified)
 
-- Photorealistic food/lifestyle photography, 16:9 (1200×630)
-- **No text in image** (AI mangles it; blog cards overlay the title)
-- Brand palette accents: deep green `#265926` + gold `#f0c442`
-- Rustic/organic/Indian-kitchen aesthetic; danedar (grainy) ghee texture when ghee is shown
-- Negative prompt: `text, watermark, logo, plastic packaging, artificial colors, cluttered background`
+| Role | Hex | Where it appears in the logo |
+|---|---|---|
+| Deep forest green | `#163320` | Darkest green in the mark gradient |
+| Forest green | `#388547` | Mark gradient, mid tone |
+| Leaf green | `#4EAE3B` | Leaf highlight gradient |
+| Lime | `#B0CB1F` | Leaf tip highlight |
+| **Gold (wordmark)** | `#C99C4A` | The "NAVPRANA" lettering |
+| Amber | `#F19512` | Ghee/drop gradient, dark end |
+| Bright yellow | `#F6E710` | Ghee/drop gradient, light end |
+| Dark amber | `#BA770B` | Warm accent gradient |
+| Burnt orange | `#BA601E` | Warm accent gradient |
+| Cream | `#FCD08E` | Lightest warm accent |
+
+Use greens for the natural/farm side of a composition and the ambers and golds for the ghee itself.
+The old `#265926` / `#f0c442` pair in earlier drafts was an approximation. These are the real values.
+
+### Getting our actual jar into a thumbnail
+
+**Do not ask an image model to render our label or logo.** It will produce mangled letterforms and a
+jar that is recognisably not ours, which is worse than no jar at all. Two workflows that do work:
+
+1. **Composite (recommended).** Generate the scene with the jar described but the label area left
+   clean and unlit-for-text, then paste the real packshot over it in any editor. One good masked
+   packshot, reused across every thumbnail, keeps the whole blog visually consistent.
+2. **Photograph it.** A jar on a wooden board near a window, shot on a phone, beats a perfect AI
+   render on both trust and originality. This is the better answer for the purity and process posts.
+
+Product packshots live on the API (`product.images`, see `components/Products.jsx`), not in the repo,
+so pull the current packshot from there rather than guessing at the design.
+
+### The NavPrana jar block
+
+Paste this into every `image_prompt` that should feature the product, and keep the wording identical
+across posts so the thumbnails read as one set:
+
+> a NavPrana glass jar of ghee in the foreground, wide-mouthed clear glass with a deep forest green
+> screw lid, filled with golden grainy danedar ghee, the front label area kept clean, evenly lit and
+> unobstructed, jar angled slightly toward camera
+
+**`<CONFIRM>` before first use** and then fix the wording permanently: jar shape (straight-sided or
+tapered), lid colour and material (green metal, gold metal, or wood), label shape, and whether we sell
+in glass or PET. Take these from the current packshot, not from memory.
+
+### `image_prompt` rules
+
+- Photorealistic food or lifestyle photography, 16:9 (1200×630)
+- **No text anywhere in the image.** Blog cards overlay the title, and AI-rendered text always fails.
+- Brand palette accents from the table above
+- Rustic, organic, Indian-kitchen aesthetic; grainy danedar texture whenever ghee is visible
+- Include the jar block on product-led posts. Omit it on posts where a jar would be intrusive
+  (a pregnancy lifestyle scene, for instance) and let the food carry the frame instead.
+- Negative prompt, always: `text, watermark, logo, label text, lettering, plastic packaging,
+  artificial colors, cluttered background, distorted jar, fake brand marks`
+
+---
+
+## Field formatting: no escape sequences
+
+The API has no `description` field. The description-type fields are **`excerpt`** and
+**`meta_description`**, and neither may contain a newline or an escape sequence of any kind.
+
+**Hard rules:**
+
+- `excerpt`, `meta_description`, `meta_title`, `title` — plain single-line text. No `\n`, no `\r`, no `\t`, no real line breaks. These render into card subtitles and `<meta>` tags where a stray
+  `\n` shows up as visible characters.
+- **`content` must be a single line of HTML with no `\n` sequences at all.** Write
+  `</p><h2>` rather than `</p>\n\n<h2>`. Whitespace between block tags does nothing for the rendered
+  page, and every `\n` is one more thing that can leak into the DB as literal text when the draft is
+  pasted into Django admin.
+- Nothing anywhere in the JSON should rely on `\n`. If a paragraph break is needed, that is what
+  `<p>` is for.
+
+Check before every publish:
+
+```bash
+node -e "const j=require('./blog-drafts/<file>.json');
+['title','excerpt','meta_title','meta_description','content'].forEach(k=>{
+  const n=(j[k].match(/\n|\r|\t/g)||[]).length;
+  console.log(k, n===0?'clean':'FAIL '+n+' escape(s)');
+});"
+```
 
 ---
 
@@ -272,6 +358,13 @@ Either way:
 ---
 
 ## Pre-publish checklist
+
+Formatting
+
+- [ ] `content` is a single line with **zero** `\n` sequences
+- [ ] `excerpt`, `meta_description`, `meta_title`, `title` contain no newlines, tabs or escapes
+- [ ] `image_prompt` uses the real brand hexes and the NavPrana jar block
+- [ ] Negative prompt includes `label text, lettering, distorted jar, fake brand marks`
 
 Structure
 
@@ -325,11 +418,14 @@ Traffic
 10. Ghee with Warm Milk at Night (draft — `blog-6-ghee-with-warm-milk-at-night.json`)
 11. Ghee for Weight Loss (draft — `blog-7-ghee-for-weight-loss.json`)
 12. Ghee During Pregnancy (draft — `blog-8-ghee-during-pregnancy.json`)
+13. A2 vs A1 Milk (draft — `blog-9-a2-vs-a1-milk.json`)
+14. How to Store Ghee / Why It Turns Grainy (draft — `blog-10-how-to-store-ghee.json`)
 
-**Retrofit needed:** drafts 1–8 were written before this voice and sourcing standard existed.
+**Retrofit needed:** drafts 1–6 were written before this voice and sourcing standard existed.
 They are structurally sound but they all need: em-dash reduction, external citations added,
 first-party NavPrana specifics inserted, and an author byline. Do this before publishing each one,
 starting with `blog-3` and `blog-4` (the rest link to them).
+Drafts 7–10 already meet the standard, apart from their `first_party_todo` items and the author byline.
 
 ## Live slugs (for cross-linking)
 
@@ -341,7 +437,5 @@ starting with `blog-3` and `blog-4` (the rest link to them).
 
 - How to Check if Your Ghee Is Pure (5 kitchen tests) — overlaps `identify-pure-a2-buffalo-bilona-ghee`; angle as at-home tests only, and cite FSSAI DART
 - Ghee for Hair & Skin: Nasya, Massage and Overnight Remedies
-- A2 vs A1 Milk: What the Protein Difference Actually Means
-- How to Store Ghee So It Lasts 12 Months (and why it turns grainy)
 - Inside Our Bilona Kitchen: One Batch, Start to Finish — **highest-value post we are not writing.**
   Pure first-party content, own photos, feeds every other post's purity section.

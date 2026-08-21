@@ -1,23 +1,9 @@
 export const metadata = {
-  title: "About NavPrana Organics — India's Best Organic Bilona Ghee Brand",
+  title: "About Us — Ghee from the Chambal Valley",
   description:
     "Learn the story of NavPrana Organics — India's best organic bilona ghee brand from Chambal valley, Madhya Pradesh. We bring you 100% pure desi buffalo A2 bilona ghee, made using the traditional Bilona method. Grass-fed, FSSAI certified, premium desi ghee from Village Esah, Morena.",
-  keywords: [
-    "NavPrana Organics",
-    "about NavPrana",
-    "best bilona ghee in india",
-    "organic ghee brand India",
-    "bilona ghee",
-    "organic india ghee",
-    "best ghee in India",
-    "pure desi ghee",
-    "a2 bilona ghee",
-    "Chambal valley ghee",
-    "premium desi ghee",
-    "grass-fed ghee",
-    "organic food India",
-    "traditional bilona method ghee",
-  ],
+  // No `keywords` field — Google has ignored <meta name="keywords">
+  // since 2009. Target terms belong in visible headings and body copy.
   openGraph: {
     title: "About NavPrana Organics — Best Organic Bilona Ghee Brand in India",
     description:

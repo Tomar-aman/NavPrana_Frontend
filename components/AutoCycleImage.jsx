@@ -3,7 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-const AutoCycleImage = ({ images = [], alt, className = "" }) => {
+// `sizes` matters: without it next/image assumes the image spans 100vw and
+// serves the largest srcset candidate. These render as cards in a 1/2/3-column
+// grid, so the real widths are far smaller than the viewport.
+const AutoCycleImage = ({
+  images = [],
+  alt,
+  className = "",
+  sizes = "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw",
+}) => {
   const [current, setCurrent] = useState(0);
   const [sliding, setSliding] = useState(false);
   const nextRef = useRef(0);
@@ -27,7 +35,15 @@ const AutoCycleImage = ({ images = [], alt, className = "" }) => {
   }, [images.length]);
 
   if (!images.length) {
-    return <Image src="/placeholder.png" alt={alt} fill className={`object-cover ${className}`} />;
+    return (
+      <Image
+        src="/placeholder.png"
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={`object-cover ${className}`}
+      />
+    );
   }
 
   const currentSrc = images[current]?.image || "/placeholder.png";
@@ -43,7 +59,13 @@ const AutoCycleImage = ({ images = [], alt, className = "" }) => {
           transition: sliding ? "transform 600ms ease-in-out" : "none",
         }}
       >
-        <Image src={currentSrc} alt={alt} fill className={`object-cover ${className}`} />
+        <Image
+          src={currentSrc}
+          alt={alt}
+          fill
+          sizes={sizes}
+          className={`object-cover ${className}`}
+        />
       </div>
 
       {/* Next — slides in from right */}
@@ -54,7 +76,14 @@ const AutoCycleImage = ({ images = [], alt, className = "" }) => {
           transition: sliding ? "transform 600ms ease-in-out" : "none",
         }}
       >
-        <Image src={nextSrc} alt={alt} fill className={`object-cover ${className}`} />
+        <Image
+          src={nextSrc}
+          alt={alt}
+          fill
+          sizes={sizes}
+          loading="lazy"
+          className={`object-cover ${className}`}
+        />
       </div>
 
       {/* Dots */}

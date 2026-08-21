@@ -1,26 +1,12 @@
 import { generateSlug } from "@/utils/slug";
-
-// NOTE: strip trailing slashes and join with an explicit "/" — the env value
-// may or may not end in one. Concatenating it directly produced
-// "https://api.navprana.comapi/v1/..." in production, which killed the fetch
-// and left product pages with no Product JSON-LD at all.
-const API_URL = (
-  process.env.NEXT_PUBLIC_BASE_URL || "https://api.navprana.cloud/"
-).replace(/\/+$/, "");
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.navprana.com";
-
-async function getProducts() {
-  try {
-    const res = await fetch(`${API_URL}/api/v1/product/products/`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.results || data || [];
-  } catch {
-    return [];
-  }
-}
+import {
+  SITE_URL,
+  getProducts,
+  milkSource,
+  milkType,
+  featuredImage,
+  clampDescription,
+} from "@/lib/site";
 
 async function getProductBySlug(slug) {
   const products = await getProducts();
@@ -43,53 +29,42 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const featuredImage =
-    product.images?.find((img) => img.is_feature)?.image ||
-    product.images?.[0]?.image ||
-    `${SITE_URL}/opengraph-image`;
+  const image = featuredImage(product, `${SITE_URL}/opengraph-image`);
+
+  const isCow = milkType(product) === "cow";
+  const kind = isCow ? "A2 desi cow ghee" : "A2 buffalo ghee";
+
+  // Google renders ~155 characters. The raw API `description` field is
+  // multi-paragraph marketing copy, so using it unbounded meant Google
+  // truncated and rewrote the snippet on every product page.
+  const description = clampDescription(
+    product.details ||
+      product.description ||
+      `Buy ${product.name} at ₹${product.price} — pure ${kind}, hand-churned bilona method, FSSAI certified. Free shipping above ₹999.`,
+  );
+
+  // Longer copy is fine for social cards, which have no 155-char limit.
+  const socialDescription = clampDescription(
+    product.details || product.description || description,
+    200,
+  );
 
   return {
-    title: `Buy ${product.name} Online — ₹${product.price} | Best Bilona Ghee in India`,
-    description:
-      product.description ||
-      product.details ||
-      `Buy ${product.name} at ₹${product.price} from NavPrana Organics. 100% pure organic A2 bilona ghee, traditional Bilona method. Best desi ghee in India. FSSAI certified, grass-fed, free shipping above ₹999. Order pure desi buffalo ghee online.`,
-    keywords: [
-      product.name,
-      "bilona ghee",
-      "a2 bilona ghee",
-      "organic ghee",
-      "pure desi ghee",
-      "bilona ghee price",
-      "buy ghee online",
-      "best ghee in India",
-      "desi ghee online",
-      "pure desi buffalo ghee",
-      "premium desi ghee",
-      "buy desi ghee online",
-      "buy buffalo ghee online",
-      "Buffalo A2 Bilona Ghee 500 ml",
-      "Buffalo A2 Bilona Ghee 1 Ltr",
-      "best bilona ghee in india",
-      "pure desi ghee price",
-      "grass-fed ghee",
-      "A2 ghee online",
-      "organic india ghee",
-      "NavPrana",
-      "order pure desi buffalo ghee",
-    ],
+    title: `${product.name} — ₹${Math.round(Number(product.price)) || product.price}`,
+    description,
+    // NOTE: no `keywords` field — see the comment in src/app/layout.js. The
+    // previous list here was buffalo-only, so the two cow SKUs advertised
+    // "buy buffalo ghee online" to anyone reading their source.
     openGraph: {
       title: `Buy ${product.name} — ₹${product.price} | NavPrana Organics`,
-      description:
-        product.details ||
-        `Buy ${product.name} at ₹${product.price}. 100% pure organic A2 bilona ghee. Best desi ghee in India. Free shipping above ₹999.`,
+      description: socialDescription,
       url: `/products/${slug}`,
       images: [
         {
-          url: featuredImage,
+          url: image,
           width: 800,
           height: 800,
-          alt: `${product.name} — Pure Desi A2 Bilona Ghee by NavPrana Organics`,
+          alt: `${product.name} — pure ${kind} by NavPrana Organics`,
         },
       ],
       // NOTE: Next.js Metadata API only accepts specific OG types ("website",
@@ -100,10 +75,8 @@ export async function generateMetadata({ params }) {
     twitter: {
       card: "summary_large_image",
       title: `Buy ${product.name} — ₹${product.price} | NavPrana Organics`,
-      description:
-        product.details ||
-        `Buy ${product.name} — pure organic A2 bilona ghee. Best bilona ghee in India. FSSAI certified.`,
-      images: [featuredImage],
+      description: socialDescription,
+      images: [image],
     },
     alternates: {
       canonical: `/products/${slug}`,
@@ -115,16 +88,14 @@ export async function generateMetadata({ params }) {
 function ProductJsonLd({ product, slug }) {
   if (!product) return null;
 
-  const featuredImage =
-    product.images?.find((img) => img.is_feature)?.image ||
-    product.images?.[0]?.image;
+  const image = featuredImage(product);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.description || product.details || "",
-    image: featuredImage,
+    image: image,
     url: `${SITE_URL}/products/${slug}`,
     brand: {
       "@type": "Brand",
@@ -194,9 +165,12 @@ function ProductJsonLd({ product, slug }) {
         value: "Traditional Bilona",
       },
       {
+        // NOTE: this was hardcoded to "A2 Buffalo Milk" for EVERY product,
+        // which told Google the two cow SKUs were made from buffalo milk —
+        // structured data contradicting the product name. Derive it instead.
         "@type": "PropertyValue",
         name: "Source",
-        value: "A2 Buffalo Milk",
+        value: milkSource(product),
       },
       {
         "@type": "PropertyValue",
@@ -220,13 +194,16 @@ function ProductJsonLd({ product, slug }) {
     jsonLd.offers.highPrice = product.max_price;
   }
 
-  if (product.average_rating) {
+  // Only emit aggregateRating when there is a real rating AND real reviews
+  // behind it — Google rejects (and can penalise) a reviewCount that isn't
+  // backed by actual reviews.
+  if (product.average_rating && product.reviews?.length > 0) {
     jsonLd.aggregateRating = {
       "@type": "AggregateRating",
       ratingValue: product.average_rating,
       bestRating: "5",
       worstRating: "1",
-      reviewCount: product.reviews?.length || 1,
+      reviewCount: product.reviews.length,
     };
   }
 

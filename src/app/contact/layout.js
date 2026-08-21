@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Contact Us | NavPrana Organics",
+  title: "Contact Us",
   description: "Have questions about our organic products or need help with your order? Get in touch with the NavPrana Team. We're here to help you live a purer, healthier life.",
   openGraph: {
     title: "Contact Us | NavPrana Organics",

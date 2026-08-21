@@ -6,49 +6,49 @@ const Benefits = () => {
   const benefits = [
     {
       icon: Heart,
-      title: "Rich in Nutrients",
+      title: "Fat-Soluble Vitamins",
       description:
-        "Pure desi ghee is a powerhouse of essential vitamins and healthy fats that naturally supports heart health and overall wellness.",
+        "Ghee naturally carries vitamins A, D, E and K — the fat-soluble ones your body absorbs better when they come with fat.",
       color: "bg-red-50",
       iconColor: "text-red-500",
     },
     {
       icon: Zap,
-      title: "Boosts Energy",
+      title: "Slow-Burning Fat",
       description:
-        "Organic bilona ghee fuels your day with healthy fats providing long-lasting stamina for active lifestyles.",
+        "Ghee is almost entirely fat, which digests slower than carbohydrate — which is why a spoon in dal keeps a meal satisfying for longer.",
       color: "bg-amber-50",
       iconColor: "text-amber-500",
     },
     {
       icon: Shield,
-      title: "Supports Immunity",
+      title: "Butyric Acid",
       description:
-        "A2 bilona ghee is rich in antioxidants and butyric acid to strengthen gut health and immune defense.",
+        "Ghee is one of the richest natural food sources of butyric acid, a short-chain fatty acid long valued in Indian kitchens and Ayurveda.",
       color: "bg-blue-50",
       iconColor: "text-blue-500",
     },
     {
       icon: Sparkles,
-      title: "Pure & Wholesome",
+      title: "One Ingredient",
       description:
-        "Zero additives, zero chemicals. Premium desi ghee — just golden goodness of pure buffalo milk.",
+        "No palm oil, no vanaspati, no colour, no preservative, no synthetic flavour. Just A2 milk — cow or buffalo — and nothing else.",
       color: "bg-purple-50",
       iconColor: "text-purple-500",
     },
     {
       icon: Droplets,
-      title: "Traditional Bilona",
+      title: "Hand-Churned Bilona",
       description:
-        "Hand-churned using the ancient Bilona technique — the best ghee-making method in India for preserving aroma and nutrition.",
+        "Cultured into curd overnight, churned by hand, then slow-simmered. Roughly 30 litres of milk go into a single litre of ghee.",
       color: "bg-cyan-50",
       iconColor: "text-cyan-500",
     },
     {
       icon: Sun,
-      title: "Farm Fresh & Grass-Fed",
+      title: "Grass-Fed, Open Grazing",
       description:
-        "Sourced from grass-fed, free-grazing buffaloes with ethical milking practices. Organic ghee at its finest.",
+        "From indigenous cows and native breed buffaloes on open grazing along the Chambal, not stall-fed on concentrate.",
       color: "bg-orange-50",
       iconColor: "text-orange-500",
     },
@@ -67,14 +67,11 @@ const Benefits = () => {
             Health Benefits
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">
-            <span className="text-gradient">Nature's Perfect</span> Nutrition
+            What&apos;s actually <span className="text-gradient">in the jar</span>
           </h2>
-          <h3 className="text-lg md:text-xl font-semibold text-muted-foreground mb-2">
-            Health Benefits of Pure Desi Bilona Ghee
-          </h3>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover the incredible health benefits of our organic bilona ghee —
-            the best A2 buffalo ghee in India, made using the ancient Bilona method.
+            Ghee is a food, not a supplement. Here is what A2 bilona ghee — cow
+            or buffalo — is made of, and how ours is made.
           </p>
         </div>
 
@@ -114,16 +111,16 @@ const Benefits = () => {
             <div className="relative overflow-hidden rounded-2xl shadow-lg">
               <Image
                 src={organicFarmImage}
-                alt="Organic farm-fresh pure desi bilona ghee — traditional Bilona method A2 buffalo ghee from NavPrana Organics"
+                alt="Open grazing along the Chambal valley, where NavPrana sources A2 cow and buffalo milk for bilona ghee"
                 className="w-full h-64 sm:h-72 md:h-[400px] object-cover hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-5 sm:p-6">
                 <h3 className="text-lg md:text-xl font-bold text-white mb-1">
-                  From Organic Farms to Your Table — Best Bilona Ghee in India
+                  From the Chambal valley to your kitchen
                 </h3>
                 <p className="text-sm text-white/80">
-                  Sustainable farming and natural processes ensure every jar of our premium desi ghee
-                  carries the pure essence of nature. Buy organic ghee online from NavPrana.
+                  Small batches, open grazing, and a process that has not changed
+                  in generations.
                 </p>
               </div>
             </div>
@@ -137,14 +134,16 @@ const Benefits = () => {
                         p-6 sm:p-8 max-w-3xl mx-auto"
           >
             <h3 className="text-lg md:text-2xl font-bold text-gradient mb-3 md:mb-4">
-              Harmony with Nature, Wellness for Life
+              How much is enough?
             </h3>
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4">
-              "When we honor nature's gifts and traditional wisdom, we create
-              nourishment that feeds not just the body, but the soul."
+              Two to three teaspoons a day across meals is roughly what
+              traditional Indian cooking already uses. Ghee is calorie dense, so
+              it is not something to add on top of an existing diet without
+              accounting for it.
             </p>
             <p className="text-xs text-muted-foreground font-medium">
-              — Traditional Wisdom & Modern Science
+              Not medical advice — ask a doctor or dietitian about your own diet.
             </p>
           </div>
         </div>

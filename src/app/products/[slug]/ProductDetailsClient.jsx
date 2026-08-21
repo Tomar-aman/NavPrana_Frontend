@@ -26,6 +26,8 @@ import { trackViewContent, trackAddToCart } from "@/lib/meta-pixel";
 import { toast } from "sonner";
 import StickyCartBar from "../../../../components/StickyCartBar";
 import { generateSlug } from "@/utils/slug";
+import { milkSource } from "@/lib/site";
+import Link from "next/link";
 
 // Added: Image Magnifier Component for premium feel
 const ImageMagnifier = ({ src, alt }) => {
@@ -94,7 +96,7 @@ const Accordion = ({ title, children, isOpen, onClick }) => {
   );
 };
 
-const ComparisonGrid = () => {
+const ComparisonGrid = ({ milk = "A2 Grass-fed" }) => {
   return (
     <div className="my-10 bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 text-center border-b border-primary/10">
@@ -113,7 +115,7 @@ const ComparisonGrid = () => {
           <tbody>
             {[
               { feature: "Process", nav: "Traditional Bilona (Curd)", com: "Cream Separation" },
-              { feature: "Milk Quality", nav: "A2 Grass-fed Buffalo/Cow", com: "Mixed/A1 Milk" },
+              { feature: "Milk Quality", nav: `${milk}, grass-fed`, com: "Mixed/A1 Milk" },
               { feature: "Nutrients", nav: "High in CLA & Vitamins", com: "Low Nutritional Value" },
               { feature: "Aroma & Texture", nav: "Rich, Granular (Danedar)", com: "Flat, Artificial Smell" },
               { feature: "Additives", nav: "100% Pure, Zero Preservatives", com: "Colors & Flavors Added" },
@@ -142,12 +144,22 @@ const ComparisonGrid = () => {
 };
 
 
-const ProductDetailsClient = ({ product }) => {
+const ProductDetailsClient = ({ product, catalogue = [] }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { items: cartItems } = useSelector((state) => state.cart);
-  const { list: allProducts } = useSelector((state) => state.product);
+  const { list: reduxProducts } = useSelector((state) => state.product);
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // Server-fetched catalogue so the size-variant links exist in the initial
+  // HTML. Reading only from Redux meant the variants were missing on first
+  // paint and invisible to crawlers.
+  const allProducts = reduxProducts.length > 0 ? reduxProducts : catalogue;
+
+  // Cow vs buffalo, for copy that must not contradict the product name.
+  // Same helper the Product JSON-LD uses, so the page and the schema can never
+  // disagree about which milk this SKU is made from.
+  const milkLabel = milkSource(product);
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -239,14 +251,31 @@ const ProductDetailsClient = ({ product }) => {
   return (
     <div className="min-h-screen bg-gray-50 mt-20">
       <main className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        {/* Breadcrumb */}
-        <div className="text-xs md:text-sm text-gray-500 mb-8 flex items-center gap-2.5 font-medium">
-          <span className="cursor-pointer hover:text-primary transition" onClick={() => router.push('/')}>Home</span>
-          <span className="text-gray-300">/</span>
-          <span className="cursor-pointer hover:text-primary transition" onClick={() => router.push('/products')}>Products</span>
-          <span className="text-gray-300">/</span>
-          <span className="text-gray-900 font-bold truncate">{product.name}</span>
-        </div>
+        {/* Breadcrumb — real links, not <span onClick>. These match the
+            BreadcrumbList JSON-LD in ../layout.js, and Googlebot can follow
+            them; click handlers it cannot. */}
+        <nav
+          aria-label="Breadcrumb"
+          className="text-xs md:text-sm text-gray-500 mb-8 font-medium"
+        >
+          <ol className="flex items-center gap-2.5">
+            <li>
+              <Link href="/" className="hover:text-primary transition">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-gray-300">/</li>
+            <li>
+              <Link href="/products" className="hover:text-primary transition">
+                Products
+              </Link>
+            </li>
+            <li aria-hidden="true" className="text-gray-300">/</li>
+            <li className="text-gray-900 font-bold truncate" aria-current="page">
+              {product.name}
+            </li>
+          </ol>
+        </nav>
 
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
           {/* IMAGE SECTION */}
@@ -345,14 +374,17 @@ const ProductDetailsClient = ({ product }) => {
                        <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-l-[20px] border-t-primary border-l-transparent"></div>
                        <CheckCircle2 size={10} className="absolute top-0.5 right-0.5 text-white" />
                     </button>
+                    {/* Real <Link>s so the size variants are crawlable and pass
+                        relevance between the 500 ml and 1 L pages. */}
                     {variants.map(v => (
-                       <button 
+                       <Link
                          key={v.id}
-                         onClick={() => router.push(`/products/${generateSlug(v.name)}`)}
+                         href={`/products/${generateSlug(v.name)}`}
+                         title={`Buy ${v.name}`}
                          className="px-5 py-2.5 bg-white border-2 border-gray-200 hover:border-primary/50 rounded-xl text-sm font-bold text-gray-600 transition shadow-sm"
                        >
                          {v.size}
-                       </button>
+                       </Link>
                     ))}
                  </div>
               </div>
@@ -466,7 +498,7 @@ const ProductDetailsClient = ({ product }) => {
           ))}
         </div>
 
-        <ComparisonGrid />
+        <ComparisonGrid milk={milkLabel} />
 
         {/* Product Details Accordion Section */}
         <div className="mt-12 max-w-4xl mx-auto">

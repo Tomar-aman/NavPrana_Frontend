@@ -13,12 +13,8 @@ export const metadata = {
   title: "Shipping Policy — Fast & Secure Delivery Across India",
   description:
     "Learn about NavPrana Organics shipping policy. We deliver pure desi ghee across India with temperature-controlled packaging, free shipping available on qualifying orders.",
-  keywords: [
-    "NavPrana shipping",
-    "ghee delivery India",
-    "organic ghee shipping",
-    "free shipping ghee",
-  ],
+  // No `keywords` field — Google has ignored <meta name="keywords">
+  // since 2009. Target terms belong in visible headings and body copy.
   openGraph: {
     title: "Shipping Policy | NavPrana Organics",
     description:

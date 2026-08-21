@@ -126,12 +126,21 @@ const Header = () => {
             exit={{ height: 0, opacity: 0 }}
             className="bg-primary flex items-center overflow-hidden"
           >
+            {/* NOTE: this bar renders on EVERY page. It previously carried five
+                health claims — "Boosts Immunity", "Enhances Brain Health",
+                "Supports Heart Health" and so on. Claims like those need
+                substantiation under FSSAI's Advertising and Claims Regulations
+                2018, and unsubstantiated health claims on a food product are a
+                regulatory exposure, not a marketing choice. These replacements
+                are all facts stated elsewhere on the site — and free shipping
+                on every page converts better than a brain-health claim anyway.
+                Keep anything added here factual. */}
             <div className="animate-marquee whitespace-nowrap text-white text-xs font-medium tracking-wide">
-              <span className="mx-8">🥛 Boosts Immunity</span>
-              <span className="mx-8">🌿 Improves Digestion</span>
-              <span className="mx-8">🔥 Increases Energy</span>
-              <span className="mx-8">🧠 Enhances Brain Health</span>
-              <span className="mx-8">❤️ Supports Heart Health</span>
+              <span className="mx-8">🚚 Free shipping above ₹999</span>
+              <span className="mx-8">🧈 Hand-churned bilona method</span>
+              <span className="mx-8">🌾 Grass-fed, open grazing</span>
+              <span className="mx-8">✅ FSSAI certified</span>
+              <span className="mx-8">🫙 One ingredient, nothing added</span>
             </div>
           </motion.div>
         )}
