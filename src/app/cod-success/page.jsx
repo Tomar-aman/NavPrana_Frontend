@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import PaymentSuccess from "../../../components/PaymentSuccess";
-import { trackPurchase } from "@/lib/meta-pixel";
+import { firePendingPurchase } from "@/lib/meta-pixel";
 import PrivateRoute from "../../../components/PrivateRoute";
 
 const CodSuccessPage = () => {
@@ -26,16 +26,13 @@ const CodSuccessPage = () => {
     }
   }, [orderData]);
 
-  // 📊 Meta Pixel — Purchase event for COD orders
+  // 📊 Meta Pixel — Purchase event for COD orders.
+  // The order value, the products and the buyer's details all come from the
+  // snapshot checkout stored; this screen only knows the ids. firePendingPurchase
+  // is self-deduping, so a refresh here does not report a second sale.
   useEffect(() => {
-    if (orderId && transactionId) {
-      trackPurchase({
-        orderId,
-        transactionId,
-        value: 0,       // full value isn't available here; GTM/server can enrich
-        currency: "INR",
-      });
-    }
+    if (!orderId) return;
+    firePendingPurchase({ orderId, transactionId });
   }, [orderId, transactionId]);
 
   // If no order data at all, redirect back to checkout

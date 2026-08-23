@@ -9,7 +9,7 @@ import SignupForm from "./SignupForm";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
-import { trackCompleteRegistration } from "@/lib/meta-pixel";
+import { setUserData, trackCompleteRegistration } from "@/lib/meta-pixel";
 import { Leaf } from "lucide-react";
 
 // Shared auth form — used by both /signin and /signup pages
@@ -100,7 +100,15 @@ const AuthForm = ({ initialTab = "signin" }) => {
       await dispatch(verifyOtp({ email: signupEmail, otp })).unwrap();
       toast.success("Account verified! You're now logged in.");
       setShowOtpModal(false);
-      // 📊 Meta Pixel — CompleteRegistration
+      // 📊 Meta Pixel — attach the new customer's details BEFORE the event, so
+      // the signup itself is matchable. ProfileContext only loads on a full
+      // page load, so without this the pixel stays anonymous for this session.
+      setUserData({
+        email: signupForm.email,
+        phone_number: signupForm.phone,
+        first_name: signupForm.firstName,
+        last_name: signupForm.lastName,
+      });
       trackCompleteRegistration("email");
       router.push("/");
     } catch {

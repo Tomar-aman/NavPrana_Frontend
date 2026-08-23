@@ -137,7 +137,7 @@ import { paymentStatus } from "@/redux/features/paymentSlice";
 import PaymentPending from "../../../components/PaymentPending";
 import PaymentFailed from "../../../components/PaymentFailed";
 import PaymentSuccess from "../../../components/PaymentSuccess";
-import { trackPurchase } from "@/lib/meta-pixel";
+import { firePendingPurchase } from "@/lib/meta-pixel";
 
 const PaymentStatusPage = () => {
   const dispatch = useDispatch();
@@ -189,15 +189,24 @@ const PaymentStatusPage = () => {
     if (isSuccess && !hasRedirected.current) {
       hasRedirected.current = true;
 
-      // 📊 Meta Pixel — Purchase event for online payment
-      trackPurchase({
-        orderId: sessionStorage.getItem("order_id"),
+      const orderId = sessionStorage.getItem("order_id");
+
+      // 📊 Meta Pixel — Purchase event for online payment.
+      // Amount, products and buyer details come from the snapshot checkout
+      // stored; the payment response is only a fallback, and its amount field
+      // is named differently depending on the Cashfree payload, hence the
+      // several candidates. firePendingPurchase dedupes, so the refresh that
+      // resets hasRedirected cannot report the sale twice.
+      firePendingPurchase({
+        orderId,
         transactionId: sessionStorage.getItem("transaction_id"),
-        value: paymentData?.amount || 0,
-        currency: "INR",
+        fallbackValue:
+          paymentData?.amount ??
+          paymentData?.order_amount ??
+          paymentData?.payment_amount ??
+          0,
       });
 
-      const orderId = sessionStorage.getItem("order_id");
       if (!orderId) return;
 
       setTimeout(() => {

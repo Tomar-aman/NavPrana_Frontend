@@ -279,9 +279,9 @@ export default async function RootLayout({ children }) {
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
-        <MetaPixel />
         <ReduxProvider>
             <ProfileProvider>
+              <MetaPixel />
               <ErrorBoundary>
               <Header />
               <AuthInitializer />

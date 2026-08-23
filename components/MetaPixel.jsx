@@ -1,15 +1,28 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { PIXEL_ID, trackPageView } from "@/lib/meta-pixel";
+import { useProfile } from "@/Context/ProfileContext";
+import {
+  PIXEL_ID,
+  clearUserData,
+  getUserData,
+  setUserData,
+  trackPageView,
+} from "@/lib/meta-pixel";
 
 /**
  * MetaPixel — Client component that:
  *  1. Injects the fbevents.js SDK once on mount.
- *  2. Fires a fresh PageView on every SPA route change.
+ *  2. Attaches the signed-in customer's details (advanced matching) so Meta can
+ *     actually match conversions to people.
+ *  3. Fires a fresh PageView on every SPA route change.
+ *
+ * Mounted inside ProfileProvider (see app/layout.js) — it needs the profile.
  */
 const MetaPixel = () => {
+  const { profile } = useProfile();
+
   /* ——— Inject the SDK once ——— */
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -41,15 +54,45 @@ const MetaPixel = () => {
     );
     /* eslint-enable */
 
-    window.fbq("init", PIXEL_ID);
+    // If the profile already resolved before the SDK stub existed, its details
+    // were cached in the module and would otherwise be lost on this init.
+    const known = getUserData();
+    if (known) {
+      window.fbq("init", PIXEL_ID, known);
+    } else {
+      window.fbq("init", PIXEL_ID);
+    }
     window.fbq("track", "PageView");
   }, []);
 
-  /* ——— Fire PageView on every SPA route change ——— */
-  const pathname = usePathname();
+  /* ——— Advanced matching: who is browsing/buying ——— */
+  // Without this every event reaches Meta anonymous — Events Manager shows the
+  // Purchase but cannot attribute it, so ads reporting and audiences stay empty.
+  // Re-calling init with user data does not fire an extra PageView.
+  const wasSignedIn = useRef(false);
 
   useEffect(() => {
-    // Skip the very first mount — the SDK init above already fired PageView
+    if (profile) {
+      wasSignedIn.current = true;
+      setUserData(profile);
+    } else if (wasSignedIn.current) {
+      // Signed out without a reload — do not tag the next visitor as this one.
+      wasSignedIn.current = false;
+      clearUserData();
+    }
+  }, [profile]);
+
+  /* ——— Fire PageView on every SPA route change ——— */
+  const pathname = usePathname();
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Skip the very first mount — the SDK init above already fired PageView.
+    // (This guard used to be missing, so every first page load counted twice.)
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     if (!window.fbq) return;
     trackPageView();
   }, [pathname]);

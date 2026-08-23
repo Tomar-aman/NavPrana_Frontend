@@ -31,7 +31,13 @@ import { motion } from "framer-motion";
 import AddressModal from "../../../components/AddressModal";
 import { sendAddress } from "@/services/profile/post-profile";
 import { toast } from "sonner";
-import { trackInitiateCheckout, trackAddPaymentInfo } from "@/lib/meta-pixel";
+import {
+  buildContents,
+  savePendingPurchase,
+  trackInitiateCheckout,
+  trackAddPaymentInfo,
+} from "@/lib/meta-pixel";
+import { useProfile } from "@/Context/ProfileContext";
 import { loadCashfreeSdk } from "@/lib/cashfree";
 import { clearGuestCart, guestCartSyncPayload } from "@/lib/guestCart";
 import { guestCheckoutAPI } from "@/services/auth/guestCheckout";
@@ -68,6 +74,10 @@ const Page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [couponError, setCouponError] = useState("");
+
+  // Needed for the Meta Pixel Purchase event — the success screens have no
+  // access to who the buyer is, so their details are captured here.
+  const { profile } = useProfile();
 
   const { list: address } = useSelector((state) => state.address);
   const { items: cartItems } = useSelector((state) => state.cart);
@@ -170,10 +180,10 @@ const Page = () => {
     }
   }, [hasCartData]);
 
-  // 📊 Meta Pixel — AddPaymentInfo when payment method changes
-  useEffect(() => {
-    trackAddPaymentInfo(paymentMethod);
-  }, [paymentMethod]);
+  // 📊 Meta Pixel — AddPaymentInfo is fired from handleCreateOrder, not here.
+  // As a [paymentMethod] effect it also fired on mount with the untouched "upi"
+  // default, so every checkout visit reported an AddPaymentInfo the shopper
+  // never performed and the funnel showed a 100% checkout➜payment rate.
 
   const handleApplyCoupon = async () => {
     if (!couponCode) {
@@ -260,9 +270,45 @@ const Page = () => {
       payment_method: paymentMethod,
     };
 
+    // 📊 Meta Pixel — AddPaymentInfo at the moment the method is committed to,
+    // with the amount actually payable.
+    trackAddPaymentInfo(paymentMethod, total);
+
+    // Everything the Purchase event needs, while we still have it. Fields are
+    // listed out rather than spread because an address object also carries an
+    // `id`, which would otherwise overwrite the customer id Meta matches on.
+    // `isGuest` is already false by now for a guest who just got an account,
+    // so fall back to the form state instead of branching on the flag.
+    const selectedAddress =
+      address.find((addr) => addr.id === addressId) || {};
+    const buyer = {
+      id: profile?.id,
+      email: profile?.email || guestDetails.email,
+      phone_number: profile?.phone_number || guestDetails.phone_number,
+      first_name: profile?.first_name || guestDetails.first_name,
+      last_name: profile?.last_name || guestDetails.last_name,
+      city: selectedAddress.city || guestDetails.city,
+      state: selectedAddress.state || guestDetails.state,
+      postal_code: selectedAddress.postal_code || guestDetails.postal_code,
+      country: selectedAddress.country || guestDetails.country,
+    };
+
     try {
       dispatch(showLoader());
       const orderData = await dispatch(createOrder(payload)).unwrap();
+
+      // 📊 Meta Pixel — hand the Purchase event off to the success screen.
+      // COD used to report value: 0 with no products and no customer, because
+      // /cod-success only ever knew the order id.
+      savePendingPurchase({
+        orderId: orderData.order_id,
+        transactionId: orderData.transaction_id,
+        value: total,
+        currency: "INR",
+        contents: buildContents(orderRows),
+        user: buyer,
+      });
+
       if (paymentMethod === "cod") {
         // Store in sessionStorage as fallback if Redux is lost on refresh
         sessionStorage.setItem("cod_order_id", orderData.order_id);

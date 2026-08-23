@@ -214,10 +214,13 @@ haldi doodh, sonth, jaiphal*. It reads native and it captures those exact search
 Every new post links to **3+ existing posts**, and at least one older post gets updated to link back.
 One-way links build no cluster. Current clusters:
 
-- **Purity**: `identify-pure-a2-buffalo-bilona-ghee` ↔ `why-buffalo-a2-bilona-ghee-is-expensive` ↔ `why-organic-food-matters`
+- **Process / purity (hub)**: `blog-12` is the hub. `identify-pure-a2-buffalo-bilona-ghee` ↔
+  `why-buffalo-a2-bilona-ghee-is-expensive` ↔ `blog-9` ↔ `blog-10` ↔ `why-organic-food-matters`.
+  Every post's Purity/Bilona section should link **to `blog-12`** rather than re-explaining the method.
 - **Dosage & routine**: `blog-3` ↔ `blog-4` ↔ `blog-6` ↔ `blog-7`
 - **Family & life stage**: `blog-2` ↔ `blog-8`
 - **Cooking**: `blog-1` ↔ `blog-5`
+- **Beauty / topical**: `blog-11` (new cluster, feeds into the dosage cluster via internal-vs-topical)
 
 ---
 
@@ -420,12 +423,14 @@ Traffic
 12. Ghee During Pregnancy (draft — `blog-8-ghee-during-pregnancy.json`)
 13. A2 vs A1 Milk (draft — `blog-9-a2-vs-a1-milk.json`)
 14. How to Store Ghee / Why It Turns Grainy (draft — `blog-10-how-to-store-ghee.json`)
+15. Ghee for Skin and Hair (draft — `blog-11-ghee-for-skin-and-hair.json`)
+16. What Is Bilona Ghee? (draft — `blog-12-what-is-bilona-ghee.json`) — **hub page, link every purity section to it**
 
 **Retrofit needed:** drafts 1–6 were written before this voice and sourcing standard existed.
 They are structurally sound but they all need: em-dash reduction, external citations added,
 first-party NavPrana specifics inserted, and an author byline. Do this before publishing each one,
 starting with `blog-3` and `blog-4` (the rest link to them).
-Drafts 7–10 already meet the standard, apart from their `first_party_todo` items and the author byline.
+Drafts 7–12 already meet the standard, apart from their `first_party_todo` items and the author byline.
 
 ## Live slugs (for cross-linking)
 
@@ -436,6 +441,8 @@ Drafts 7–10 already meet the standard, apart from their `first_party_todo` ite
 ## High-potential future topics
 
 - How to Check if Your Ghee Is Pure (5 kitchen tests) — overlaps `identify-pure-a2-buffalo-bilona-ghee`; angle as at-home tests only, and cite FSSAI DART
-- Ghee for Hair & Skin: Nasya, Massage and Overnight Remedies
-- Inside Our Bilona Kitchen: One Batch, Start to Finish — **highest-value post we are not writing.**
-  Pure first-party content, own photos, feeds every other post's purity section.
+- Inside Our Bilona Kitchen: One Batch, Start to Finish — **still the highest-value post we are not
+  writing.** `blog-12` explains the method generically; this one documents *our* batch with real
+  numbers and our own photos. Write it once the `first_party_todo` items on `blog-12` are answered.
+- Ghee for Weight Gain (distinct intent from `blog-7`, do not merge)
+- Ghee for Diabetes (high volume, heavy YMYL — needs a doctor byline before we attempt it)
