@@ -55,11 +55,21 @@ const GUEST_REQUIRED = {
   postal_code: "Enter your PIN code",
 };
 
-const validateGuest = (details) => {
+const validateGuest = (details, pinStatus) => {
   const errors = {};
   Object.entries(GUEST_REQUIRED).forEach(([field, message]) => {
     if (!String(details[field] || "").trim()) errors[field] = message;
   });
+  // An unknown PIN is undeliverable however well the rest reads. A lookup that
+  // could not run ("unreachable") is let through — an outage at India Post must
+  // not cost us the order.
+  if (pinStatus === "not_found") {
+    errors.postal_code = "This PIN code does not exist";
+  } else if (pinStatus === "loading") {
+    errors.postal_code = "Checking PIN code — one moment";
+  } else if (details.postal_code && !/^\d{6}$/.test(details.postal_code.trim())) {
+    errors.postal_code = "Enter a valid 6-digit PIN code";
+  }
   if (details.email && !/^\S+@\S+\.\S+$/.test(details.email.trim())) {
     errors.email = "Enter a valid email address";
   }
@@ -102,6 +112,8 @@ const Page = () => {
     country: "India",
   });
   const [guestErrors, setGuestErrors] = useState({});
+  // Reported by GuestDetailsForm as it resolves the PIN against India Post.
+  const [guestPinStatus, setGuestPinStatus] = useState("idle");
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("upi");
@@ -216,7 +228,7 @@ const Page = () => {
     if (placingOrder) return;
 
     if (isGuest) {
-      const errors = validateGuest(guestDetails);
+      const errors = validateGuest(guestDetails, guestPinStatus);
       setGuestErrors(errors);
       if (Object.keys(errors).length > 0) {
         return toast.error("Please complete your details to continue");
@@ -435,6 +447,7 @@ const Page = () => {
                   values={guestDetails}
                   onChange={setGuestDetails}
                   errors={guestErrors}
+                  onPincodeStatus={setGuestPinStatus}
                 />
               )}
 

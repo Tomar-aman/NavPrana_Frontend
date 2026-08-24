@@ -1,13 +1,21 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { User, MapPin } from "lucide-react";
+import {
+  User,
+  MapPin,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
+import { usePincodeLookup } from "@/hooks/usePincodeLookup";
 
 /**
  * Declared at module scope on purpose — defining it inside GuestDetailsForm
  * would remount every input on each keystroke and drop focus mid-typing.
  */
-const TextField = ({ id, label, value, onChange, error, ...rest }) => (
+const TextField = ({ id, label, value, onChange, error, hint, ...rest }) => (
   <div>
     <label
       htmlFor={id}
@@ -23,10 +31,14 @@ const TextField = ({ id, label, value, onChange, error, ...rest }) => (
         error
           ? "border-red-300 focus:border-red-400 focus:ring-red-200"
           : "border-gray-200 focus:border-primary focus:ring-primary/20"
-      }`}
+      } ${rest.readOnly ? "bg-gray-50/80 text-gray-600" : ""}`}
       {...rest}
     />
-    {error && <p className="text-red-500 text-[11px] mt-1">{error}</p>}
+    {error ? (
+      <p className="text-red-500 text-[11px] mt-1">{error}</p>
+    ) : (
+      hint || null
+    )}
   </div>
 );
 
@@ -34,7 +46,12 @@ const TextField = ({ id, label, value, onChange, error, ...rest }) => (
  * Contact + delivery details collected on checkout when nobody is signed in.
  * Submitting these creates a silent guest account — no password, no OTP.
  */
-const GuestDetailsForm = ({ values, onChange, errors = {} }) => {
+const GuestDetailsForm = ({
+  values,
+  onChange,
+  errors = {},
+  onPincodeStatus,
+}) => {
   const set = (field) => (e) => onChange({ ...values, [field]: e.target.value });
 
   const fieldProps = (field, id, label, extra = {}) => ({
@@ -45,6 +62,57 @@ const GuestDetailsForm = ({ values, onChange, errors = {} }) => {
     error: errors[field],
     ...extra,
   });
+
+  // The PIN resolves a few hundred ms after the keystroke, so the `values` this
+  // render closed over may be stale by then — merge onto the latest instead.
+  const valuesRef = useRef(values);
+  valuesRef.current = values;
+
+  const { status: pinStatus, details: pinDetails } = usePincodeLookup(
+    values.postal_code,
+    (match) =>
+      onChange({ ...valuesRef.current, city: match.city, state: match.state }),
+  );
+
+  // Checkout blocks the order on a PIN the directory does not know. Reported
+  // from an effect, not mid-render — the parent stores it in state.
+  const statusRef = useRef(onPincodeStatus);
+  statusRef.current = onPincodeStatus;
+  useEffect(() => {
+    statusRef.current?.(pinStatus);
+  }, [pinStatus]);
+
+  const pinHint = () => {
+    if (pinStatus === "loading")
+      return (
+        <p className="flex items-center gap-1 text-gray-500 text-[11px] mt-1">
+          <Loader2 size={11} className="animate-spin" />
+          Checking PIN code…
+        </p>
+      );
+    if (pinStatus === "resolved")
+      return (
+        <p className="flex items-center gap-1 text-green-600 text-[11px] mt-1">
+          <CheckCircle2 size={11} />
+          {pinDetails.city}, {pinDetails.state}
+        </p>
+      );
+    if (pinStatus === "not_found")
+      return (
+        <p className="flex items-center gap-1 text-red-500 text-[11px] mt-1">
+          <AlertTriangle size={11} />
+          This PIN code does not exist
+        </p>
+      );
+    if (pinStatus === "unreachable")
+      return (
+        <p className="flex items-center gap-1 text-amber-600 text-[11px] mt-1">
+          <AlertTriangle size={11} />
+          Could not verify — fill city and state yourself
+        </p>
+      );
+    return null;
+  };
 
   return (
     <div className="space-y-5">
@@ -121,24 +189,37 @@ const GuestDetailsForm = ({ values, onChange, errors = {} }) => {
               autoComplete: "address-line2",
             })}
           />
+          {/* PIN first — city and state are filled from it, out of the India
+              Post directory, so the address matches what the courier reads. */}
           <div className="grid sm:grid-cols-3 gap-3">
             <TextField
+              {...fieldProps("postal_code", "guest-pin", "PIN Code", {
+                placeholder: "476001",
+                inputMode: "numeric",
+                maxLength: 6,
+                autoComplete: "postal-code",
+                hint: pinHint(),
+                onChange: (e) =>
+                  onChange({
+                    ...valuesRef.current,
+                    postal_code: e.target.value.replace(/\D/g, "").slice(0, 6),
+                  }),
+              })}
+            />
+            <TextField
               {...fieldProps("city", "guest-city", "City", {
-                placeholder: "Morena",
+                placeholder: "Fills from PIN",
                 autoComplete: "address-level2",
               })}
             />
             <TextField
               {...fieldProps("state", "guest-state", "State", {
-                placeholder: "Madhya Pradesh",
+                placeholder: "Fills from PIN",
                 autoComplete: "address-level1",
-              })}
-            />
-            <TextField
-              {...fieldProps("postal_code", "guest-pin", "PIN Code", {
-                placeholder: "476001",
-                inputMode: "numeric",
-                autoComplete: "postal-code",
+                // A confirmed PIN settles the state — the field shoppers most
+                // often get wrong, with nothing left to decide once it is known.
+                readOnly:
+                  pinStatus === "resolved" && values.state === pinDetails?.state,
               })}
             />
           </div>
