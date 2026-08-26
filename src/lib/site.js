@@ -7,6 +7,8 @@
  * all "https://www.navprana.com", which meant a missing env var silently
  * pointed every canonical and sitemap URL at a redirecting hostname.
  */
+import { withSafeReviews, withFamilyRatings } from "@/lib/reviews";
+
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://navprana.com"
 ).replace(/\/+$/, "");
@@ -40,7 +42,11 @@ export async function getProducts({ revalidate = 3600 } = {}) {
       return [];
     }
     const data = await res.json();
-    return data.results || data || [];
+    const products = data.results || data || [];
+    if (!Array.isArray(products)) return [];
+    // Strip buyer emails, then pool each product's rating with its other pack
+    // sizes so every surface agrees on the review count.
+    return withFamilyRatings(products.map(withSafeReviews));
   } catch (err) {
     console.error("getProducts: fetch failed", err);
     return [];

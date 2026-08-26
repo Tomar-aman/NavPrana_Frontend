@@ -217,7 +217,7 @@ const Page = () => {
               </p>
               <div className="flex items-center space-x-2 text-sm">
                 <Phone className="h-4 w-4 text-primary" />
-                <span>Call us at +91 98765 43210</span>
+                <span>Call us at +91 7509531811</span>
               </div>
             </div>
           </section>

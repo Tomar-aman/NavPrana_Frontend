@@ -9,12 +9,41 @@
   "author": "REPLACE: real author name + credential. Our production lead is the right byline for this post, and it is the one post where that byline carries real authority.",
   "meta_title": "What Is Bilona Ghee? The Method | NavPrana",
   "meta_description": "What is bilona ghee and how is it made? The four-step curd-churn method, how it differs from machine ghee, and why the word bilona is not legally protected.",
+  "keywords": {
+    "primary": "what is bilona ghee",
+    "secondary": [
+      "bilona vs machine made ghee",
+      "how is bilona ghee made"
+    ],
+    "hinglish": [
+      "bilona ghee kya hai"
+    ]
+  },
   "image_prompt": "Documentary process photography inside a traditional Indian ghee kitchen, a wide brass vessel of butter simmering gently on a low wood flame with a wooden churning staff resting against a clay pot of set curd beside it, a finished NavPrana glass jar of golden grainy danedar ghee with the front label area kept clean and evenly lit standing in the foreground, warm firelight mixed with soft daylight from a high window, visible steam and golden froth on the simmering butter, authentic rustic workshop setting, NavPrana brand palette of deep forest green #163320, forest green #388547 and warm gold #C99C4A with amber #F19512 highlights, shallow depth of field, honest documentary aesthetic, 16:9 aspect ratio. Negative: text, watermark, logo, label text, lettering, plastic packaging, artificial colors, cluttered background, distorted jar, fake brand marks, modern stainless steel factory equipment",
   "sources": [
-    { "claim": "FSSAI defines a compositional standard for ghee but not for bilona or vedic ghee", "url": "https://www.fssai.gov.in/cms/food-safety-and-standards-regulations.php", "verified": "2026-08-22", "note": "Confirm the exact wording of the ghee standard before quoting figures. The absence of a bilona definition is the key point." },
-    { "claim": "Preparation method affects ghee quality and fatty acid profile", "url": "https://pubmed.ncbi.nlm.nih.gov/?term=ghee+preparation+method+quality", "verified": "2026-08-22", "note": "Several Indian dairy-science papers compare desi/curd-churn vs creamery-butter routes. Read one before citing specifics." },
-    { "claim": "At-home adulteration tests", "url": "https://www.fssai.gov.in/cms/detect-adulteration-with-rapid-test.php", "verified": "2026-08-22", "note": "FSSAI DART booklet." },
-    { "claim": "Classical Ayurvedic framing of ghrita preparation", "url": "https://www.ayush.gov.in/", "verified": "2026-08-22" }
+    {
+      "claim": "FSSAI defines a compositional standard for ghee but not for bilona or vedic ghee",
+      "url": "https://www.fssai.gov.in/cms/food-safety-and-standards-regulations.php",
+      "verified": "2026-08-22",
+      "note": "Confirm the exact wording of the ghee standard before quoting figures. The absence of a bilona definition is the key point."
+    },
+    {
+      "claim": "Preparation method affects ghee quality and fatty acid profile",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=ghee+preparation+method+quality",
+      "verified": "2026-08-22",
+      "note": "Several Indian dairy-science papers compare desi/curd-churn vs creamery-butter routes. Read one before citing specifics."
+    },
+    {
+      "claim": "At-home adulteration tests",
+      "url": "https://www.fssai.gov.in/cms/detect-adulteration-with-rapid-test.php",
+      "verified": "2026-08-22",
+      "note": "FSSAI DART booklet."
+    },
+    {
+      "claim": "Classical Ayurvedic framing of ghrita preparation",
+      "url": "https://www.ayush.gov.in/",
+      "verified": "2026-08-22"
+    }
   ],
   "first_party_todo": [
     "This is the post that most needs our own data. Give the real numbers: litres of milk in, litres of ghee out, curd setting time, churning time, simmer duration and temperature, batch size, jars per batch.",

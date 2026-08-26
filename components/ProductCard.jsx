@@ -76,7 +76,7 @@ export default function ProductCard({ product, isInCart, onAddToCart, size = "sm
               {product.name}
             </Link>
           </h3>
-          {product.average_rating && (
+          {(product.family_rating || product.average_rating) && (
             <div
               className={`flex items-center gap-1 shrink-0 ${s.rating.box} bg-primary/10 rounded-md`}
             >
@@ -85,7 +85,7 @@ export default function ProductCard({ product, isInCart, onAddToCart, size = "sm
                 className="text-primary fill-primary"
               />
               <span className={`${s.rating.text} font-bold text-primary`}>
-                {product.average_rating}
+                {Number(product.family_rating || product.average_rating).toFixed(1)}
               </span>
             </div>
           )}

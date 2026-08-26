@@ -8,7 +8,17 @@
   "is_featured": true,
   "author": "REPLACE: real author name + credential, e.g. 'Reviewed by <RD name>, Registered Dietitian'",
   "meta_title": "Ghee for Weight Loss: Does It Work? | NavPrana",
-  "meta_description": "Does ghee help with weight loss or cause weight gain? The honest answer, the right daily amount, and 5 mistakes that undo it all. Free shipping ₹999+.",
+  "meta_description": "Ghee for weight loss: does it work, or does it cause weight gain? The honest answer, the right daily amount, and 5 mistakes that undo it all.",
+  "keywords": {
+    "primary": "ghee for weight loss",
+    "secondary": [
+      "does ghee make you fat",
+      "ghee for belly fat"
+    ],
+    "hinglish": [
+      "ghee se weight badhta hai kya"
+    ]
+  },
   "image_prompt": "Bright clean wellness food photography, a balanced Indian meal on a light ceramic plate with two rotis carrying a thin sheen of ghee, a bowl of dal and sauteed green vegetables, a NavPrana glass jar of golden grainy danedar ghee with the front label area kept clean and evenly lit, and a measuring teaspoon beside it, a measuring tape softly out of focus at the edge of frame, airy natural daylight, minimal light wooden table, fresh healthy mood, NavPrana brand palette of deep forest green #163320, forest green #388547 and warm gold #C99C4A with amber #F19512 highlights, shallow depth of field, editorial nutrition aesthetic, 16:9 aspect ratio. Negative: text, watermark, logo, label text, lettering, plastic packaging, artificial colors, cluttered background, distorted jar, fake brand marks",
   "sources": [
     {

@@ -9,12 +9,39 @@
   "author": "REPLACE: real author name + credential. A dermatologist or BAMS practitioner review byline would lift this post considerably.",
   "meta_title": "Ghee for Skin and Hair: Uses & Benefits | NavPrana",
   "meta_description": "Ghee for skin and hair, sorted honestly: which uses have real backing, the right method for lips, under-eyes and scalp, and who should avoid it.",
+  "keywords": {
+    "primary": "ghee for skin",
+    "secondary": [
+      "ghee for hair growth",
+      "ghee for dark circles"
+    ],
+    "hinglish": [
+      "ghee chehre par lagane se kya hota hai"
+    ]
+  },
   "image_prompt": "Soft natural beauty still-life photography, a small open NavPrana glass jar of golden grainy danedar ghee with the front label area kept clean and evenly lit, placed on a pale marble surface beside a folded muslin cloth and a few fresh rose petals, a wooden spatula with a small amount of ghee resting alongside, warm diffused morning window light, calm minimal Ayurvedic skincare mood, NavPrana brand palette of deep forest green #163320, forest green #388547 and warm gold #C99C4A with amber #F19512 highlights, shallow depth of field, editorial beauty aesthetic, 16:9 aspect ratio. Negative: text, watermark, logo, label text, lettering, plastic packaging, artificial colors, cluttered background, distorted jar, fake brand marks, human face close-up",
   "sources": [
-    { "claim": "Research on ghee and ghrita in wound healing and topical preparations", "url": "https://pubmed.ncbi.nlm.nih.gov/?term=ghee+wound+healing", "verified": "2026-08-22", "note": "Mostly small studies on medicated ghrita formulations, not plain ghee. Keep claims modest." },
-    { "claim": "Classical Ayurvedic use of ghrita, including nasya", "url": "https://www.ayush.gov.in/", "verified": "2026-08-22" },
-    { "claim": "Ayurvedic research body for classical preparations", "url": "https://ccras.nic.in/", "verified": "2026-08-22" },
-    { "claim": "Legal standard for ghee sold in India", "url": "https://www.fssai.gov.in/cms/food-safety-and-standards-regulations.php", "verified": "2026-08-22" }
+    {
+      "claim": "Research on ghee and ghrita in wound healing and topical preparations",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/?term=ghee+wound+healing",
+      "verified": "2026-08-22",
+      "note": "Mostly small studies on medicated ghrita formulations, not plain ghee. Keep claims modest."
+    },
+    {
+      "claim": "Classical Ayurvedic use of ghrita, including nasya",
+      "url": "https://www.ayush.gov.in/",
+      "verified": "2026-08-22"
+    },
+    {
+      "claim": "Ayurvedic research body for classical preparations",
+      "url": "https://ccras.nic.in/",
+      "verified": "2026-08-22"
+    },
+    {
+      "claim": "Legal standard for ghee sold in India",
+      "url": "https://www.fssai.gov.in/cms/food-safety-and-standards-regulations.php",
+      "verified": "2026-08-22"
+    }
   ],
   "first_party_todo": [
     "Add a real customer question about using ghee on skin or a baby's skin. We likely get these often.",

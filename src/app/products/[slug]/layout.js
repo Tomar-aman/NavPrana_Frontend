@@ -7,10 +7,14 @@ import {
   featuredImage,
   clampDescription,
 } from "@/lib/site";
+import { familyReviews, averageRating, reviewerName } from "@/lib/reviews";
 
 async function getProductBySlug(slug) {
   const products = await getProducts();
-  return products.find((p) => generateSlug(p.name) === slug) || null;
+  const product = products.find((p) => generateSlug(p.name) === slug) || null;
+  // Carry the catalogue along so the JSON-LD can pool reviews across the pack
+  // sizes exactly the way the page does.
+  return product ? { ...product, catalogue: products } : null;
 }
 
 export async function generateStaticParams() {
@@ -87,6 +91,9 @@ export async function generateMetadata({ params }) {
 // Product JSON-LD structured data
 function ProductJsonLd({ product, slug }) {
   if (!product) return null;
+
+  const reviews = familyReviews(product, product.catalogue || []);
+  const rating = averageRating(reviews);
 
   const image = featuredImage(product);
 
@@ -197,19 +204,20 @@ function ProductJsonLd({ product, slug }) {
   // Only emit aggregateRating when there is a real rating AND real reviews
   // behind it — Google rejects (and can penalise) a reviewCount that isn't
   // backed by actual reviews.
-  if (product.average_rating && product.reviews?.length > 0) {
+  if (rating && reviews.length > 0) {
     jsonLd.aggregateRating = {
       "@type": "AggregateRating",
-      ratingValue: product.average_rating,
+      ratingValue: rating.toFixed(1),
       bestRating: "5",
       worstRating: "1",
-      reviewCount: product.reviews.length,
+      reviewCount: reviews.length,
     };
   }
 
-  // Add individual reviews if available
-  if (product.reviews?.length > 0) {
-    jsonLd.review = product.reviews.slice(0, 5).map((r) => ({
+  // Add individual reviews if available. getProducts() has already replaced the
+  // buyer's email with a display name, so nothing here can leak an address.
+  if (reviews.length > 0) {
+    jsonLd.review = reviews.slice(0, 5).map((r) => ({
       "@type": "Review",
       reviewRating: {
         "@type": "Rating",
@@ -218,9 +226,10 @@ function ProductJsonLd({ product, slug }) {
       },
       author: {
         "@type": "Person",
-        name: r.user_name || "Verified Buyer",
+        name: r.user_name || reviewerName(r.user_email),
       },
-      reviewBody: r.comment || "",
+      reviewBody: r.review || r.comment || "",
+      datePublished: r.created_at || undefined,
     }));
   }
 

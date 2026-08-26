@@ -25,6 +25,7 @@ Three things decide whether a post ranks and converts, in this order:
 | `meta_title` | string | ≤60 chars, ends with `\| NavPrana`. |
 | `meta_description` | string | ≤160 chars, includes primary keyword + hook (e.g. "Free shipping ₹999+"). **Single line, no `\n`.** There is no `description` field in the API; this and `excerpt` are the description fields. |
 | `image_prompt` | string | AI image-generation prompt for the thumbnail — stored in the draft JSON so the image can be (re)generated anytime. Not a DB field. Must carry the brand palette + jar block; see image rules. |
+| `keywords` | object | **Draft-JSON only. Never rendered as a `<meta name="keywords">` tag** (see below). Planning field: `primary`, `secondary[]`, `hinglish[]`. |
 | `sources` | list | Draft-JSON only (not a DB field). Every external URL cited in the post, with what it backs up. See sourcing rules. |
 | `author` | string | Draft-JSON only until the DB adds the field. Real human name + credential. Never "Admin" or "Team". |
 
@@ -173,6 +174,46 @@ Assets to gather once and reuse across all posts:
 - **What we got wrong**: a batch we rejected, a change we made. One paragraph of this outranks a page of adjectives.
 
 Rule: if a paragraph could appear on any ghee website unchanged, it is not earning its place.
+
+---
+
+## Why we do not ship a keywords meta tag
+
+Asked and settled, so nobody re-raises it. **`<meta name="keywords">` does nothing for rankings.**
+Google [said so publicly in 2009](https://developers.google.com/search/blog/2009/09/google-does-not-use-keywords-meta-tag)
+and that post is still live; the tag is absent from Google's list of
+[supported meta tags](https://developers.google.com/search/docs/crawling-indexing/special-tags).
+Bing ignores it too. Adding one buys zero views and publishes our target keyword list for any
+competitor to scrape.
+
+The blog API has no `keywords` or `tags` field either, so shipping one would mean a Django migration
+for no gain. **If we are going to spend a backend migration on views, spend it on `author` and a
+visible published/updated date, then `Article` + `FAQPage` schema.** Those are real ranking signals;
+a keywords tag is not.
+
+### What the `keywords` field IS for
+
+It lives in the draft JSON only, and it earns its place two ways:
+
+1. **Cannibalisation control.** With a dozen posts, the real risk is two of our own pages competing
+   for one query, which splits signals and sinks both. One primary keyword per post, owned by exactly
+   one post, no exceptions. This is why the "5 kitchen tests" topic stays unwritten: `identify-pure-a2-buffalo-bilona-ghee` already owns that query.
+2. **Placement discipline.** The primary must appear in slug, title, meta title, meta description and
+   the first 150 words. Exact-phrase matching is not required by Google any more, but it is a cheap
+   check that the post is about what we think it is about.
+
+Shape:
+
+```json
+"keywords": {
+  "primary": "ghee for weight loss",
+  "secondary": ["does ghee make you fat", "ghee for belly fat"],
+  "hinglish": ["ghee se weight badhta hai kya"]
+}
+```
+
+Run `node blog-drafts/keyword-audit.js` (run from the repo root) before publishing. It reports duplicate
+primaries, secondary overlaps, and missing placements across every draft at once.
 
 ---
 
@@ -397,7 +438,9 @@ Trust
 
 Traffic
 
-- [ ] Primary keyword in all required positions
+- [ ] `keywords.primary` set, and owned by no other post
+- [ ] Primary keyword in slug, title, meta title, meta description and first 150 words
+- [ ] Keyword audit run across all drafts, zero duplicate primaries
 - [ ] Hinglish variants worked into the FAQ
 - [ ] PAA questions harvested from the live SERP
 - [ ] 3+ internal blog links out, 1 older post updated to link back

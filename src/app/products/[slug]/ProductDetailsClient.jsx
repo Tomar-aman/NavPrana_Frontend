@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import {
   ShoppingCart,
@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import StickyCartBar from "../../../../components/StickyCartBar";
 import { generateSlug } from "@/utils/slug";
 import { milkSource } from "@/lib/site";
+import { familyReviews, averageRating } from "@/lib/reviews";
 import Link from "next/link";
 
 // Added: Image Magnifier Component for premium feel
@@ -71,6 +72,13 @@ const ImageMagnifier = ({ src, alt }) => {
 };
 
 // Added: Accordion Component for premium feel
+const reviewDate = (value) => {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+};
+
 const Accordion = ({ title, children, isOpen, onClick }) => {
   return (
     <div className={`border border-gray-100 rounded-2xl mb-4 bg-white transition-all duration-300 ${isOpen ? 'shadow-md ring-1 ring-primary/10' : 'shadow-sm hover:shadow-md'}`}>
@@ -85,7 +93,7 @@ const Accordion = ({ title, children, isOpen, onClick }) => {
       </button>
       <div
         className={`transition-all duration-500 ease-in-out overflow-hidden ${
-          isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+          isOpen ? "max-h-[6000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="p-5 md:p-6 pt-0 border-t border-gray-50 mt-2 text-base text-gray-600 prose max-w-none leading-relaxed">
@@ -164,6 +172,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeAccordion, setActiveAccordion] = useState("description");
+  const reviewsRef = useRef(null);
 
   // Variant matching
   // Assume products with same first 2 words in name are variants
@@ -238,6 +247,30 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
   const toggleAccordion = (id) => {
     setActiveAccordion(activeAccordion === id ? "" : id);
   };
+
+  const openReviews = () => {
+    setActiveAccordion("reviews");
+    // Scroll on the next frame, once the accordion has been told to open.
+    requestAnimationFrame(() => {
+      reviewsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  // 1 Ltr and 500 ml are the same ghee in two jars, so they share one review
+  // pool — otherwise the 500 ml page reads as though nobody has bought it.
+  // Cow and buffalo pool separately. Sourced from the server catalogue, whose
+  // reviews have already had buyer emails stripped.
+  const reviews = useMemo(
+    () => familyReviews(product, catalogue),
+    [product, catalogue],
+  );
+  const reviewCount = reviews.length;
+  const pooledRating = averageRating(reviews);
+  const ratingValue = pooledRating
+    ? pooledRating.toFixed(1)
+    : product.average_rating
+      ? Number(product.average_rating).toFixed(1)
+      : "5.0";
 
   const images = product.images || [];
   const mainImage = images[selectedImage]?.image || "/placeholder.png";
@@ -336,13 +369,17 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                    <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 rounded-lg border border-amber-100">
                       <Star size={16} className="text-amber-500 fill-amber-500" />
                       <span className="text-sm font-black text-amber-800">
-                        {product.average_rating || "5.0"}
+                        {ratingValue}
                       </span>
                     </div>
                     <div className="h-5 w-[1px] bg-gray-200"></div>
-                    <span className="text-sm font-semibold text-primary underline cursor-pointer hover:text-primary/80 transition" onClick={() => setActiveAccordion("reviews")}>
-                      {product.reviews?.length || 0} Verified Reviews
-                    </span>
+                    <button
+                      type="button"
+                      onClick={openReviews}
+                      className="text-sm font-semibold text-primary underline underline-offset-2 cursor-pointer hover:text-primary/80 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
+                    >
+                      {reviewCount} Verified {reviewCount === 1 ? "Review" : "Reviews"}
+                    </button>
                 </div>
                 
                 <p className="text-base md:text-lg text-gray-600 leading-relaxed font-medium">{product.details}</p>
@@ -542,8 +579,9 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                 )}
              </Accordion>
              
+             <div id="reviews" ref={reviewsRef} className="scroll-mt-24">
              <Accordion 
-               title={`Customer Reviews (${product.reviews?.length || 0})`}
+               title={`Customer Reviews (${reviewCount})`}
                isOpen={activeAccordion === "reviews"}
                onClick={() => toggleAccordion("reviews")}
              >
@@ -551,19 +589,65 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                    {/* Review Stats & List */}
                    <div>
                      <h4 className="text-xl font-extrabold text-gray-900 mb-6 text-center">What our customers say</h4>
-                     {product.reviews?.length > 0 ? (
+                     {reviewCount > 0 ? (
                        <div className="space-y-6">
-                         {product.reviews.map((review, i) => (
-                           <div key={i} className="border-b border-gray-100 pb-6">
+                         {reviews.map((review, i) => {
+                           const body = review.review || review.comment || "";
+                           const photos = (review.media || []).filter((m) => m.file);
+                           const when = reviewDate(review.created_at);
+                           return (
+                           <div key={review.id ?? i} className="border-b border-gray-100 pb-6 last:border-b-0">
                              <div className="flex items-center gap-2 mb-2">
                                {[1,2,3,4,5].map(s => (
                                  <Star key={s} size={14} className={s <= review.rating ? "text-amber-500 fill-amber-500" : "text-gray-200"} />
                                ))}
+                               {review.variant_size && (
+                                 <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-1">
+                                   {review.variant_size}
+                                 </span>
+                               )}
+                               {when && <span className="text-xs text-gray-400 font-medium ml-1">{when}</span>}
                              </div>
-                             <p className="text-gray-700 font-medium italic">"{review.comment}"</p>
-                             <div className="text-sm text-gray-500 mt-2 font-semibold">- {review.user_name || "Verified Customer"}</div>
+                             {body && <p className="text-gray-700 font-medium italic">&ldquo;{body}&rdquo;</p>}
+                             {photos.length > 0 && (
+                               <div className="flex flex-wrap gap-2 mt-3">
+                                 {photos.map((m, mi) =>
+                                   m.media_type === "video" ? (
+                                     <video
+                                       key={m.id ?? mi}
+                                       src={m.file}
+                                       controls
+                                       className="w-28 h-28 rounded-lg object-cover border border-gray-100 bg-black"
+                                     />
+                                   ) : (
+                                     <a
+                                       key={m.id ?? mi}
+                                       href={m.file}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-100 hover:opacity-90 transition"
+                                     >
+                                       <Image
+                                         src={m.file}
+                                         alt={m.alt_text || `Customer photo for ${product.name}`}
+                                         fill
+                                         sizes="80px"
+                                         className="object-cover"
+                                       />
+                                     </a>
+                                   )
+                                 )}
+                               </div>
+                             )}
+                             <div className="flex items-center gap-2 mt-2">
+                               <span className="text-sm text-gray-500 font-semibold">- {review.user_name || "Verified Customer"}</span>
+                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200 uppercase tracking-wide">
+                                 <CheckCircle2 size={11} /> Verified
+                               </span>
+                             </div>
                            </div>
-                         ))}
+                           );
+                         })}
                        </div>
                      ) : (
                        <div className="text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
@@ -575,6 +659,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                    </div>
                 </div>
              </Accordion>
+             </div>
            </div>
         </div>
       </main>
