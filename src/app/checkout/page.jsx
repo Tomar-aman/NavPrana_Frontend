@@ -403,7 +403,7 @@ const Page = () => {
   const paymentOptions = [
     { id: "upi", label: "UPI", icon: Wallet, color: "bg-violet-50", iconColor: "text-violet-500" },
     { id: "card", label: "Credit / Debit Card", icon: CreditCard, color: "bg-blue-50", iconColor: "text-blue-500" },
-    { id: "cod", label: "Cash on Delivery", icon: Banknote, color: "bg-green-50", iconColor: "text-green-600", note: "+₹20 handling fee" },
+    { id: "cod", label: "Cash on Delivery", icon: Banknote, color: "bg-green-50", iconColor: "text-green-600", note: "+₹100 handling fee" },
   ];
 
   return (
