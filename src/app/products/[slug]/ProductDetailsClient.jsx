@@ -16,7 +16,8 @@ import {
   Clock,
   CheckCircle2,
   Image as ImageIcon,
-  Send
+  Send,
+  ExternalLink
 } from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +29,8 @@ import StickyCartBar from "../../../../components/StickyCartBar";
 import { generateSlug } from "@/utils/slug";
 import { milkSource } from "@/lib/site";
 import { familyReviews, averageRating } from "@/lib/reviews";
+import { getAmazonUrl } from "@/lib/amazon";
+import { trackEvent } from "@/lib/analytics";
 import Link from "next/link";
 
 // Added: Image Magnifier Component for premium feel
@@ -152,6 +155,25 @@ const ComparisonGrid = ({ milk = "A2 Grass-fed" }) => {
 };
 
 
+// lucide-react ships no brand marks, so the Amazon "smile" arc is inlined —
+// it sits beside the "Buy on Amazon" label, which carries the wordmark itself.
+const AmazonMark = ({ className = "" }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#FF9900"
+    strokeWidth="2.4"
+    strokeLinecap="round"
+    className={className}
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M3 14c5.4 4.3 12.6 4.3 18 0" />
+    <path d="M18.6 15.8 21.2 13.6" />
+    <path d="M17.6 12.1 21.2 13.6" />
+  </svg>
+);
+
 const ProductDetailsClient = ({ product, catalogue = [] }) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -185,7 +207,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
 
   useEffect(() => {
     const date = new Date();
-    date.setDate(date.getDate() + 3);
+    date.setDate(date.getDate() + 5);
     const options = { weekday: 'short', month: 'short', day: 'numeric' };
     setDeliveryDate(date.toLocaleDateString('en-IN', options));
 
@@ -239,6 +261,18 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
 
 
   const isInCart = cartItems.some((item) => item.product === product.id);
+
+  // Amazon listing for this SKU, or null when none is configured — the button
+  // is only rendered when there is a real listing to send shoppers to.
+  const amazonUrl = getAmazonUrl(product);
+
+  const handleAmazonClick = () => {
+    trackEvent("marketplace_click", {
+      marketplace: "amazon",
+      item_id: product.id,
+      item_name: product.name,
+    });
+  };
 
   const handleQuantityChange = (val) => {
     setQuantity((prev) => Math.max(1, prev + val));
@@ -505,6 +539,23 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                 Buy Now
               </button>
             </div>
+
+            {/* Marketplace CTA — for shoppers who would rather check out on
+                Amazon. rel="nofollow sponsored" keeps the outbound affiliate
+                link from bleeding this page's authority. */}
+            {amazonUrl && (
+              <a
+                href={amazonUrl}
+                target="_blank"
+                rel="noopener noreferrer nofollow sponsored"
+                onClick={handleAmazonClick}
+                className="mt-4 w-full flex items-center justify-center gap-2.5 py-4 rounded-xl border-2 border-[#FF9900] bg-[#FF9900]/10 text-[#232F3E] text-base font-black hover:bg-[#FF9900]/20 transition shadow-sm active:scale-[0.98]"
+              >
+                <AmazonMark className="h-5 w-5 shrink-0" />
+                Buy on Amazon
+                <ExternalLink size={16} className="opacity-60" />
+              </a>
+            )}
 
             <StickyCartBar
               product={product}
