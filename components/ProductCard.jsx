@@ -49,6 +49,12 @@ export default function ProductCard({ product, isInCart, onAddToCart, size = "sm
   const s = SIZES[size] ?? SIZES.sm;
   const href = `/products/${generateSlug(product.name)}`;
 
+  // family_rating pools the ratings of a product's other pack sizes, so the
+  // card agrees with the product page instead of showing a bare API average
+  // (or nothing at all, for a variant whose reviews all sit on the other size).
+  const rating = product.family_rating ?? product.average_rating;
+  const reviewCount = product.family_review_count ?? product.reviews?.length ?? 0;
+
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
       {/* Image */}
@@ -76,7 +82,7 @@ export default function ProductCard({ product, isInCart, onAddToCart, size = "sm
               {product.name}
             </Link>
           </h3>
-          {(product.family_rating || product.average_rating) && (
+          {rating > 0 && (
             <div
               className={`flex items-center gap-1 shrink-0 ${s.rating.box} bg-primary/10 rounded-md`}
             >
@@ -85,8 +91,13 @@ export default function ProductCard({ product, isInCart, onAddToCart, size = "sm
                 className="text-primary fill-primary"
               />
               <span className={`${s.rating.text} font-bold text-primary`}>
-                {Number(product.family_rating || product.average_rating).toFixed(1)}
+                {Number(rating).toFixed(1)}
               </span>
+              {reviewCount > 0 && (
+                <span className={`${s.rating.text} font-medium text-primary/70`}>
+                  ({reviewCount})
+                </span>
+              )}
             </div>
           )}
         </div>

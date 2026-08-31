@@ -33,6 +33,7 @@ import { sendAddress } from "@/services/profile/post-profile";
 import { toast } from "sonner";
 import {
   buildContents,
+  getFbCookies,
   savePendingPurchase,
   trackInitiateCheckout,
   trackAddPaymentInfo,
@@ -44,6 +45,10 @@ import { guestCheckoutAPI } from "@/services/auth/guestCheckout";
 import { syncCartAPI } from "@/services/cart/syncCart";
 import { getAuthToken, setAuthToken } from "@/utils/authToken";
 import GuestDetailsForm from "../../../components/GuestDetailsForm";
+
+// Mirrors Order.COD_HANDLING_FEE on the backend — keep the two in sync, the
+// backend's value is what the shopper is actually charged.
+const COD_HANDLING_FEE = 49;
 
 const GUEST_REQUIRED = {
   first_name: "Enter your first name",
@@ -181,7 +186,7 @@ const Page = () => {
   // Mirrors Order.calculate_shipping() on the backend — keep the two in sync
   const shipping =
     subtotal <= 0 || subtotal > 599 || couponData?.free_shipping ? 0 : 50;
-  const codHandlingFee = paymentMethod === "cod" ? 100 : 0;
+  const codHandlingFee = paymentMethod === "cod" ? COD_HANDLING_FEE : 0;
   const total = subtotal + shipping + codHandlingFee - couponDiscount;
 
   // 📊 Meta Pixel — InitiateCheckout (fires when cart data is available)
@@ -280,6 +285,14 @@ const Page = () => {
       address_id: addressId,
       coupon_code: couponCode || undefined,
       payment_method: paymentMethod,
+      // Meta Conversions API — the backend fires the server-side Purchase and
+      // needs the same browser identifiers the pixel uses, otherwise the two
+      // copies of the event cannot be matched to one person. It cannot read
+      // these cookies itself (different origin, no credentials), so they go in
+      // the payload and get stored on the order.
+      ...getFbCookies(),
+      event_source_url:
+        typeof window !== "undefined" ? window.location.href : undefined,
     };
 
     // 📊 Meta Pixel — AddPaymentInfo at the moment the method is committed to,
@@ -403,7 +416,7 @@ const Page = () => {
   const paymentOptions = [
     { id: "upi", label: "UPI", icon: Wallet, color: "bg-violet-50", iconColor: "text-violet-500" },
     { id: "card", label: "Credit / Debit Card", icon: CreditCard, color: "bg-blue-50", iconColor: "text-blue-500" },
-    { id: "cod", label: "Cash on Delivery", icon: Banknote, color: "bg-green-50", iconColor: "text-green-600", note: "+₹100 handling fee" },
+    { id: "cod", label: "Cash on Delivery", icon: Banknote, color: "bg-green-50", iconColor: "text-green-600", note: `+₹${COD_HANDLING_FEE} handling fee` },
   ];
 
   return (

@@ -140,6 +140,51 @@ export const clearUserData = () => {
 };
 
 /* ------------------------------------------------------------------ */
+/*  Conversions API support                                           */
+/* ------------------------------------------------------------------ */
+
+/*
+ * A server-side (CAPI) event matches far better when it carries the same
+ * browser identifiers the pixel uses — _fbp (browser id) and _fbc (ad click
+ * id). Django cannot read them on its own: the API is on api.navprana.com,
+ * a different origin, and the axios client does not send cookies there. So
+ * they ride along in the create-order payload instead, and the backend stores
+ * them on the order for when it fires Purchase.
+ */
+
+const readCookie = (name) => {
+  if (typeof document === "undefined") return undefined;
+  const match = document.cookie.match(
+    new RegExp(`(?:^|; )${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}=([^;]*)`),
+  );
+  return match ? decodeURIComponent(match[1]) : undefined;
+};
+
+/**
+ * Browser identifiers to hand to the Conversions API.
+ *
+ * `_fbc` only exists once someone has arrived from an ad — the pixel writes it
+ * from the `fbclid` query param and it then persists as a cookie. The URL
+ * fallback below only helps if the purchase happens on the very landing page,
+ * but it costs nothing and covers the case where the pixel was blocked from
+ * writing the cookie.
+ *
+ * @returns {{ fbp?: string, fbc?: string }} omits whichever is unavailable
+ */
+export const getFbCookies = () => {
+  const fbp = readCookie("_fbp");
+  let fbc = readCookie("_fbc");
+
+  if (!fbc && typeof window !== "undefined") {
+    const fbclid = new URLSearchParams(window.location.search).get("fbclid");
+    // Meta's documented format: fb.<subdomainIndex>.<timestamp>.<fbclid>
+    if (fbclid) fbc = `fb.1.${Date.now()}.${fbclid}`;
+  }
+
+  return { ...(fbp ? { fbp } : {}), ...(fbc ? { fbc } : {}) };
+};
+
+/* ------------------------------------------------------------------ */
 /*  Standard Events                                                   */
 /* ------------------------------------------------------------------ */
 
