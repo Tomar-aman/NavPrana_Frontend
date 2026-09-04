@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
 import { setUserData, trackCompleteRegistration } from "@/lib/meta-pixel";
+import { normalizePhone } from "@/lib/validators";
 import { Leaf } from "lucide-react";
 
 // Shared auth form — used by both /signin and /signup pages
@@ -60,16 +61,20 @@ const AuthForm = ({ initialTab = "signin" }) => {
     try {
       setSignupLoading(true);
       setSignupErrors({});
+      // Cleaned again rather than trusted from the form: the blur that trims
+      // the email and strips the country code never fires if the visitor
+      // submits straight from a field with the keyboard.
+      const email = signupForm.email.trim();
       await dispatch(
         signupUser({
-          first_name: signupForm.firstName,
-          last_name: signupForm.lastName,
-          email: signupForm.email,
-          phone_number: signupForm.phone,
+          first_name: signupForm.firstName.trim(),
+          last_name: signupForm.lastName.trim(),
+          email,
+          phone_number: normalizePhone(signupForm.phone),
           password: signupForm.password,
         }),
       ).unwrap();
-      setSignupEmail(signupForm.email);
+      setSignupEmail(email);
       setShowOtpModal(true);
       toast.success("OTP sent");
     } catch (err) {
@@ -103,11 +108,14 @@ const AuthForm = ({ initialTab = "signin" }) => {
       // 📊 Meta Pixel — attach the new customer's details BEFORE the event, so
       // the signup itself is matchable. ProfileContext only loads on a full
       // page load, so without this the pixel stays anonymous for this session.
+      // Normalised the same way the account was created, or Meta hashes a
+      // different string here than it does everywhere else and the new customer
+      // fails to match against their own later events.
       setUserData({
-        email: signupForm.email,
-        phone_number: signupForm.phone,
-        first_name: signupForm.firstName,
-        last_name: signupForm.lastName,
+        email: signupEmail,
+        phone_number: normalizePhone(signupForm.phone),
+        first_name: signupForm.firstName.trim(),
+        last_name: signupForm.lastName.trim(),
       });
       trackCompleteRegistration("email");
       router.push("/");

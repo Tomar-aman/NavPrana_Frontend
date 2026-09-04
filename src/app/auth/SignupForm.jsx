@@ -4,44 +4,81 @@ import { memo, useState } from "react";
 import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import GoogleSignInButton from "./GoogleSignInButton";
+import {
+  normalizePhone,
+  sanitizePhoneInput,
+  validateEmail,
+  validatePhone,
+} from "@/lib/validators";
+
+/**
+ * One rule per field, read by both the blur check and the Create Account check
+ * so a field cannot look accepted while typing and then be rejected on submit.
+ *
+ * Format checks come from the shared validators — the same ones guest checkout
+ * runs, so an address or number accepted in one place is accepted in the other.
+ * The "required" wording stays here to match the rest of this form.
+ */
+const FIELD_RULES = {
+  firstName: (v) => (String(v || "").trim() ? "" : "First name is required"),
+  lastName: (v) => (String(v || "").trim() ? "" : "Last name is required"),
+  email: (v) =>
+    String(v || "").trim() ? validateEmail(v) : "Email is required",
+  phone: (v) =>
+    String(v || "").trim() ? validatePhone(v) : "Phone number is required",
+  password: (v) => {
+    if (!v) return "Password is required";
+    if (v.length < 8) return "Password must be at least 8 characters";
+    return "";
+  },
+};
 
 const SignupForm = memo(
   ({ form, setForm, showPassword, setShowPassword, onSubmit, loading, apiErrors = {} }) => {
     const [errors, setErrors] = useState({});
-
-    // Merge client-side and API errors (API errors take priority)
-    const allErrors = { ...errors, ...apiErrors };
+    // Fields the visitor has finished with once. Checking only these keeps the
+    // form from turning red before anything has been filled in — every field
+    // here is empty on arrival, and flagging them all up front reads as a
+    // telling off rather than as help.
+    const [touched, setTouched] = useState({});
 
     /* ---------- VALIDATION ---------- */
     const validate = () => {
       const newErrors = {};
-
-      if (!form.firstName?.trim())
-        newErrors.firstName = "First name is required";
-
-      if (!form.lastName?.trim()) newErrors.lastName = "Last name is required";
-
-      if (!form.email?.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-        newErrors.email = "Enter a valid email address";
+      for (const [field, rule] of Object.entries(FIELD_RULES)) {
+        const message = rule(form[field]);
+        if (message) newErrors[field] = message;
       }
-
-      if (!form.phone?.trim()) {
-        newErrors.phone = "Phone number is required";
-      } else if (!/^[0-9]{10}$/.test(form.phone)) {
-        newErrors.phone = "Phone must be 10 digits";
-      }
-
-      if (!form.password) {
-        newErrors.password = "Password is required";
-      } else if (form.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters";
-      }
-
       setErrors(newErrors);
+      // Everything has now been reported on, so a later fix to any field shows
+      // its result live rather than waiting for a second submit.
+      setTouched(
+        Object.fromEntries(Object.keys(FIELD_RULES).map((f) => [f, true])),
+      );
       return Object.keys(newErrors).length === 0;
     };
+
+    // Checked on every render for touched fields, so an error clears the moment
+    // the value becomes valid instead of hanging around until the next blur.
+    const liveErrors = {};
+    for (const [field, rule] of Object.entries(FIELD_RULES)) {
+      if (touched[field]) {
+        const message = rule(form[field]);
+        if (message) liveErrors[field] = message;
+      }
+    }
+
+    // API errors take priority — they are what actually stopped the signup, and
+    // they say things the client cannot know ("this email is already
+    // registered"). Merged by falling through empty values rather than by
+    // spreading: clearError blanks a field to "", which would otherwise spread
+    // straight over the live error and leave a bad value looking accepted.
+    // apiErrors is the base so keys with no field of their own still surface.
+    const allErrors = { ...apiErrors };
+    for (const field of Object.keys(FIELD_RULES)) {
+      allErrors[field] =
+        apiErrors[field] || errors[field] || liveErrors[field] || "";
+    }
 
     const handleSubmit = () => {
       if (!validate()) return;
@@ -52,6 +89,25 @@ const SignupForm = memo(
       if (errors[field]) {
         setErrors((prev) => ({ ...prev, [field]: "" }));
       }
+    };
+
+    const markTouched = (field) =>
+      setTouched((prev) => ({ ...prev, [field]: true }));
+
+    const handleEmailBlur = () => {
+      markTouched("email");
+      // Pasted addresses routinely carry a trailing space, which survives all
+      // the way to a verification mail that never arrives.
+      const trimmed = String(form.email || "").trim();
+      if (trimmed !== form.email) setForm({ ...form, email: trimmed });
+    };
+
+    const handlePhoneBlur = () => {
+      markTouched("phone");
+      // "+91 98765 43210" and "09876543210" are the same number — settle that
+      // here so the account is created with ten bare digits either way.
+      const normalized = normalizePhone(form.phone);
+      if (normalized !== form.phone) setForm({ ...form, phone: normalized });
     };
 
     return (
@@ -79,6 +135,7 @@ const SignupForm = memo(
                     }`}
                   placeholder="First name"
                   value={form.firstName}
+                  onBlur={() => markTouched("firstName")}
                   onChange={(e) => {
                     setForm({ ...form, firstName: e.target.value });
                     clearError("firstName");
@@ -105,6 +162,7 @@ const SignupForm = memo(
                   className={`w-full pl-14 pr-3 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.lastName ? "border-red-400" : "border-gray-200"
                     }`}
                   value={form.lastName}
+                  onBlur={() => markTouched("lastName")}
                   onChange={(e) => {
                     setForm({ ...form, lastName: e.target.value });
                     clearError("lastName");
@@ -132,6 +190,7 @@ const SignupForm = memo(
                 className={`w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.email ? "border-red-400" : "border-gray-200"
                   }`}
                 value={form.email}
+                onBlur={handleEmailBlur}
                 onChange={(e) => {
                   setForm({ ...form, email: e.target.value });
                   clearError("email");
@@ -155,14 +214,20 @@ const SignupForm = memo(
               <input
                 placeholder="10-digit mobile number"
                 type="tel"
-                inputMode="numeric"
-                maxLength={10}
+                inputMode="tel"
+                // Wide enough for a country code typed in full ("+91 0987…");
+                // handlePhoneBlur strips it back to ten digits on the way out.
+                maxLength={14}
                 className={`w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.phone ? "border-red-400" : "border-gray-200"
                   }`}
                 value={form.phone}
+                onBlur={handlePhoneBlur}
                 onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "");
-                  setForm({ ...form, phone: val });
+                  // Anything that cannot belong to a number is dropped as it is
+                  // typed, so the field never holds a value rejected for a
+                  // reason the visitor cannot see. A pasted "+91 …" survives,
+                  // which the old digits-only strip silently mangled.
+                  setForm({ ...form, phone: sanitizePhoneInput(e.target.value) });
                   clearError("phone");
                 }}
               />
@@ -187,6 +252,7 @@ const SignupForm = memo(
                 className={`w-full pl-14 pr-12 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${allErrors.password ? "border-red-400" : "border-gray-200"
                   }`}
                 value={form.password}
+                onBlur={() => markTouched("password")}
                 onChange={(e) => {
                   setForm({ ...form, password: e.target.value });
                   clearError("password");
