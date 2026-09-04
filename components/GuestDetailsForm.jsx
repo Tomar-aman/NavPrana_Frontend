@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   User,
@@ -10,6 +10,12 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { usePincodeLookup } from "@/hooks/usePincodeLookup";
+import {
+  normalizePhone,
+  sanitizePhoneInput,
+  validateEmail,
+  validatePhone,
+} from "@/lib/validators";
 
 /**
  * Declared at module scope on purpose — defining it inside GuestDetailsForm
@@ -67,6 +73,52 @@ const GuestDetailsForm = ({
   // render closed over may be stale by then — merge onto the latest instead.
   const valuesRef = useRef(values);
   valuesRef.current = values;
+
+  // Contact fields are checked as the shopper leaves them rather than only on
+  // Place Order, so a typo in the address they'll receive the order at surfaces
+  // while they are still looking at it. Nothing is flagged before it has been
+  // filled in once — a red field the moment you tab past it reads as a telling
+  // off, and this form is the first thing a guest sees.
+  const [touched, setTouched] = useState({});
+  const markTouched = (field) =>
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+  const contactError = (field, validate) => {
+    // Errors raised by the failed submit win: they are what stopped the order.
+    if (errors[field]) return errors[field];
+    if (!touched[field]) return "";
+    return validate(values[field]) || "";
+  };
+
+  const emailError = contactError("email", validateEmail);
+  const phoneError = contactError("phone_number", validatePhone);
+
+  const handleEmailBlur = () => {
+    markTouched("email");
+    // Pasted addresses routinely carry a trailing space, which survives all the
+    // way to a bounced confirmation mail.
+    const trimmed = String(values.email || "").trim();
+    if (trimmed !== values.email) {
+      onChange({ ...valuesRef.current, email: trimmed });
+    }
+  };
+
+  const handlePhoneBlur = () => {
+    markTouched("phone_number");
+    // "+91 98765-43210" and "09876543210" are the same number — settle that
+    // here so the backend and the courier only ever see ten bare digits.
+    const normalized = normalizePhone(values.phone_number);
+    if (normalized !== values.phone_number) {
+      onChange({ ...valuesRef.current, phone_number: normalized });
+    }
+  };
+
+  const okHint = (text) => (
+    <p className="flex items-center gap-1 text-green-600 text-[11px] mt-1">
+      <CheckCircle2 size={11} />
+      {text}
+    </p>
+  );
 
   const { status: pinStatus, details: pinDetails } = usePincodeLookup(
     values.postal_code,
@@ -154,14 +206,34 @@ const GuestDetailsForm = ({
               type: "email",
               placeholder: "you@example.com",
               autoComplete: "email",
+              error: emailError,
+              onBlur: handleEmailBlur,
+              hint:
+                touched.email && !emailError && values.email
+                  ? okHint("Order confirmation goes here")
+                  : null,
             })}
           />
           <TextField
             {...fieldProps("phone_number", "guest-phone", "Phone", {
               type: "tel",
               placeholder: "9876543210",
-              inputMode: "numeric",
+              inputMode: "tel",
               autoComplete: "tel",
+              error: phoneError,
+              onBlur: handlePhoneBlur,
+              // Anything that cannot belong to a number is dropped as it is
+              // typed, so the field cannot hold a value the check will reject
+              // for a reason the shopper can't see.
+              onChange: (e) =>
+                onChange({
+                  ...valuesRef.current,
+                  phone_number: sanitizePhoneInput(e.target.value),
+                }),
+              hint:
+                touched.phone_number && !phoneError && values.phone_number
+                  ? okHint("Delivery updates come here")
+                  : null,
             })}
           />
         </div>
