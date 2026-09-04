@@ -34,11 +34,14 @@ const Hero = () => {
   }, [slides.length]);
 
   return (
-    <section
-      id="home"
-      className="relative w-full overflow-hidden mt-20 aspect-[16/9] group"
-    >
-      <div className="relative w-full h-full">
+    <section id="home" className="w-full mt-20">
+      {/* Every slide is a finished piece of artwork carrying its own headline,
+          body copy and Shop Now button, so nothing is laid over it — the
+          headline below used to sit on top and buried theirs. It read worst on
+          a phone, where 16:9 leaves about 220px of height and the overlay took
+          most of it. The images are exactly 16:9, so this box crops none of
+          them at any width. */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden group">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -59,61 +62,71 @@ const Hero = () => {
           </div>
         ))}
 
-        {/* Gradient Overlay — carries the headline text over the photo */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-20 pointer-events-none" />
+        {/* The artwork has a Shop Now button painted into it, which people aim
+            at — the whole banner has to answer that tap. Sits under the arrows
+            and dots so their own clicks still reach them. */}
+        <Link
+          href="/products"
+          aria-label="Shop pure desi bilona ghee online"
+          className="absolute inset-0 z-20"
+        />
 
         {/* Navigation Arrows (Visible on hover on desktop) */}
         <button
           onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 hidden sm:block"
+          aria-label="Previous slide"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 hidden sm:block"
         >
           <ChevronLeft size={24} />
         </button>
         <button
           onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 hidden sm:block"
+          aria-label="Next slide"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 hidden sm:block"
         >
           <ChevronRight size={24} />
         </button>
+      </div>
 
-        {/* Pagination Dots */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`h-2 rounded-full transition-all ${currentSlide === index ? "w-8 bg-white" : "w-2 bg-white/50"
-                }`}
-            />
-          ))}
-        </div>
+      {/* Pagination dots sit under the banner rather than on it. White dots
+          worked only because a dark gradient used to be painted over the photo;
+          with the artwork left alone they would vanish into the cream slides. */}
+      <div className="flex justify-center gap-2 pt-4">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            aria-label={`Go to slide ${index + 1}`}
+            className={`h-2 rounded-full transition-all ${currentSlide === index ? "w-8 bg-primary" : "w-2 bg-gray-300 hover:bg-gray-400"
+              }`}
+          />
+        ))}
+      </div>
 
-        {/* Bottom headline + CTA */}
-        <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 z-30 pointer-events-none">
-          <div className="container mx-auto px-6 pointer-events-auto">
-            <div className="max-w-2xl">
-              {/* NOTE: this h1 must stay VISIBLE. It was previously sr-only,
-                  together with a keyword-stuffed paragraph — hidden text and
-                  keyword stuffing are both named in Google's spam policies, and
-                  it left the homepage with no visible heading at all. */}
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 leading-[1.12] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]">
-                Pure A2 Desi Cow &amp; Buffalo Bilona Ghee
-              </h1>
-              <p className="text-sm sm:text-base md:text-lg text-white/90 mb-3 sm:mb-5 max-w-xl leading-relaxed drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
-                Hand-churned the traditional bilona way in the Chambal valley of
-                Madhya Pradesh. Grass-fed, FSSAI certified, nothing added.
-              </p>
-              <Link
-                href="/products"
-                aria-label="Shop pure desi bilona ghee online"
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-6 sm:py-3 bg-white text-foreground text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-white/90 transition shadow-lg backdrop-blur-sm"
-              >
-                Shop Now
-                <ArrowRight size={13} className="sm:hidden" />
-                <ArrowRight size={16} className="hidden sm:block" />
-              </Link>
-            </div>
-          </div>
+      <div className="container mx-auto px-6 pt-5 pb-8 sm:pt-6 sm:pb-10">
+        <div className="max-w-2xl">
+          {/* NOTE: this h1 must stay VISIBLE. It was previously sr-only,
+              together with a keyword-stuffed paragraph — hidden text and
+              keyword stuffing are both named in Google's spam policies, and
+              it left the homepage with no visible heading at all. Below the
+              banner is still visible; behind it was not. */}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 leading-[1.15] tracking-tight">
+            Pure A2 Desi Cow &amp; Buffalo Bilona Ghee
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-5 max-w-xl leading-relaxed">
+            Hand-churned the traditional bilona way in the Chambal valley of
+            Madhya Pradesh. Grass-fed, FSSAI certified, nothing added.
+          </p>
+          {/* White on white now that this is off the darkened photo, so it
+              takes the brand colour instead. */}
+          <Link
+            href="/products"
+            aria-label="Shop pure desi bilona ghee online"
+            className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition shadow-sm"
+          >
+            Shop Now
+            <ArrowRight size={16} />
+          </Link>
         </div>
       </div>
     </section>
