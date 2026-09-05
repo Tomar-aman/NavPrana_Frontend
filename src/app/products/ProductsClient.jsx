@@ -50,6 +50,29 @@ const ProductsClient = ({ initialProducts = [] }) => {
       });
   };
 
+  // Straight to checkout, adding the product first unless it is already in the
+  // cart — adding a second time would only bump the quantity. Mirrors
+  // handleBuyNow on the product detail page so both routes behave alike.
+  const handleBuyNow = async (productId) => {
+    const productObj = products.find((p) => p.id === productId);
+    const alreadyInCart = cartItems.some((item) => item.product === productId);
+
+    try {
+      if (!alreadyInCart) {
+        await dispatch(
+          addToCart({ product: productId, quantity: 1, productDetail: productObj }),
+        ).unwrap();
+        dispatch(getCart());
+        trackAddToCart(productObj, 1);
+      }
+      router.push("/checkout");
+    } catch (err) {
+      toast.error(
+        typeof err === "string" ? err : "Something went wrong. Please try again.",
+      );
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background mt-20">
       <main className="container mx-auto px-4 py-8 md:px-15">
@@ -95,6 +118,7 @@ const ProductsClient = ({ initialProducts = [] }) => {
               size="sm"
               isInCart={cartItems.some((item) => item.product === product.id)}
               onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
             />
           ))}
         </section>

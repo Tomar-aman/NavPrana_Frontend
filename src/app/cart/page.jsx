@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCart, updateCart, deleteCart } from "@/redux/features/cartSlice";
 import { useRouter } from "next/navigation";
 import { generateSlug } from "@/utils/slug";
+import { calculateShipping, usePricing } from "@/hooks/usePricing";
 
 const getFeaturedImage = (images = []) => {
   return (
@@ -22,6 +23,7 @@ const Page = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { items: cartItems, loading } = useSelector((state) => state.cart);
+  const { pricing } = usePricing();
 
   useEffect(() => {
     dispatch(getCart());
@@ -64,7 +66,10 @@ const Page = () => {
   }, 0);
 
   const discountTotal = mrpSubtotal - subtotal;
-  const shipping = subtotal > 599 ? 0 : subtotal === 0 ? 0 : 50;
+  // Threshold and charge come from Pricing Settings in the Django admin — this
+  // page used to carry its own copy of "> 599 ships free, else ₹50", a third
+  // one after the backend's and checkout's.
+  const shipping = calculateShipping(subtotal, pricing);
   const total = subtotal + shipping;
 
   return (

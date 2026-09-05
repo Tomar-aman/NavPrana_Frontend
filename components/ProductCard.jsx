@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AutoCycleImage from "./AutoCycleImage";
 import { generateSlug } from "@/utils/slug";
@@ -33,6 +33,7 @@ const SIZES = {
     rating: { box: "px-2 py-0.5", icon: 12, text: "text-xs" },
     price: "text-xl",
     gapBelowPrice: "mb-4",
+    cta: "text-sm",
   },
   sm: {
     image: "h-56 md:h-60",
@@ -41,10 +42,19 @@ const SIZES = {
     rating: { box: "px-2 py-0.5", icon: 11, text: "text-[11px]" },
     price: "text-xl",
     gapBelowPrice: "mb-3",
+    // A shade smaller: at this size two buttons share the card's width and
+    // "Add to Cart" is the label with the least room to spare.
+    cta: "text-[13px]",
   },
 };
 
-export default function ProductCard({ product, isInCart, onAddToCart, size = "sm" }) {
+export default function ProductCard({
+  product,
+  isInCart,
+  onAddToCart,
+  onBuyNow,
+  size = "sm",
+}) {
   const router = useRouter();
   const s = SIZES[size] ?? SIZES.sm;
   const href = `/products/${generateSlug(product.name)}`;
@@ -136,23 +146,31 @@ export default function ProductCard({ product, isInCart, onAddToCart, size = "sm
           )}
         </div>
 
-        {/* CTA — z-20 keeps it above the card's stretched link overlay */}
-        <div className="mt-auto relative z-20">
-          {isInCart ? (
+        {/* CTA — z-20 keeps it above the card's stretched link overlay.
+            Two buttons, so only one of them can be the filled one: Buy Now
+            takes it, the cart button steps back to an outline. Two identical
+            solid blocks would leave the shopper picking between them. */}
+        <div
+          className={`mt-auto relative z-20 grid gap-2 ${onBuyNow ? "grid-cols-2" : "grid-cols-1"
+            }`}
+        >
+          <button
+            onClick={() =>
+              isInCart ? router.push("/cart") : onAddToCart(product.id)
+            }
+            className={`w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-primary bg-white text-primary ${s.cta} font-semibold hover:bg-primary/5 transition cursor-pointer whitespace-nowrap`}
+          >
+            <ShoppingCart size={14} />
+            {isInCart ? "Go to Cart" : "Add to Cart"}
+          </button>
+
+          {onBuyNow && (
             <button
-              onClick={() => router.push("/cart")}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
+              onClick={() => onBuyNow(product.id)}
+              className={`w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-primary text-white ${s.cta} font-semibold hover:bg-primary/90 transition cursor-pointer whitespace-nowrap`}
             >
-              <ShoppingCart size={15} />
-              Go to Cart
-            </button>
-          ) : (
-            <button
-              onClick={() => onAddToCart(product.id)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
-            >
-              <ShoppingCart size={15} />
-              Add to Cart
+              <Zap size={14} />
+              Buy Now
             </button>
           )}
         </div>

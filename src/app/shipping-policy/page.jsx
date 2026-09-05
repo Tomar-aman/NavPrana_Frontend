@@ -8,6 +8,7 @@ import {
   Phone,
 } from "lucide-react";
 import Link from "next/link";
+import { fetchPricingServer } from "@/lib/pricing";
 
 export const metadata = {
   title: "Shipping Policy — Fast & Secure Delivery Across India",
@@ -26,25 +27,31 @@ export const metadata = {
   },
 };
 
-const Page = () => {
+const Page = async () => {
+  // Quoted from Pricing Settings rather than written into the copy: this page
+  // promises a threshold that checkout then has to honour, and the two used to
+  // be able to disagree.
+  const pricing = await fetchPricingServer();
+  const freeAbove = `Free shipping on orders above ₹${pricing.free_shipping_threshold}`;
+
   const shippingZones = [
     {
       zone: "Metro Cities",
       cities: "Delhi, Mumbai, Bangalore, Chennai, Kolkata, Hyderabad",
       duration: "2-3 business days",
-      charges: "Free shipping on orders above ₹599",
+      charges: freeAbove,
     },
     {
       zone: "Tier 1 Cities",
       cities: "Pune, Ahmedabad, Jaipur, Lucknow, Kanpur, Nagpur",
       duration: "3-4 business days",
-      charges: "Free shipping on orders above ₹599",
+      charges: freeAbove,
     },
     {
       zone: "Tier 2 Cities",
       cities: "Agra, Varanasi, Meerut, Nashik, Faridabad",
       duration: "4-5 business days",
-      charges: "Free shipping on orders above ₹599",
+      charges: freeAbove,
     },
     {
       zone: "Remote Areas",

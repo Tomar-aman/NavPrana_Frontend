@@ -51,25 +51,11 @@ import { syncCartAPI } from "@/services/cart/syncCart";
 import { getAuthToken, setAuthToken } from "@/utils/authToken";
 import GuestDetailsForm from "../../../components/GuestDetailsForm";
 import { normalizePhone, validateEmail, validatePhone } from "@/lib/validators";
+import { calculateShipping, usePricing } from "@/hooks/usePricing";
 
-// Mirrors Order.COD_HANDLING_FEE on the backend — keep the two in sync, the
-// backend's value is what the shopper is actually charged.
-const COD_HANDLING_FEE = 49;
-
-// The reward-framed version of the very same gap: rather than COD costing ₹49
-// more, paying online costs ₹49 less. The arithmetic is identical but a
-// discount moves far more shoppers than a penalty does. Turn this on only once
-// the backend actually applies a prepaid discount when creating the order —
-// until then the totals shown here would not match what the shopper is charged.
-const PREPAID_DISCOUNT_ENABLED = false;
-const PREPAID_DISCOUNT = 49;
-
-// What every nudge on this page quotes. Whichever of the two mechanisms is
-// live, this is what the shopper genuinely saves by not choosing COD, so the
-// copy and the maths can never drift apart.
-const PREPAID_SAVING = PREPAID_DISCOUNT_ENABLED
-  ? PREPAID_DISCOUNT
-  : COD_HANDLING_FEE;
+// Fees used to be hardcoded here, mirroring constants on the backend, and the
+// two had drifted apart. They now come from Pricing Settings in the Django
+// admin via usePricing() — one number, edited in one place.
 
 // Email and phone are absent here on purpose — validateEmail/validatePhone
 // below already report their own "Enter your…" message when empty, and listing
@@ -116,6 +102,24 @@ const Page = () => {
   // Needed for the Meta Pixel Purchase event — the success screens have no
   // access to who the buyer is, so their details are captured here.
   const { profile } = useProfile();
+
+  // Fees as set in the Django admin. Falls back to the shipped defaults for the
+  // first render and if the request fails — a total that is briefly stale beats
+  // a checkout that will not price at all, and the backend prices the order
+  // itself regardless of what is shown here.
+  const { pricing } = usePricing();
+
+  // Whether the gap between the two rails is charged to COD or credited to
+  // prepaid. Read once here so the arithmetic below and the copy further down
+  // can never disagree about which mechanism is live.
+  const prepaidDiscountEnabled =
+    Boolean(pricing.prepaid_discount_enabled) && pricing.prepaid_discount > 0;
+
+  // What every nudge on this page quotes: what the shopper genuinely saves by
+  // not choosing COD, whichever of the two mechanisms is running.
+  const prepaidSaving = prepaidDiscountEnabled
+    ? pricing.prepaid_discount
+    : pricing.cod_handling_fee;
 
   const { list: address } = useSelector((state) => state.address);
   const { items: cartItems } = useSelector((state) => state.cart);
@@ -209,9 +213,11 @@ const Page = () => {
 
   const productDiscount = mrpSubtotal - subtotal;
   const couponDiscount = couponData?.discount_amount || 0;
-  // Mirrors Order.calculate_shipping() on the backend — keep the two in sync
-  const shipping =
-    subtotal <= 0 || subtotal > 599 || couponData?.free_shipping ? 0 : 50;
+  const shipping = calculateShipping(
+    subtotal,
+    pricing,
+    Boolean(couponData?.free_shipping),
+  );
   const isCod = paymentMethod === "cod";
   // Both rails are priced up front, not just the selected one — the nudges have
   // to be able to quote the other rail's total before the shopper commits, and
@@ -219,13 +225,13 @@ const Page = () => {
   // to the saving every piece of copy on the page promises.
   const baseTotal = subtotal + shipping - couponDiscount;
   const codTotal =
-    baseTotal + (PREPAID_DISCOUNT_ENABLED ? 0 : COD_HANDLING_FEE);
+    baseTotal + (prepaidDiscountEnabled ? 0 : pricing.cod_handling_fee);
   const prepaidTotal =
-    baseTotal - (PREPAID_DISCOUNT_ENABLED ? PREPAID_DISCOUNT : 0);
+    baseTotal - (prepaidDiscountEnabled ? pricing.prepaid_discount : 0);
   const codHandlingFee =
-    !PREPAID_DISCOUNT_ENABLED && isCod ? COD_HANDLING_FEE : 0;
+    !prepaidDiscountEnabled && isCod ? pricing.cod_handling_fee : 0;
   const prepaidDiscount =
-    PREPAID_DISCOUNT_ENABLED && !isCod ? PREPAID_DISCOUNT : 0;
+    prepaidDiscountEnabled && !isCod ? pricing.prepaid_discount : 0;
   const total = isCod ? codTotal : prepaidTotal;
 
   // 📊 Meta Pixel — InitiateCheckout (fires when cart data is available)
@@ -279,7 +285,7 @@ const Page = () => {
       trackCustomEvent("CODInterceptShown", {
         value: codTotal,
         currency: "INR",
-        saving: PREPAID_SAVING,
+        saving: prepaidSaving,
       });
       setShowCodIntercept(true);
       return;
@@ -296,7 +302,7 @@ const Page = () => {
     trackCustomEvent("CODInterceptConverted", {
       value: prepaidTotal,
       currency: "INR",
-      saving: PREPAID_SAVING,
+      saving: prepaidSaving,
     });
     handleCreateOrder("upi");
   };
@@ -532,7 +538,7 @@ const Page = () => {
       color: "bg-green-50",
       iconColor: "text-green-600",
       recommended: true,
-      saving: PREPAID_SAVING,
+      saving: prepaidSaving,
     },
     {
       id: "card",
@@ -541,7 +547,7 @@ const Page = () => {
       icon: CreditCard,
       color: "bg-green-50",
       iconColor: "text-green-600",
-      saving: PREPAID_SAVING,
+      saving: prepaidSaving,
     },
     {
       id: "cod",
@@ -550,9 +556,9 @@ const Page = () => {
       icon: Banknote,
       color: "bg-gray-100",
       iconColor: "text-gray-500",
-      note: PREPAID_DISCOUNT_ENABLED
-        ? `₹${PREPAID_DISCOUNT} more than paying online`
-        : `+₹${COD_HANDLING_FEE} handling fee`,
+      note: prepaidDiscountEnabled
+        ? `₹${pricing.prepaid_discount} more than paying online`
+        : `+₹${pricing.cod_handling_fee} handling fee`,
     },
   ];
 
@@ -688,7 +694,7 @@ const Page = () => {
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base font-semibold">Payment Method</h2>
                 <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-1 rounded-lg">
-                  Save ₹{PREPAID_SAVING} on online payment
+                  Save ₹{prepaidSaving} on online payment
                 </span>
               </div>
               <div className="space-y-2">
@@ -748,7 +754,7 @@ const Page = () => {
               {isCod && (
                 <div className="mt-3 rounded-xl border border-orange-200 bg-orange-50 p-3">
                   <p className="text-xs font-semibold text-orange-900">
-                    Paying online is ₹{PREPAID_SAVING} cheaper
+                    Paying online is ₹{prepaidSaving} cheaper
                   </p>
                   <p className="text-[11px] text-orange-800 mt-0.5">
                     ₹{prepaidTotal} with UPI instead of ₹{codTotal} on delivery.
@@ -758,7 +764,7 @@ const Page = () => {
                     onClick={() => setPaymentMethod("upi")}
                     className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-lg transition cursor-pointer"
                   >
-                    Switch to UPI & save ₹{PREPAID_SAVING}
+                    Switch to UPI & save ₹{prepaidSaving}
                     <ArrowRight size={13} />
                   </button>
                 </div>
@@ -922,11 +928,11 @@ const Page = () => {
                   onClick={() => setPaymentMethod("upi")}
                   className="w-full text-left text-[11px] font-semibold text-orange-900 bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-1.5 mt-1 hover:bg-orange-100 transition cursor-pointer"
                 >
-                  Pay online instead → ₹{prepaidTotal}, save ₹{PREPAID_SAVING}
+                  Pay online instead → ₹{prepaidTotal}, save ₹{prepaidSaving}
                 </button>
               ) : (
                 <p className="text-[11px] text-green-700 font-medium bg-green-50 rounded-lg px-2.5 py-1.5 mt-1">
-                  ✓ ₹{PREPAID_SAVING} saved by paying online
+                  ✓ ₹{prepaidSaving} saved by paying online
                 </p>
               )}
             </div>
@@ -981,10 +987,10 @@ const Page = () => {
             </div>
 
             <h3 className="text-base font-bold">
-              Save ₹{PREPAID_SAVING} on this order
+              Save ₹{prepaidSaving} on this order
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Pay online now and skip the ₹{PREPAID_SAVING} you would pay extra
+              Pay online now and skip the ₹{prepaidSaving} you would pay extra
               on delivery.
             </p>
 

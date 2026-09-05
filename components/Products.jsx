@@ -4,6 +4,8 @@ import ProductCard from "./ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, getCart } from "@/redux/features/cartSlice";
 import { fetchProducts } from "@/redux/features/product";
+import { trackAddToCart } from "@/lib/meta-pixel";
+import { usePricing } from "@/hooks/usePricing";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -15,6 +17,7 @@ const Products = ({ initialProducts = [] }) => {
   const { list: reduxProducts, loading, error } = useSelector((state) => state.product);
   const { items: cartItems } = useSelector((state) => state.cart);
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { pricing } = usePricing();
 
   // Server-fetched products render in the initial HTML (this component is a
   // client component, so a Redux-only list meant Googlebot saw an empty grid
@@ -43,14 +46,48 @@ const Products = ({ initialProducts = [] }) => {
       .then(() => {
         toast.success("Product added to cart");
         dispatch(getCart());
+        // 📊 Meta Pixel — AddToCart. The /products grid has always reported
+        // this and the homepage never did, so adds from the busiest grid on
+        // the site were missing from the funnel entirely.
+        trackAddToCart(productDetail, 1);
       })
       .catch((err) => {
         toast.error(err);
       });
   };
 
+  // Straight to checkout, adding the product first unless it is already in the
+  // cart — adding a second time would only bump the quantity. Mirrors
+  // handleBuyNow on the product detail page so both routes behave alike.
+  const handleBuyNow = async (productId) => {
+    const productDetail = list.find((p) => p.id === productId);
+    const alreadyInCart = cartItems.some((item) => item.product === productId);
+
+    try {
+      if (!alreadyInCart) {
+        await dispatch(
+          addToCart({ product: productId, quantity: 1, productDetail }),
+        ).unwrap();
+        dispatch(getCart());
+        trackAddToCart(productDetail, 1);
+      }
+      router.push("/checkout");
+    } catch (err) {
+      toast.error(
+        typeof err === "string" ? err : "Something went wrong. Please try again.",
+      );
+    }
+  };
+
   const trustItems = [
-    { icon: Truck, title: "Free Shipping", desc: "On orders above ₹999" },
+    // Quoted from Pricing Settings. This read "above ₹999" while the threshold
+    // was ₹599, so the homepage was talking shoppers out of a discount they
+    // already qualified for.
+    {
+      icon: Truck,
+      title: "Free Shipping",
+      desc: `On orders above ₹${pricing.free_shipping_threshold}`,
+    },
     { icon: Shield, title: "Quality Assured", desc: "Lab tested pure desi ghee" },
     { icon: Star, title: "Verified Reviews", desc: "From real customers" },
     { icon: Heart, title: "Bilona Method", desc: "Traditional hand-churned" },
@@ -86,6 +123,7 @@ const Products = ({ initialProducts = [] }) => {
               size="lg"
               isInCart={cartItems.some((item) => item.product === product.id)}
               onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
             />
           ))}
         </div>
