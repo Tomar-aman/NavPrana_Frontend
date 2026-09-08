@@ -336,6 +336,54 @@ across posts so the thumbnails read as one set:
 tapered), lid colour and material (green metal, gold metal, or wood), label shape, and whether we sell
 in glass or PET. Take these from the current packshot, not from memory.
 
+### Match the image to the topic
+
+A thumbnail that does not match the post reads as stock filler and kills the click. Pick the scene
+type from the post's job first, then write the prompt around it. These are the patterns already in
+use across the drafts, so new posts should slot into one rather than invent a look.
+
+| Post type | Scene | Light and mood | Examples |
+|---|---|---|---|
+| **Comparison** (X vs Y) | Split or side-by-side, two jars or two fats in identical vessels | Neutral even daylight, no colour cast, so the difference is the subject | `blog-1`, `blog-5`, `blog-9`, `blog-19` |
+| **Dosage / how much** | Measuring spoons with a visible, countable portion | Bright, clean, clinical-but-warm | `blog-4`, `blog-13`, `blog-16` |
+| **Ritual / time of day** | A glass and a single spoon, almost nothing else | Light does the work: dawn gold for morning, dim amber lamp for night | `blog-3`, `blog-6`, `blog-22` |
+| **Baby / parenting** | Nursery or highchair detail, soft textiles, tiny spoon | Soft diffused daylight, tender. **Never a baby's face.** | `blog-2`, `blog-17`, `blog-18` |
+| **Health condition** | A balanced plate, portion visible and modest | Bright even daylight, calm and sober. No festive styling. | `blog-14`, `blog-24`, `blog-25`, `blog-26` |
+| **Process / how-to** | Hands, tools, a pan mid-process, steam | Warm working light, documentary and unstyled | `blog-12`, `blog-21` |
+| **Cooking / recipe** | The finished dish as hero, ghee jar supporting | Warm, rich, appetising, festive where the post is festive | `blog-20` |
+| **Storage / practical** | Jar close-up, macro on the crystalline texture | Soft indirect light, no glare, so the grain reads | `blog-10` |
+| **Seasonal** | Season props carry it: shawl and steam for winter | Match the season the reader is in when they land | `blog-23` |
+| **Buying guide** | Hands inspecting a jar against the light | Bright neutral, considered, decision-making mood | `blog-15` |
+| **Beauty / topical** | Marble, muslin, a spatula, minimal props | Soft window light, editorial beauty | `blog-11` |
+
+Two details that are easy to miss and matter:
+
+- **Match the ghee colour to the post.** Cow ghee is golden, buffalo ghee is creamy white. A buffalo
+  post showing golden ghee contradicts its own argument (see `blog-19`).
+- **Match the emotional register.** A diabetes post must not look like a Diwali post. Sober topics
+  get sober styling.
+
+### Making the thumbnail attractive
+
+Blog cards are seen at roughly 300px wide in a scrolling feed. That is the real design constraint.
+
+- **One hero subject.** Three main objects maximum. Anything more turns to mush at card size.
+- **The ghee is the hook.** Make it visibly golden and visibly grainy. That texture is what stops
+  the scroll, and it is also our differentiator, so it should be in almost every frame.
+- **High contrast between subject and background.** Pale ghee on a pale marble counter disappears.
+  Put warm gold against dark wood, or creamy white against a deeper surface.
+- **Leave negative space** on one side or across the bottom third. Blog cards overlay the title, and
+  a busy frame under text is unreadable.
+- **Add a motion cue.** Steam rising, ghee melting on hot roti, a drip off a spoon. Static food looks
+  dead; something in mid-motion looks alive.
+- **Shallow depth of field.** Blur the background to isolate the subject. Say so in the prompt.
+- **A human element lifts clicks** — hands pouring, holding, inspecting. Use hands, not faces, and
+  never any part of a baby or a patient.
+
+Avoid: dark muddy scenes, busy fabric patterns, more than one strong colour competing with the gold,
+overhead flat-lays for anything except comparison and dosage posts, and props that belong to a
+different post's topic.
+
 ### `image_prompt` rules
 
 - Photorealistic food or lifestyle photography, 16:9 (1200×630)
@@ -344,8 +392,17 @@ in glass or PET. Take these from the current packshot, not from memory.
 - Rustic, organic, Indian-kitchen aesthetic; grainy danedar texture whenever ghee is visible
 - Include the jar block on product-led posts. Omit it on posts where a jar would be intrusive
   (a pregnancy lifestyle scene, for instance) and let the food carry the frame instead.
+- **Name the scene type, the light and the mood explicitly.** "Warm cosy winter food photography"
+  gives a usable image; "photo of ghee" does not.
+- **End with the aspect ratio** so the model does not crop the composition badly.
 - Negative prompt, always: `text, watermark, logo, label text, lettering, plastic packaging,
   artificial colors, cluttered background, distorted jar, fake brand marks`
+- **Extend the negative prompt per topic.** Baby posts add `baby face close-up`. Condition posts add
+  `medical devices, glucometer`. Process posts add `modern stainless steel factory equipment`.
+  Comparison posts add whatever would confuse the comparison.
+
+Prompt skeleton, in this order: *scene type, hero subject, supporting props, jar block if used,
+light, mood, setting, brand palette, depth of field, aspect ratio, negative prompt.*
 
 ---
 
@@ -408,6 +465,9 @@ Formatting
 - [ ] `content` is a single line with **zero** `\n` sequences
 - [ ] `excerpt`, `meta_description`, `meta_title`, `title` contain no newlines, tabs or escapes
 - [ ] `image_prompt` uses the real brand hexes and the NavPrana jar block
+- [ ] Scene type matches the post type in the topic table
+- [ ] Ghee colour matches the post (golden for cow, creamy white for buffalo)
+- [ ] One hero subject, negative space left for the title overlay, a motion cue present
 - [ ] Negative prompt includes `label text, lettering, distorted jar, fake brand marks`
 
 Structure

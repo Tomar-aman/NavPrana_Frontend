@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import pineappleImage from "@/assets/hero_image.jpg";
+import pineappleImage from "@/assets/hero_3.png";
 import cowImage from "@/assets/img_3.png";
-import salesImage from "@/assets/sales.png";
+import salesImage from "@/assets/hero_4.png";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
@@ -40,7 +40,9 @@ const Hero = () => {
           headline below used to sit on top and buried theirs. It read worst on
           a phone, where 16:9 leaves about 220px of height and the overlay took
           most of it. The images are exactly 16:9, so this box crops none of
-          them at any width. */}
+          them at any width. Kept full-bleed on purpose: a capped width left
+          dead margins beside it while the header and the copy below run
+          nearly edge to edge, which read as a mis-sized image. */}
       <div className="relative w-full aspect-[16/9] overflow-hidden group">
         {slides.map((slide, index) => (
           <div
