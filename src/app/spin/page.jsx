@@ -136,7 +136,14 @@ export default function SpinPage() {
       const { prize_id, prize_name, coupon_code } = res.data;
 
       // Find the index of the won sector (excluding "try_again" mismatches)
-      const matchingSectorIndices = WHEEL_SECTORS.map((s, idx) => s.id === prize_id ? idx : -1).filter(idx => idx !== -1);
+      // NOTE: "free_500ml" is drawn on the wheel but is never returned by the API
+      // (weight 0 server-side), so the pointer never stops on it.
+      let matchingSectorIndices = WHEEL_SECTORS.map((s, idx) => s.id === prize_id ? idx : -1).filter(idx => idx !== -1);
+      // Fall back to a "try_again" segment if the API sends a prize we do not draw,
+      // otherwise the target angle becomes NaN and the wheel stops rendering.
+      if (matchingSectorIndices.length === 0) {
+        matchingSectorIndices = WHEEL_SECTORS.map((s, idx) => s.id === "try_again" ? idx : -1).filter(idx => idx !== -1);
+      }
       // Pick a random matching segment index if multiple exist (like try_again)
       const targetIndex = matchingSectorIndices[Math.floor(Math.random() * matchingSectorIndices.length)];
 
