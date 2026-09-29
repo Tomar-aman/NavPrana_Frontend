@@ -77,7 +77,7 @@ const AuthForm = ({ initialTab = "signin" }) => {
       toast.success("Login successful");
       router.push(nextPath.current);
     } catch (err) {
-      setLoginError(err?.message || err?.error || "Invalid email or password");
+      setLoginError(err?.message || err?.error || "Invalid email/phone or password");
     } finally {
       setSigninLoading(false);
     }
@@ -231,7 +231,7 @@ const AuthForm = ({ initialTab = "signin" }) => {
                   }}
                   className="w-full mt-3 text-center text-xs font-medium text-primary hover:text-primary/80 transition cursor-pointer"
                 >
-                  No password needed — sign up with WhatsApp OTP instead
+                  Sign up with phone number instead
                 </button>
               </motion.div>
             )}

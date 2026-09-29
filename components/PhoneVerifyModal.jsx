@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, MessageCircle, Loader2, ArrowLeft } from "lucide-react";
+import { X, Loader2, ArrowLeft } from "lucide-react";
+import WhatsAppIcon from "./icons/WhatsAppIcon";
 import { toast } from "sonner";
 import {
   otpErrorMessage,
@@ -26,7 +27,7 @@ const PhoneVerifyModal = ({
   onClose,
   onVerified,
   title = "Verify your phone",
-  description = "We'll send a 6-digit code to this number on WhatsApp.",
+  description = "We'll send an OTP to this number on WhatsApp.",
 }) => {
   const [step, setStep] = useState("phone");
   const [phone, setPhone] = useState("");
@@ -58,7 +59,7 @@ const PhoneVerifyModal = ({
     setLoading(true);
     try {
       await sendPhoneVerificationApi(normalizePhone(phone));
-      toast.success("Code sent on WhatsApp");
+      toast.success("OTP sent on your WhatsApp", { icon: <WhatsAppIcon size={18} /> });
       setStep("code");
       setCode("");
       setCooldown(RESEND_SECONDS);
@@ -67,14 +68,14 @@ const PhoneVerifyModal = ({
       if (err?.response?.status === 429 && step === "phone") {
         setStep("code");
       }
-      setError(otpErrorMessage(err, "Could not send the code"));
+      setError(otpErrorMessage(err, "Could not send OTP"));
     } finally {
       setLoading(false);
     }
   };
 
   const verify = async () => {
-    if (code.length !== 6) return setError("Enter the 6-digit code");
+    if (code.length !== 6) return setError("Enter the 6-digit OTP");
     setError("");
     setLoading(true);
     try {
@@ -100,7 +101,7 @@ const PhoneVerifyModal = ({
 
         <div className="flex justify-center mb-4">
           <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center">
-            <MessageCircle size={28} className="text-green-600" />
+            <WhatsAppIcon size={30} />
           </div>
         </div>
 
@@ -110,7 +111,9 @@ const PhoneVerifyModal = ({
             description
           ) : (
             <>
-              Enter the code sent on WhatsApp to
+              <span className="inline-flex items-center gap-1.5">
+                <WhatsAppIcon size={15} /> OTP sent on your WhatsApp
+              </span>
               <br />
               <span className="font-medium text-foreground">+91 {normalizePhone(phone)}</span>
             </>
@@ -133,7 +136,7 @@ const PhoneVerifyModal = ({
             type="text"
             inputMode="numeric"
             autoComplete="one-time-code"
-            placeholder="6-digit code"
+            placeholder="6-digit OTP"
             maxLength={6}
             autoFocus
             value={code}
@@ -151,7 +154,7 @@ const PhoneVerifyModal = ({
           className="w-full mt-4 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
-          {step === "phone" ? "Send code on WhatsApp" : "Verify"}
+          {step === "phone" ? "Send OTP" : "Verify"}
         </button>
 
         {step === "code" && (
@@ -166,7 +169,7 @@ const PhoneVerifyModal = ({
               <span className="text-muted-foreground">Resend in {cooldown}s</span>
             ) : (
               <button onClick={sendCode} className="font-medium text-primary hover:text-primary/80 cursor-pointer">
-                Resend code
+                Resend OTP
               </button>
             )}
           </div>

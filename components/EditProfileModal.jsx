@@ -5,6 +5,7 @@ import { X, Camera, Loader2, User, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "@/redux/features/profileSlice";
+import { validateEmail } from "@/lib/validators";
 
 const EditProfileModal = ({ isOpen, onClose, profile }) => {
   const dispatch = useDispatch();
@@ -31,6 +32,9 @@ const EditProfileModal = ({ isOpen, onClose, profile }) => {
 
   if (!isOpen) return null;
 
+  // Phone sign-ups may have no email yet; one can be added, never changed.
+  const canAddEmail = !profile?.email;
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -54,6 +58,10 @@ const EditProfileModal = ({ isOpen, onClose, profile }) => {
     if (!phone.trim()) errs.phone = "Phone number is required";
     else if (!/^\d{10}$/.test(phone.replace(/\s/g, "")))
       errs.phone = "Enter valid 10-digit phone number";
+    if (canAddEmail) {
+      const emailError = validateEmail(email, { required: false });
+      if (emailError) errs.email = emailError;
+    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -67,6 +75,7 @@ const EditProfileModal = ({ isOpen, onClose, profile }) => {
       fd.append("first_name", firstName);
       fd.append("last_name", lastName);
       fd.append("phone_number", phone);
+      if (canAddEmail && email.trim()) fd.append("email", email.trim());
       if (selectedFile) fd.append("profile_picture", selectedFile);
 
       await dispatch(updateProfile(fd)).unwrap();
@@ -178,7 +187,7 @@ const EditProfileModal = ({ isOpen, onClose, profile }) => {
             </div>
           </div>
 
-          {/* Email (read-only) */}
+          {/* Email — read-only once set */}
           <div>
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Email
@@ -188,15 +197,29 @@ const EditProfileModal = ({ isOpen, onClose, profile }) => {
                 size={15}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
-              <input
-                value={email}
-                disabled
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-gray-50/80 text-gray-500 cursor-not-allowed"
-              />
+              {canAddEmail ? (
+                <input
+                  type="email"
+                  value={email}
+                  placeholder="you@example.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+                />
+              ) : (
+                <input
+                  value={email}
+                  disabled
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm bg-gray-50/80 text-gray-500 cursor-not-allowed"
+                />
+              )}
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              Email cannot be changed
-            </p>
+            {errors.email ? (
+              <p className="text-[11px] text-red-500 mt-1">{errors.email}</p>
+            ) : (
+              <p className="text-[11px] text-muted-foreground mt-1">
+                {canAddEmail ? "Optional — for order updates and invoices. Can't be changed later." : "Email cannot be changed"}
+              </p>
+            )}
           </div>
 
           {/* Phone */}

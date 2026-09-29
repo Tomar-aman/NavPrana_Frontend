@@ -1058,7 +1058,7 @@ const Page = () => {
         isOpen={phoneToVerify !== null}
         initialPhone={phoneToVerify || ""}
         title="Verify your number for COD"
-        description="To confirm Cash on Delivery orders, we send a one-time code on WhatsApp. You only do this once."
+        description="To confirm Cash on Delivery orders, we send an OTP on your WhatsApp. You only do this once."
         onClose={() => setPhoneToVerify(null)}
         onVerified={() => {
           setPhoneToVerify(null);

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { Phone, KeyRound, User, Mail, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { otpLogin } from "@/redux/features/authSlice";
+import WhatsAppIcon from "../../../components/icons/WhatsAppIcon";
 import { otpErrorMessage, sendLoginOtpApi } from "@/services/auth/phoneOtp";
 import { normalizePhone, sanitizePhoneInput, validateEmail, validatePhone } from "@/lib/validators";
 
@@ -54,24 +55,24 @@ const OtpLoginForm = ({ onSuccess, onUsePassword }) => {
     setLoading(true);
     try {
       await sendLoginOtpApi(normalizePhone(phone));
-      toast.success("Code sent on WhatsApp");
+      toast.success("OTP sent on your WhatsApp", { icon: <WhatsAppIcon size={18} /> });
       setStep("code");
       setCode("");
       setCooldown(RESEND_SECONDS);
     } catch (err) {
-      setErrors({ phone: otpErrorMessage(err, "Could not send the code") });
+      setErrors({ phone: otpErrorMessage(err, "Could not send OTP") });
     } finally {
       setLoading(false);
     }
   };
 
   const submit = async (withDetails) => {
-    if (code.length !== 6) return setErrors({ code: "Enter the 6-digit code" });
+    if (code.length !== 6) return setErrors({ code: "Enter the 6-digit OTP" });
     const payload = { phone_number: normalizePhone(phone), otp: code };
     if (withDetails) {
       const next = {};
       if (!details.firstName.trim()) next.firstName = "Enter your first name";
-      const emailError = validateEmail(details.email);
+      const emailError = validateEmail(details.email, { required: false });
       if (emailError) next.email = emailError;
       if (Object.keys(next).length) return setErrors(next);
       Object.assign(payload, {
@@ -116,12 +117,17 @@ const OtpLoginForm = ({ onSuccess, onUsePassword }) => {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
       <h2 className="text-xl font-semibold text-foreground mb-1">
-        {step === "details" ? "Almost there" : "Sign in with WhatsApp"}
+        {step === "details" ? "Almost there" : "Continue with phone number"}
       </h2>
       <p className="text-sm text-muted-foreground mb-6">
-        {step === "phone" && "We'll send a 6-digit code to your WhatsApp. New here? This creates your account."}
-        {step === "code" && <>Enter the code sent on WhatsApp to <span className="font-medium text-foreground">+91 {normalizePhone(phone)}</span></>}
-        {step === "details" && "Tell us your name and email to create your account. Order updates and invoices go to this email."}
+        {step === "phone" && "Enter your mobile number to get an OTP."}
+        {step === "code" && (
+          <span className="inline-flex flex-wrap items-center gap-1.5">
+            <WhatsAppIcon size={16} /> OTP sent on your WhatsApp
+            <span className="font-medium text-foreground">+91 {normalizePhone(phone)}</span>
+          </span>
+        )}
+        {step === "details" && "Tell us your name to create your account. Add an email if you want order updates and invoices by mail."}
       </p>
 
       <div className="space-y-4">
@@ -139,18 +145,18 @@ const OtpLoginForm = ({ onSuccess, onUsePassword }) => {
                 className={inputClass(errors.phone)}
               />
             </Field>
-            {primaryButton("Send code", sendCode)}
+            {primaryButton("Send OTP", sendCode)}
           </>
         )}
 
         {step === "code" && (
           <>
-            <Field label="WhatsApp code" icon={KeyRound} error={errors.code}>
+            <Field label="OTP" icon={KeyRound} error={errors.code}>
               <input
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                placeholder="6-digit code"
+                placeholder="6-digit OTP"
                 maxLength={6}
                 autoFocus
                 value={code}
@@ -171,7 +177,7 @@ const OtpLoginForm = ({ onSuccess, onUsePassword }) => {
                 <span className="text-muted-foreground">Resend in {cooldown}s</span>
               ) : (
                 <button onClick={sendCode} className="font-medium text-primary hover:text-primary/80 cursor-pointer">
-                  Resend code
+                  Resend OTP
                 </button>
               )}
             </div>
@@ -198,7 +204,7 @@ const OtpLoginForm = ({ onSuccess, onUsePassword }) => {
                 />
               </Field>
             </div>
-            <Field label="Email" icon={Mail} error={errors.email}>
+            <Field label="Email (optional)" icon={Mail} error={errors.email}>
               <input
                 type="email"
                 autoComplete="email"

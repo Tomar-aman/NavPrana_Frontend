@@ -2,8 +2,9 @@
 
 import { memo, useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, MessageCircle } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Phone } from "lucide-react";
 import GoogleSignInButton from "./GoogleSignInButton";
+import { validatePhone } from "@/lib/validators";
 
 const LoginForm = memo(
   ({
@@ -22,10 +23,16 @@ const LoginForm = memo(
     const validate = () => {
       const newErrors = {};
 
-      if (!form.email?.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-        newErrors.email = "Enter a valid email address";
+      // One field takes either: anything with an "@" is read as an email,
+      // anything else as a mobile number.
+      const id = form.email?.trim() || "";
+      if (!id) {
+        newErrors.email = "Enter your email or phone number";
+      } else if (id.includes("@")) {
+        if (!/^\S+@\S+\.\S+$/.test(id)) newErrors.email = "Enter a valid email address";
+      } else {
+        const phoneError = validatePhone(id);
+        if (phoneError) newErrors.email = phoneError;
       }
 
       if (!form.password) {
@@ -52,15 +59,16 @@ const LoginForm = memo(
           {/* Email */}
           <div>
             <label className="block text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
-              Email
+              Email or phone number
             </label>
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
                 <Mail size={15} className="text-gray-500" />
               </div>
               <input
-                type="email"
-                placeholder="you@example.com"
+                type="text"
+                autoComplete="username"
+                placeholder="you@example.com or 98765 43210"
                 value={form.email}
                 onChange={(e) => {
                   setForm({ ...form, email: e.target.value });
@@ -159,8 +167,8 @@ const LoginForm = memo(
             onClick={onUseOtp}
             className="w-full py-3 rounded-xl border border-gray-200 text-foreground flex items-center justify-center gap-2 text-sm font-medium hover:bg-gray-50 transition cursor-pointer"
           >
-            <MessageCircle size={16} className="text-green-600" />
-            Sign in with WhatsApp OTP
+            <Phone size={16} className="text-primary" />
+            Continue with phone number
           </button>
 
           {/* Google Sign-In */}
