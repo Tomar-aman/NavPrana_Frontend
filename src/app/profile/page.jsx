@@ -41,6 +41,7 @@ import { getProfile } from "@/redux/features/profileSlice";
 import { useRouter } from "next/navigation";
 import PrivateRoute from "../../../components/PrivateRoute";
 import VerifyOtpModal from "../auth/VerifyOtpModal";
+import PhoneVerifyModal from "../../../components/PhoneVerifyModal";
 import {
   sendEmailVerificationApi,
   verifyEmailApi,
@@ -187,6 +188,9 @@ const Page = () => {
       toast.error(err?.error || err?.message || "Failed to update address");
     }
   };
+
+  // A verified phone is what lets the customer place a COD order.
+  const [showVerifyPhoneModal, setShowVerifyPhoneModal] = useState(false);
 
   // Signup no longer asks for an OTP, so the email is verified from here.
   const [showVerifyEmailModal, setShowVerifyEmailModal] = useState(false);
@@ -357,10 +361,22 @@ const Page = () => {
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                       <Phone size={15} className="text-primary" />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide">Phone Number</p>
                       <p className="text-sm text-foreground">{phone || "Not added"}</p>
                     </div>
+                    {profile?.phone_verified && phone ? (
+                      <span className="flex items-center gap-1 text-[11px] font-medium text-green-700 bg-green-50 px-2 py-1 rounded-lg shrink-0">
+                        <BadgeCheck size={13} /> Verified
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setShowVerifyPhoneModal(true)}
+                        className="flex items-center gap-1 text-xs font-medium text-primary border border-primary/30 bg-white px-2.5 py-1 rounded-lg hover:bg-primary/5 transition cursor-pointer shrink-0"
+                      >
+                        {phone ? "Verify" : "Add"}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -643,6 +659,16 @@ const Page = () => {
             onClose={() => setShowVerifyEmailModal(false)}
             onVerify={handleVerifyEmail}
             onResend={sendEmailVerificationApi}
+          />
+
+          <PhoneVerifyModal
+            isOpen={showVerifyPhoneModal}
+            initialPhone={phone}
+            onClose={() => setShowVerifyPhoneModal(false)}
+            onVerified={() => {
+              setShowVerifyPhoneModal(false);
+              dispatch(getProfile());
+            }}
           />
 
           {showAddressModal && (

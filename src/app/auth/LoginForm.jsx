@@ -2,7 +2,7 @@
 
 import { memo, useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, MessageCircle } from "lucide-react";
 import GoogleSignInButton from "./GoogleSignInButton";
 
 const LoginForm = memo(
@@ -14,6 +14,7 @@ const LoginForm = memo(
     onSubmit,
     loading,
     error,
+    onUseOtp,
   }) => {
     const [errors, setErrors] = useState({});
 
@@ -150,6 +151,16 @@ const LoginForm = memo(
                 <ArrowRight size={16} />
               </>
             )}
+          </button>
+
+          {/* WhatsApp OTP */}
+          <button
+            type="button"
+            onClick={onUseOtp}
+            className="w-full py-3 rounded-xl border border-gray-200 text-foreground flex items-center justify-center gap-2 text-sm font-medium hover:bg-gray-50 transition cursor-pointer"
+          >
+            <MessageCircle size={16} className="text-green-600" />
+            Sign in with WhatsApp OTP
           </button>
 
           {/* Google Sign-In */}

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import LoginForm from "./LoginForm";
+import OtpLoginForm from "./OtpLoginForm";
 import SignupForm from "./SignupForm";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -33,10 +34,39 @@ const AuthForm = ({ initialTab = "signin" }) => {
     password: "",
   });
 
+  // "password" or "otp" (WhatsApp) on the Sign In tab.
+  const [signinMode, setSigninMode] = useState("password");
+
+  // Where to go after signing in, e.g. checkout sends a shopper here with
+  // ?next=/checkout. Read once on mount, because switching tabs rewrites the
+  // URL without it. Only same-site paths, so the link cannot bounce people to
+  // another site.
+  const nextPath = useRef("/");
+  useEffect(() => {
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (next && next.startsWith("/") && !next.startsWith("//")) nextPath.current = next;
+  }, []);
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     // Navigate to the clean URL for the chosen tab
     router.replace(tab === "signup" ? "/signup" : "/signin", { scroll: false });
+  };
+
+  const handleOtpSuccess = (res) => {
+    if (res.is_new_user) {
+      toast.success("Account created! Welcome to NavPrana.");
+      setUserData({
+        email: res.email,
+        phone_number: res.phone_number,
+        first_name: res.first_name,
+        last_name: res.last_name,
+      });
+      trackCompleteRegistration("whatsapp");
+    } else {
+      toast.success("Login successful");
+    }
+    router.push(nextPath.current);
   };
 
   const handleSignIn = async () => {
@@ -45,7 +75,7 @@ const AuthForm = ({ initialTab = "signin" }) => {
       setSigninLoading(true);
       await dispatch(loginUser(signinForm)).unwrap();
       toast.success("Login successful");
-      router.push("/");
+      router.push(nextPath.current);
     } catch (err) {
       setLoginError(err?.message || err?.error || "Invalid email or password");
     } finally {
@@ -91,7 +121,7 @@ const AuthForm = ({ initialTab = "signin" }) => {
         last_name: lastName,
       });
       trackCompleteRegistration("email");
-      router.push("/");
+      router.push(nextPath.current);
     } catch (err) {
       if (typeof err === "object" && err !== null) {
         const fieldMap = {
@@ -156,15 +186,23 @@ const AuthForm = ({ initialTab = "signin" }) => {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <LoginForm
-                  form={signinForm}
-                  setForm={setSigninForm}
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                  onSubmit={handleSignIn}
-                  loading={signinLoading}
-                  error={loginError}
-                />
+                {signinMode === "otp" ? (
+                  <OtpLoginForm
+                    onSuccess={handleOtpSuccess}
+                    onUsePassword={() => setSigninMode("password")}
+                  />
+                ) : (
+                  <LoginForm
+                    form={signinForm}
+                    setForm={setSigninForm}
+                    showPassword={showPassword}
+                    setShowPassword={setShowPassword}
+                    onSubmit={handleSignIn}
+                    loading={signinLoading}
+                    error={loginError}
+                    onUseOtp={() => setSigninMode("otp")}
+                  />
+                )}
               </motion.div>
             )}
 
@@ -185,6 +223,16 @@ const AuthForm = ({ initialTab = "signin" }) => {
                   loading={signupLoading}
                   apiErrors={signupErrors}
                 />
+                {/* OTP login creates the account for a new number, no password needed. */}
+                <button
+                  onClick={() => {
+                    setSigninMode("otp");
+                    handleTabChange("signin");
+                  }}
+                  className="w-full mt-3 text-center text-xs font-medium text-primary hover:text-primary/80 transition cursor-pointer"
+                >
+                  No password needed — sign up with WhatsApp OTP instead
+                </button>
               </motion.div>
             )}
           </AnimatePresence>

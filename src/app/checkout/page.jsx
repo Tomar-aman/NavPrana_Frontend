@@ -50,6 +50,7 @@ import { guestCheckoutAPI } from "@/services/auth/guestCheckout";
 import { syncCartAPI } from "@/services/cart/syncCart";
 import { getAuthToken, setAuthToken } from "@/utils/authToken";
 import GuestDetailsForm from "../../../components/GuestDetailsForm";
+import PhoneVerifyModal from "../../../components/PhoneVerifyModal";
 import { normalizePhone, validateEmail, validatePhone } from "@/lib/validators";
 import { calculateShipping, usePricing } from "@/hooks/usePricing";
 
@@ -129,6 +130,13 @@ const Page = () => {
   // Last chance to win the order onto a prepaid rail — shown once, on the tap
   // that would otherwise have placed a COD order.
   const [showCodIntercept, setShowCodIntercept] = useState(false);
+  // COD needs a phone verified on WhatsApp (fake-order guard). The backend
+  // refuses the order with `phone_not_verified`; this holds the number to
+  // verify, and the order is placed again once it is.
+  const [phoneToVerify, setPhoneToVerify] = useState(null);
+  // A guest's address id, kept for that retry: by then the guest is signed in,
+  // so the guest branch is skipped, and there is no selected saved address.
+  const guestAddressId = useRef(null);
 
   // Signed-in state is read once on mount; a guest becomes signed in only
   // through handleCreateOrder below, which re-renders via setIsGuest.
@@ -344,7 +352,7 @@ const Page = () => {
       if (Object.keys(errors).length > 0) {
         return toast.error("Please complete your details to continue");
       }
-    } else if (!selectedAddressId) {
+    } else if (!selectedAddressId && !guestAddressId.current) {
       return toast.error("Select address");
     }
 
@@ -352,7 +360,7 @@ const Page = () => {
 
     // Guests get an account + address created behind the scenes first, so the
     // order call below is identical for both paths.
-    let addressId = selectedAddressId;
+    let addressId = selectedAddressId || guestAddressId.current;
     // cartItems from the closure is the pre-sync (local) list, so track the
     // rows the order should actually be built from.
     let orderRows = cartItems;
@@ -369,6 +377,7 @@ const Page = () => {
         });
         setAuthToken(guest.access);
         addressId = guest.address_id;
+        guestAddressId.current = guest.address_id;
 
         const localItems = guestCartSyncPayload();
         if (localItems.length > 0) {
@@ -461,6 +470,10 @@ const Page = () => {
       // Only re-enable on failure — on success we are navigating away, and
       // re-enabling would briefly expose the button again mid-redirect.
       setPlacingOrder(false);
+      if (err?.code === "phone_not_verified") {
+        setPhoneToVerify(err.phone_number || normalizePhone(guestDetails.phone_number) || "");
+        return;
+      }
       toast.error(err?.error || err?.message || "Order creation failed. Please try again.");
     }
   };
@@ -1039,6 +1052,19 @@ const Page = () => {
           </motion.div>
         </div>
       )}
+
+      {/* COD phone verification — verifying places the order straight away. */}
+      <PhoneVerifyModal
+        isOpen={phoneToVerify !== null}
+        initialPhone={phoneToVerify || ""}
+        title="Verify your number for COD"
+        description="To confirm Cash on Delivery orders, we send a one-time code on WhatsApp. You only do this once."
+        onClose={() => setPhoneToVerify(null)}
+        onVerified={() => {
+          setPhoneToVerify(null);
+          handleCreateOrder("cod");
+        }}
+      />
 
       {/* Address Modal */}
       {showAddressModal && (

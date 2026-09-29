@@ -2,6 +2,7 @@
 import { loginApi } from "@/services/auth/login";
 import { signUp } from "@/services/auth/signUp";
 import { googleAuthApi } from "@/services/auth/googleAuth";
+import { verifyLoginOtpApi } from "@/services/auth/phoneOtp";
 import { setAuthToken, removeAuthToken, getAuthToken } from "@/utils/authToken";
 
 /* ================= LOGIN ================= */
@@ -41,6 +42,22 @@ export const signupUser = createAsyncThunk(
       }
 
       return rejectWithValue(errData?.message || "Signup failed");
+    }
+  }
+);
+
+/* ================= WHATSAPP OTP LOGIN ================= */
+// Resolves with { needs_details: true } and no token when the number has no
+// account yet — the form then asks for a name and email and calls this again.
+export const otpLogin = createAsyncThunk(
+  "auth/otpLogin",
+  async (data, { rejectWithValue }) => {
+    try {
+      const res = await verifyLoginOtpApi(data);
+      if (res.access) setAuthToken(res.access);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err?.response?.data || { message: "Login failed" });
     }
   }
 );
@@ -125,6 +142,14 @@ const authSlice = createSlice({
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      /* ---------- WHATSAPP OTP LOGIN ---------- */
+      .addCase(otpLogin.fulfilled, (state, action) => {
+        if (!action.payload.access) return;
+        state.user = action.payload;
+        state.token = action.payload.access;
+        state.isAuthenticated = true;
       })
 
       /* ---------- GOOGLE LOGIN ---------- */
