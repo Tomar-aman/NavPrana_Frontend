@@ -1,12 +1,13 @@
 ﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, ShieldCheck, Loader2 } from "lucide-react";
+import { X, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import NavPranaLoader from "../../../components/NavPranaLoader";
 
 const VerifyOtpModal = ({ isOpen, email, onClose, onVerify, onResend }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [cooldown, setCooldown] = useState(30);
+  const [cooldown, setCooldown] = useState(60);
   const [verifying, setVerifying] = useState(false);
   const inputRefs = useRef([]);
 
@@ -14,7 +15,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify, onResend }) => {
   useEffect(() => {
     if (isOpen) {
       setOtp(["", "", "", "", "", ""]);
-      setCooldown(30);
+      setCooldown(60);
       setVerifying(false);
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
@@ -76,7 +77,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify, onResend }) => {
   const handleResend = async () => {
     try {
       await onResend();
-      setCooldown(30);
+      setCooldown(60);
       toast.success("New OTP sent");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Could not resend OTP");
@@ -86,6 +87,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify, onResend }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl w-full max-w-sm p-6 relative shadow-xl">
+        {verifying && <NavPranaLoader />}
         {/* Close */}
         <button
           onClick={onClose}
@@ -138,14 +140,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify, onResend }) => {
           onClick={handleVerify}
           disabled={otpString.length < 6 || verifying}
         >
-          {verifying ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Verifying...
-            </>
-          ) : (
-            "Verify OTP"
-          )}
+          {verifying ? "Verifying..." : "Verify OTP"}
         </button>
 
         {/* Resend OTP */}

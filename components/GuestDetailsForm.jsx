@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   User,
   MapPin,
-  Loader2,
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
@@ -138,7 +137,6 @@ const GuestDetailsForm = ({
     if (pinStatus === "loading")
       return (
         <p className="flex items-center gap-1 text-gray-500 text-[11px] mt-1">
-          <Loader2 size={11} className="animate-spin" />
           Checking PIN code…
         </p>
       );

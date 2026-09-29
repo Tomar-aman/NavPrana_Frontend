@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Loader2, ArrowLeft } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import WhatsAppIcon from "./icons/WhatsAppIcon";
 import { toast } from "sonner";
 import {
@@ -10,8 +10,9 @@ import {
   verifyPhoneApi,
 } from "@/services/auth/phoneOtp";
 import { normalizePhone, sanitizePhoneInput, validatePhone } from "@/lib/validators";
+import NavPranaLoader from "./NavPranaLoader";
 
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 60;
 
 /**
  * Verify the signed-in customer's phone with a WhatsApp code. Used from the
@@ -92,6 +93,7 @@ const PhoneVerifyModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl w-full max-w-sm p-6 relative shadow-xl">
+        {loading && <NavPranaLoader />}
         <button
           onClick={onClose}
           className="absolute right-4 top-4 p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition cursor-pointer"
@@ -153,7 +155,6 @@ const PhoneVerifyModal = ({
           disabled={loading}
           className="w-full mt-4 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
         >
-          {loading && <Loader2 size={16} className="animate-spin" />}
           {step === "phone" ? "Send OTP" : "Verify"}
         </button>
 

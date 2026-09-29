@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Star, X, Upload, ImagePlus, Video, Loader2 } from "lucide-react";
+import { Star, X, Upload, ImagePlus, Video } from "lucide-react";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { addReview } from "@/redux/features/reviewSlice";
@@ -268,14 +268,7 @@ const AddReviewModal = ({
             disabled={isSubmitting}
             className="flex-1 py-2.5 text-sm font-medium rounded-xl bg-primary text-white hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              "Submit Review"
-            )}
+            {isSubmitting ? "Submitting..." : "Submit Review"}
           </button>
         </div>
       </div>

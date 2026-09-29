@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import {
   Clock,
-  Loader2,
   RefreshCw,
   CheckCircle2,
   HomeIcon,
@@ -80,7 +79,7 @@ const PaymentPending = () => {
           transition={{ delay: 0.5 }}
         >
           <div className="flex items-center gap-2 mb-4">
-            <Loader2 className="w-5 h-5 text-yellow-600 animate-spin" />
+            <Clock className="w-5 h-5 text-yellow-600" />
             <span className="text-sm font-medium text-yellow-700">
               Checking payment status
             </span>

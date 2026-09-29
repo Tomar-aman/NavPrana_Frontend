@@ -20,7 +20,6 @@ import {
   Copy,
   Check,
   BadgeCheck,
-  Loader2,
 } from "lucide-react";
 
 import { sendAddress } from "@/services/profile/post-profile";
@@ -40,6 +39,7 @@ import { logout } from "@/redux/features/authSlice";
 import { getProfile } from "@/redux/features/profileSlice";
 import { useRouter } from "next/navigation";
 import PrivateRoute from "../../../components/PrivateRoute";
+import NavPranaLoader from "../../../components/NavPranaLoader";
 import VerifyOtpModal from "../auth/VerifyOtpModal";
 import PhoneVerifyModal from "../../../components/PhoneVerifyModal";
 import {
@@ -236,6 +236,7 @@ const Page = () => {
   return (
     <PrivateRoute>
       <div className="min-h-screen bg-gray-50/80 pt-28 pb-16 px-4">
+        {sendingVerification && <NavPranaLoader />}
         <div className="max-w-4xl mx-auto">
 
           {/* ============ HEADER CARD ============ */}
@@ -351,7 +352,6 @@ const Page = () => {
                           disabled={sendingVerification}
                           className="flex items-center gap-1 text-xs font-medium text-primary border border-primary/30 bg-white px-2.5 py-1 rounded-lg hover:bg-primary/5 transition cursor-pointer shrink-0 disabled:opacity-70"
                         >
-                          {sendingVerification && <Loader2 size={12} className="animate-spin" />}
                           Verify
                         </button>
                       ))}
@@ -526,9 +526,7 @@ const Page = () => {
               </h2>
 
               {loadingCoupons ? (
-                <div className="flex justify-center py-10">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                </div>
+                <NavPranaLoader />
               ) : coupons.length === 0 ? (
                 <div className="text-center py-10 text-muted-foreground">
                   <Tag size={32} className="mx-auto mb-2 opacity-30" />

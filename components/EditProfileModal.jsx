@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Camera, Loader2, User, Mail, Phone } from "lucide-react";
+import { X, Camera, User, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "@/redux/features/profileSlice";
@@ -260,14 +260,7 @@ const EditProfileModal = ({ isOpen, onClose, profile }) => {
             disabled={isSubmitting}
             className="flex-1 py-2.5 text-sm font-medium rounded-xl bg-primary text-white hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
+            {isSubmitting ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import GoogleSignInButton from "./GoogleSignInButton";
 import {
@@ -285,7 +285,6 @@ const SignupForm = memo(
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
                 Creating account...
               </>
             ) : (

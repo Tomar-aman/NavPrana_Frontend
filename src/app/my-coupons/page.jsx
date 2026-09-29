@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import PrivateRoute from "../../../components/PrivateRoute";
+import NavPranaLoader from "../../../components/NavPranaLoader";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { Tag, Copy, ChevronLeft, Gift } from "lucide-react";
@@ -69,10 +70,7 @@ export default function MyCouponsPage() {
 
           {/* List/Grid Container */}
           {loading ? (
-            <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="text-xs text-gray-400 mt-3">Fetching your winning coupons...</p>
-            </div>
+            <NavPranaLoader />
           ) : coupons.length === 0 ? (
             <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center shadow-sm space-y-4">
               <Tag size={40} className="mx-auto text-gray-300 opacity-60" />

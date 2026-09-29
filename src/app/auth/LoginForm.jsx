@@ -2,7 +2,7 @@
 
 import { memo, useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, Phone } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Phone } from "lucide-react";
 import GoogleSignInButton from "./GoogleSignInButton";
 import { validatePhone } from "@/lib/validators";
 
@@ -150,7 +150,6 @@ const LoginForm = memo(
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
                 Signing in...
               </>
             ) : (

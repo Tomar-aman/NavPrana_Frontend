@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Eye, EyeOff, Lock, Loader2 } from "lucide-react";
+import { X, Eye, EyeOff, Lock } from "lucide-react";
 
 const ChangePasswordModal = ({
   isOpen,
@@ -171,14 +171,7 @@ const ChangePasswordModal = ({
               disabled={isSubmitting}
               className="flex-1 py-2.5 text-sm font-medium rounded-xl bg-primary text-white hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                "Update Password"
-              )}
+              {isSubmitting ? "Updating..." : "Update Password"}
             </button>
           </div>
         </form>

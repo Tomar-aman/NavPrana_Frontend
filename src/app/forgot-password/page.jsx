@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Mail, KeyRound, ArrowLeft, CheckCircle2, Send,
   ShieldCheck, Eye, EyeOff, Leaf, Sparkles,
@@ -14,16 +14,22 @@ import {
   resetPassword, resetPasswordState,
   sendForgotOtp, verifyForgotOtp,
 } from "@/redux/features/passwordSlice";
+import { normalizePhone, validatePhone } from "@/lib/validators";
+import WhatsAppIcon from "../../../components/icons/WhatsAppIcon";
+
+const RESEND_SECONDS = 60;
 
 const STEPS = { EMAIL: 1, OTP: 2, RESET: 3 };
 const stepMeta = [
-  { id: STEPS.EMAIL, label: "Email" },
+  { id: STEPS.EMAIL, label: "Account" },
   { id: STEPS.OTP, label: "Verify" },
   { id: STEPS.RESET, label: "Reset" },
 ];
 
 export default function Page() {
+  // Email or mobile number; anything with an "@" is read as an email.
   const [email, setEmail] = useState("");
+  const [cooldown, setCooldown] = useState(0);
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,25 +38,47 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const { step, email: reduxEmail } = useSelector((s) => s.password);
+  const { step, contact, reset } = useSelector((s) => s.password);
   const router = useRouter();
+  const isPhone = Boolean(contact?.phone_number);
+  const sentTo = isPhone ? `+91 ${contact.phone_number}` : contact?.email;
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  const sendOtp = async (target) => {
+    try {
+      setLoading(true);
+      await dispatch(sendForgotOtp(target)).unwrap();
+      if (target.phone_number) {
+        toast.success("OTP sent on your WhatsApp", { icon: <WhatsAppIcon size={18} /> });
+      } else {
+        toast.success("OTP sent to your email");
+      }
+      setOtp("");
+      setCooldown(RESEND_SECONDS);
+    } catch (err) { toast.error(err || "Failed to send OTP"); }
+    finally { setLoading(false); }
+  };
 
   /* ── handlers ── */
   const onSubmitEmail = async () => {
-    if (!email) { toast.warning("Please enter your email"); return; }
-    try {
-      setLoading(true);
-      await dispatch(sendForgotOtp({ email })).unwrap();
-      toast.success("OTP sent to your email");
-    } catch (err) { toast.error(err || "Failed to send OTP"); }
-    finally { setLoading(false); }
+    const id = email.trim();
+    if (!id) { toast.warning("Please enter your email or phone number"); return; }
+    if (id.includes("@")) return sendOtp({ email: id });
+    const phoneError = validatePhone(id);
+    if (phoneError) { toast.warning(phoneError); return; }
+    sendOtp({ phone_number: normalizePhone(id) });
   };
 
   const onSubmitOTP = async () => {
     if (otp.length !== 6) { toast.warning("Enter a valid 6-digit OTP"); return; }
     try {
       setLoading(true);
-      await dispatch(verifyForgotOtp({ email: reduxEmail || email, otp })).unwrap();
+      await dispatch(verifyForgotOtp({ contact, otp })).unwrap();
       toast.success("OTP verified!");
     } catch (err) { toast.error(err || "Invalid OTP"); }
     finally { setLoading(false); }
@@ -62,7 +90,7 @@ export default function Page() {
     if (password !== confirmPassword) { toast.error("Passwords do not match"); return; }
     try {
       setLoading(true);
-      await dispatch(resetPassword({ email: reduxEmail || email, password, confirm_password: confirmPassword })).unwrap();
+      await dispatch(resetPassword({ ...reset, password, confirm_password: confirmPassword })).unwrap();
       toast.success("Password reset successful!");
       dispatch(resetPasswordState());
       router.push("/signin");
@@ -73,17 +101,17 @@ export default function Page() {
   /* ── per-step content ── */
   const stepIcon = {
     [STEPS.EMAIL]: <Mail size={28} className="text-primary" />,
-    [STEPS.OTP]: <KeyRound size={28} className="text-primary" />,
+    [STEPS.OTP]: isPhone ? <WhatsAppIcon size={28} /> : <KeyRound size={28} className="text-primary" />,
     [STEPS.RESET]: <ShieldCheck size={28} className="text-primary" />,
   };
   const stepTitle = {
     [STEPS.EMAIL]: "Forgot Password?",
-    [STEPS.OTP]: "Check your email",
+    [STEPS.OTP]: isPhone ? "Check your WhatsApp" : "Check your email",
     [STEPS.RESET]: "Create new password",
   };
   const stepSub = {
-    [STEPS.EMAIL]: "Enter your email and we'll send you a one-time password.",
-    [STEPS.OTP]: `Enter the 6-digit code sent to ${reduxEmail || email}`,
+    [STEPS.EMAIL]: "Enter your email or phone number and we'll send you a one-time password.",
+    [STEPS.OTP]: `Enter the 6-digit OTP sent to ${sentTo || ""}`,
     [STEPS.RESET]: "Almost done — choose a strong new password.",
   };
 
@@ -128,7 +156,7 @@ export default function Page() {
           {/* step pills */}
           <div className="space-y-3 pt-2">
             {[
-              { n: "01", label: "Enter your email address" },
+              { n: "01", label: "Enter your email or phone number" },
               { n: "02", label: "Verify with the OTP sent to you" },
               { n: "03", label: "Set your new password" },
             ].map((s) => (
@@ -203,10 +231,10 @@ export default function Page() {
                 exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.2 }}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Email Address</label>
+                    <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">Email or Phone Number</label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <input type="email" placeholder="you@example.com"
+                      <input type="text" autoComplete="username" placeholder="you@example.com or 98765 43210"
                         className={inputCls()}
                         value={email} onChange={(e) => setEmail(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && onSubmitEmail()} />
@@ -230,21 +258,33 @@ export default function Page() {
                     <label className="block text-xs font-semibold text-foreground uppercase tracking-wider mb-2">One-Time Password</label>
                     <div className="relative">
                       <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <input type="text" inputMode="numeric" maxLength={6}
+                      <input type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6}
                         placeholder="• • • • • •"
                         className={`${inputCls()} text-center tracking-[0.6em] font-bold text-lg`}
                         value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                         onKeyDown={(e) => e.key === "Enter" && onSubmitOTP()} />
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1.5 text-center">Check inbox and spam folder</p>
+                    <p className="text-xs text-muted-foreground mt-1.5 text-center flex items-center justify-center gap-1.5">
+                      {isPhone ? <><WhatsAppIcon size={13} /> OTP sent on your WhatsApp</> : "Check inbox and spam folder"}
+                    </p>
                   </div>
                   <button onClick={onSubmitOTP} disabled={loading || otp.length !== 6}
                     className="w-full flex items-center justify-center gap-2 py-3.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-sm shadow-primary/30">
                     {loading ? <span className="animate-pulse">Verifying…</span> : <><CheckCircle2 size={15} /> Verify OTP</>}
                   </button>
+                  <div className="text-center text-xs">
+                    {cooldown > 0 ? (
+                      <span className="text-muted-foreground">Resend OTP in {cooldown}s</span>
+                    ) : (
+                      <button onClick={() => sendOtp(contact)} disabled={loading}
+                        className="font-medium text-primary hover:text-primary/80 cursor-pointer disabled:opacity-50">
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
                   <button onClick={() => dispatch(resetPasswordState())}
                     className="w-full flex items-center justify-center gap-1.5 py-2.5 text-sm text-muted-foreground hover:text-foreground rounded-xl hover:bg-gray-100 transition-all">
-                    <ArrowLeft size={14} /> Change email
+                    <ArrowLeft size={14} /> Change email / number
                   </button>
                 </div>
               </motion.div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { X, MapPin, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { X, MapPin, CheckCircle2, AlertTriangle } from "lucide-react";
 import { usePincodeLookup } from "@/hooks/usePincodeLookup";
+import NavPranaLoader from "./NavPranaLoader";
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -125,7 +126,6 @@ const AddressModal = ({
     if (pinStatus === "loading")
       return (
         <p className="flex items-center gap-1 text-gray-500 text-xs mt-1">
-          <Loader2 size={12} className="animate-spin" />
           Checking PIN code…
         </p>
       );
@@ -158,6 +158,7 @@ const AddressModal = ({
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)" }}
     >
+      {isSubmitting && <NavPranaLoader />}
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -313,10 +314,7 @@ const AddressModal = ({
             className="flex-1 py-2.5 text-sm font-medium rounded-xl bg-primary text-white hover:bg-primary/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
             {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                {isEdit ? "Updating..." : "Saving..."}
-              </>
+              isEdit ? "Updating..." : "Saving..."
             ) : isEdit ? (
               "Update Address"
             ) : (

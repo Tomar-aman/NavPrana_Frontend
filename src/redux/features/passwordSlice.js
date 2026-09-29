@@ -4,29 +4,38 @@ import { forgotPasswordOTPVerify } from "@/services/auth/forgot-password-otp-ver
 import { forgotPassword } from "@/services/auth/forgot-password";
 import { changePassword as changePasswordAPI } from "@/services/auth/change-password";
 
-/* ================= SEND OTP ================= */
+// The message the backend put on an error: `message` from the WhatsApp path,
+// field lists ({"otp": ["…"]}) from the email path.
+const apiError = (err, fallback) => {
+  const data = err?.response?.data;
+  if (!data || typeof data !== "object") return fallback;
+  if (data.message) return data.message;
+  const first = Object.values(data)[0];
+  return (Array.isArray(first) ? first[0] : first) || fallback;
+};
 
+/* ================= SEND OTP ================= */
+// `contact` is { email } or { phone_number } — a phone gets the code on WhatsApp.
 export const sendForgotOtp = createAsyncThunk(
   "password/sendOtp",
-  async ({ email }, { rejectWithValue }) => {
+  async (contact, { rejectWithValue }) => {
     try {
-      return await forgotPasswordOTP({ email });
+      return await forgotPasswordOTP(contact);
     } catch (err) {
-      return rejectWithValue(
-        err?.response?.data?.message || "Failed to send OTP"
-      );
+      return rejectWithValue(apiError(err, "Failed to send OTP"));
     }
   }
 );
 
 /* ================= VERIFY OTP ================= */
+// Resolves with { uid, token }; the reset below is refused without them.
 export const verifyForgotOtp = createAsyncThunk(
   "password/verifyOtp",
-  async ({ email, otp }, { rejectWithValue }) => {
+  async ({ contact, otp }, { rejectWithValue }) => {
     try {
-      return await forgotPasswordOTPVerify({ email, otp });
+      return await forgotPasswordOTPVerify({ ...contact, otp });
     } catch (err) {
-      return rejectWithValue(err?.response?.data?.message || "Invalid OTP");
+      return rejectWithValue(apiError(err, "Invalid OTP"));
     }
   }
 );
@@ -34,13 +43,11 @@ export const verifyForgotOtp = createAsyncThunk(
 /* ================= RESET PASSWORD (FORGOT) ================= */
 export const resetPassword = createAsyncThunk(
   "password/reset",
-  async ({ email, password, confirm_password }, { rejectWithValue }) => {
+  async ({ uid, token, password, confirm_password }, { rejectWithValue }) => {
     try {
-      return await forgotPassword({ email, password, confirm_password });
+      return await forgotPassword({ uid, token, password, confirm_password });
     } catch (err) {
-      return rejectWithValue(
-        err?.response?.data?.message || "Password reset failed"
-      );
+      return rejectWithValue(apiError(err, "Password reset failed"));
     }
   }
 );
@@ -70,7 +77,8 @@ const passwordSlice = createSlice({
   name: "password",
   initialState: {
     step: 1,
-    email: "",   // stored here so it survives across step transitions
+    contact: null, // { email } or { phone_number }, kept across the steps
+    reset: null,   // { uid, token } from a verified OTP
     loading: false,
     error: null,
     successMessage: null,
@@ -79,7 +87,8 @@ const passwordSlice = createSlice({
   reducers: {
     resetPasswordState: (state) => {
       state.step = 1;
-      state.email = "";
+      state.contact = null;
+      state.reset = null;
       state.loading = false;
       state.error = null;
       state.successMessage = null;
@@ -96,7 +105,7 @@ const passwordSlice = createSlice({
       .addCase(sendForgotOtp.fulfilled, (state, action) => {
         state.loading = false;
         state.step = 2;
-        state.email = action.meta.arg.email;  // persist email in Redux
+        state.contact = action.meta.arg;
         state.successMessage = action.payload?.message;
       })
       .addCase(sendForgotOtp.rejected, (state, action) => {
@@ -108,9 +117,10 @@ const passwordSlice = createSlice({
       .addCase(verifyForgotOtp.pending, (state) => {
         state.loading = true;
       })
-      .addCase(verifyForgotOtp.fulfilled, (state) => {
+      .addCase(verifyForgotOtp.fulfilled, (state, action) => {
         state.loading = false;
         state.step = 3;
+        state.reset = { uid: action.payload.uid, token: action.payload.token };
       })
       .addCase(verifyForgotOtp.rejected, (state, action) => {
         state.loading = false;

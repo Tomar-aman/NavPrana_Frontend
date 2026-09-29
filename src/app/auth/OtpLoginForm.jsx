@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Phone, KeyRound, User, Mail, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
+import { Phone, KeyRound, User, Mail, ArrowRight, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { otpLogin } from "@/redux/features/authSlice";
 import WhatsAppIcon from "../../../components/icons/WhatsAppIcon";
 import { otpErrorMessage, sendLoginOtpApi } from "@/services/auth/phoneOtp";
 import { normalizePhone, sanitizePhoneInput, validateEmail, validatePhone } from "@/lib/validators";
+import NavPranaLoader from "../../../components/NavPranaLoader";
 
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 60;
 
 const inputClass = (hasError) =>
   `w-full pl-14 pr-4 py-3 border rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-primary/20 focus:border-primary ${hasError ? "border-red-400" : "border-gray-200"}`;
@@ -110,12 +111,13 @@ const OtpLoginForm = ({ onSuccess, onUsePassword }) => {
       disabled={loading}
       className="w-full py-3 rounded-xl bg-primary text-primary-foreground flex items-center justify-center gap-2 text-sm disabled:opacity-70 hover:bg-primary/90 transition font-medium cursor-pointer shadow-sm"
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{label}<ArrowRight size={16} /></>}
+      {label}<ArrowRight size={16} />
     </button>
   );
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      {loading && <NavPranaLoader />}
       <h2 className="text-xl font-semibold text-foreground mb-1">
         {step === "details" ? "Almost there" : "Continue with phone number"}
       </h2>

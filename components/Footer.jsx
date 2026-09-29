@@ -18,6 +18,7 @@ import { getSocialMediaLinks } from "@/services/contact/get-social-media-links";
 import { generateSlug } from "@/utils/slug";
 import { toast } from "sonner";
 import { subscribeNewsletter } from "@/services/contact/subscribe";
+import NavPranaLoader from "./NavPranaLoader";
 
 const SOCIAL_ICON_MAP = {
   facebook: Facebook,
@@ -223,12 +224,9 @@ const Footer = ({ products = [] }) => {
                     disabled={subscribing}
                     className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary flex items-center justify-center hover:bg-primary/90 transition cursor-pointer disabled:opacity-50"
                   >
-                    {subscribing ? (
-                      <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <ArrowRight size={14} className="text-white" />
-                    )}
+                    <ArrowRight size={14} className="text-white" />
                   </button>
+                  {subscribing && <NavPranaLoader />}
                 </form>
               </div>
               <p className="text-[11px] text-white/40">
