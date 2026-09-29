@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import VerifyOtpModal from "./VerifyOtpModal";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { loginUser, signupUser, verifyOtp } from "@/redux/features/authSlice";
+import { loginUser, signupUser } from "@/redux/features/authSlice";
 import { setUserData, trackCompleteRegistration } from "@/lib/meta-pixel";
 import { normalizePhone } from "@/lib/validators";
 import { Leaf } from "lucide-react";
@@ -17,8 +16,6 @@ import { Leaf } from "lucide-react";
 const AuthForm = ({ initialTab = "signin" }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [showPassword, setShowPassword] = useState(false);
-  const [showOtpModal, setShowOtpModal] = useState(false);
-  const [signupEmail, setSignupEmail] = useState("");
   const [signinLoading, setSigninLoading] = useState(false);
   const [signupLoading, setSignupLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
@@ -65,18 +62,36 @@ const AuthForm = ({ initialTab = "signin" }) => {
       // the email and strips the country code never fires if the visitor
       // submits straight from a field with the keyboard.
       const email = signupForm.email.trim();
+      const firstName = signupForm.firstName.trim();
+      const lastName = signupForm.lastName.trim();
+      const phone = normalizePhone(signupForm.phone);
+      // No OTP step any more: the account is active and signed in at once.
+      // Customers were dropping off waiting for the mail; the email can be
+      // verified later from the profile page.
       await dispatch(
         signupUser({
-          first_name: signupForm.firstName.trim(),
-          last_name: signupForm.lastName.trim(),
+          first_name: firstName,
+          last_name: lastName,
           email,
-          phone_number: normalizePhone(signupForm.phone),
+          phone_number: phone,
           password: signupForm.password,
         }),
       ).unwrap();
-      setSignupEmail(email);
-      setShowOtpModal(true);
-      toast.success("OTP sent");
+      toast.success("Account created! Welcome to NavPrana.");
+      // 📊 Meta Pixel — attach the new customer's details BEFORE the event, so
+      // the signup itself is matchable. ProfileContext only loads on a full
+      // page load, so without this the pixel stays anonymous for this session.
+      // Normalised the same way the account was created, or Meta hashes a
+      // different string here than it does everywhere else and the new customer
+      // fails to match against their own later events.
+      setUserData({
+        email,
+        phone_number: phone,
+        first_name: firstName,
+        last_name: lastName,
+      });
+      trackCompleteRegistration("email");
+      router.push("/");
     } catch (err) {
       if (typeof err === "object" && err !== null) {
         const fieldMap = {
@@ -97,30 +112,6 @@ const AuthForm = ({ initialTab = "signin" }) => {
       }
     } finally {
       setSignupLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (otp) => {
-    try {
-      await dispatch(verifyOtp({ email: signupEmail, otp })).unwrap();
-      toast.success("Account verified! You're now logged in.");
-      setShowOtpModal(false);
-      // 📊 Meta Pixel — attach the new customer's details BEFORE the event, so
-      // the signup itself is matchable. ProfileContext only loads on a full
-      // page load, so without this the pixel stays anonymous for this session.
-      // Normalised the same way the account was created, or Meta hashes a
-      // different string here than it does everywhere else and the new customer
-      // fails to match against their own later events.
-      setUserData({
-        email: signupEmail,
-        phone_number: normalizePhone(signupForm.phone),
-        first_name: signupForm.firstName.trim(),
-        last_name: signupForm.lastName.trim(),
-      });
-      trackCompleteRegistration("email");
-      router.push("/");
-    } catch {
-      toast.error("Invalid OTP");
     }
   };
 
@@ -198,13 +189,6 @@ const AuthForm = ({ initialTab = "signin" }) => {
             )}
           </AnimatePresence>
         </div>
-
-        <VerifyOtpModal
-          isOpen={showOtpModal}
-          email={signupEmail}
-          onClose={() => setShowOtpModal(false)}
-          onVerify={handleVerifyOtp}
-        />
       </main>
     </div>
   );

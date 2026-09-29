@@ -1,7 +1,6 @@
 ﻿import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi } from "@/services/auth/login";
 import { signUp } from "@/services/auth/signUp";
-import { verifyAPI } from "@/services/auth/verifyOTP";
 import { googleAuthApi } from "@/services/auth/googleAuth";
 import { setAuthToken, removeAuthToken, getAuthToken } from "@/utils/authToken";
 
@@ -28,7 +27,11 @@ export const signupUser = createAsyncThunk(
   "auth/signup",
   async (data, { rejectWithValue }) => {
     try {
-      return await signUp(data);
+      // Signup no longer waits on an emailed OTP: the account is active at
+      // once and the response carries tokens, same as login.
+      const res = await signUp(data);
+      setAuthToken(res.access);
+      return res;
     } catch (err) {
       const errData = err?.response?.data;
 
@@ -38,21 +41,6 @@ export const signupUser = createAsyncThunk(
       }
 
       return rejectWithValue(errData?.message || "Signup failed");
-    }
-  }
-);
-
-/* ================= VERIFY OTP ================= */
-export const verifyOtp = createAsyncThunk(
-  "auth/verifyOtp",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await verifyAPI(payload);
-      setAuthToken(res.access);
-      return res;
-    } catch (err) {
-      const msg = err?.response?.data?.message || err?.response?.data?.error || "OTP verification failed";
-      return rejectWithValue(msg);
     }
   }
 );
@@ -128,26 +116,13 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(signupUser.fulfilled, (state) => {
+      .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
-      })
-      .addCase(signupUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      /* ---------- VERIFY OTP ---------- */
-      .addCase(verifyOtp.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(verifyOtp.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user || null;
+        state.user = action.payload;
         state.token = action.payload.access;
         state.isAuthenticated = true;
       })
-      .addCase(verifyOtp.rejected, (state, action) => {
+      .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

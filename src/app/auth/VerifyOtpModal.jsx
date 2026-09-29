@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { X, ShieldCheck, Loader2 } from "lucide-react";
-import { resendVerifyApi } from "@/services/auth/resendOTP";
+import { toast } from "sonner";
 
-const VerifyOtpModal = ({ isOpen, email, onClose, onVerify }) => {
+const VerifyOtpModal = ({ isOpen, email, onClose, onVerify, onResend }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [cooldown, setCooldown] = useState(30);
   const [verifying, setVerifying] = useState(false);
@@ -73,11 +73,14 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify }) => {
     setVerifying(false);
   };
 
-  const onResend = async () => {
+  const handleResend = async () => {
     try {
-      await resendVerifyApi({ email });
+      await onResend();
       setCooldown(30);
-    } catch (err) { }
+      toast.success("New OTP sent");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not resend OTP");
+    }
   };
 
   return (
@@ -105,6 +108,8 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify }) => {
         <p className="text-sm text-center text-muted-foreground mb-6">
           We sent a 6-digit code to<br />
           <span className="font-medium text-foreground">{email}</span>
+          <br />
+          <span className="text-xs">Can&apos;t find it? Check your spam folder.</span>
         </p>
 
         {/* OTP Inputs */}
@@ -151,7 +156,7 @@ const VerifyOtpModal = ({ isOpen, email, onClose, onVerify }) => {
             </p>
           ) : (
             <button
-              onClick={onResend}
+              onClick={handleResend}
               className="text-xs font-medium text-primary hover:text-primary/80 transition cursor-pointer"
             >
               Resend OTP
