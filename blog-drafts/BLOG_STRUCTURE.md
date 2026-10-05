@@ -3,6 +3,7 @@
 Every blog post must follow this structure. Fields verified against the live DB schema
 (`GET https://api.navprana.com/api/v1/blogs/<slug>/`). The public API is **read-only** —
 posts are inserted via the Django admin.
+ok
 
 Three things decide whether a post ranks and converts, in this order:
 **(1)** it reads like a person wrote it, **(2)** every factual claim is traceable to a real source,
