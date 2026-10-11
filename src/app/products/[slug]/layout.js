@@ -36,15 +36,19 @@ export async function generateMetadata({ params }) {
   const image = featuredImage(product, `${SITE_URL}/opengraph-image`);
 
   const isCow = milkType(product) === "cow";
-  const kind = isCow ? "A2 desi cow ghee" : "A2 buffalo ghee";
+  const kind = isCow ? "A2 desi cow" : "A2 buffalo";
+  const displayPrice = Math.round(Number(product.price)) || product.price;
+  const seoPackSize = String(product.size || "").replace(/\bLtr\b/i, "litre");
+  const packSize = seoPackSize ? ` ${seoPackSize}` : "";
+  const searchTitle = isCow
+    ? `Bilona Cow Ghee${packSize} | A2 Desi — ₹${displayPrice}`
+    : `A2 Buffalo Bilona Ghee${packSize} — ₹${displayPrice}`;
 
-  // Google renders ~155 characters. The raw API `description` field is
-  // multi-paragraph marketing copy, so using it unbounded meant Google
-  // truncated and rewrote the snippet on every product page.
+  // Lead with the product and price so the snippet matches the purchase intent
+  // visible in Search Console queries such as "bilona cow ghee" and "1 litre
+  // ghee price". Keep the longer catalogue copy for social cards below.
   const description = clampDescription(
-    product.details ||
-      product.description ||
-      `Buy ${product.name} at ₹${product.price} — pure ${kind}, hand-churned bilona method, FSSAI certified. Free shipping above ₹999.`,
+    `${isCow ? "Buy Bilona Cow Ghee" : "Buy A2 Buffalo Bilona Ghee"}${packSize} at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ₹999.`,
   );
 
   // Longer copy is fine for social cards, which have no 155-char limit.
@@ -54,13 +58,13 @@ export async function generateMetadata({ params }) {
   );
 
   return {
-    title: `${product.name} — ₹${Math.round(Number(product.price)) || product.price}`,
+    title: searchTitle,
     description,
     // NOTE: no `keywords` field — see the comment in src/app/layout.js. The
     // previous list here was buffalo-only, so the two cow SKUs advertised
     // "buy buffalo ghee online" to anyone reading their source.
     openGraph: {
-      title: `Buy ${product.name} — ₹${product.price} | NavPrana Organics`,
+      title: `Buy ${searchTitle} | NavPrana Organics`,
       description: socialDescription,
       url: `/products/${slug}`,
       images: [
@@ -78,7 +82,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `Buy ${product.name} — ₹${product.price} | NavPrana Organics`,
+      title: `Buy ${searchTitle} | NavPrana Organics`,
       description: socialDescription,
       images: [image],
     },
@@ -196,10 +200,6 @@ function ProductJsonLd({ product, slug }) {
       },
     ],
   };
-
-  if (product.max_price && Number(product.max_price) > Number(product.price)) {
-    jsonLd.offers.highPrice = product.max_price;
-  }
 
   // Only emit aggregateRating when there is a real rating AND real reviews
   // behind it — Google rejects (and can penalise) a reviewCount that isn't

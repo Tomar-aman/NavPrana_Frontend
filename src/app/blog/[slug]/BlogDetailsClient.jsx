@@ -6,6 +6,14 @@ import { Clock, Leaf } from "lucide-react";
 import BlogAnalytics from "./BlogAnalytics";
 
 const BlogDetailsClient = ({ blog }) => {
+  // The CMS content convention starts with an <h1>, while this page already
+  // renders the post title as its accessible page-level <h1> above. Remove
+  // only a leading content H1 so published articles expose a single H1.
+  const articleContent = (blog.content || "").replace(
+    /^\s*<h1\b[^>]*>[\s\S]*?<\/h1>/i,
+    "",
+  );
+
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-IN", {
       year: "numeric",
@@ -80,7 +88,7 @@ const BlogDetailsClient = ({ blog }) => {
         {/* Blog Content */}
         <article
           className="blog-content"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
+          dangerouslySetInnerHTML={{ __html: articleContent }}
         />
 
         {/* Footer */}

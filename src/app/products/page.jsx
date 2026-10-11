@@ -17,11 +17,10 @@ export async function generateMetadata() {
   const from = prices.length ? Math.min(...prices) : null;
   const priceClause = from ? ` Starting ₹${from}.` : "";
 
-  const title =
-    "Buy A2 Desi Cow & Buffalo Bilona Ghee";
+  const title = "Buy A2 Bilona Ghee Online: Cow & Buffalo";
   const description =
-    `Shop pure A2 desi cow ghee and A2 buffalo bilona ghee in 500 ml and 1 litre jars.${priceClause}` +
-    " Hand-churned bilona method, grass-fed, FSSAI certified. Free shipping above ₹999.";
+    `Shop A2 desi cow ghee and A2 buffalo bilona ghee in 500 ml and 1 litre jars.${priceClause}` +
+    " Compare sizes and order online. Free shipping on orders above ₹999.";
 
   return {
     title,

@@ -14,7 +14,9 @@ export async function generateMetadata({ params }) {
     }
 
     const title = `${blog.title} | NavPrana Blog`;
-    const description = blog.excerpt || blog.meta_description || `Read about ${blog.title} on the NavPrana Organics blog. Insights on organic living and traditional food wisdom.`;
+    // `excerpt` is the blog-card copy; use the editorially written SEO
+    // description for search and social snippets when the CMS provides one.
+    const description = blog.meta_description || blog.excerpt || `Read about ${blog.title} on the NavPrana Organics blog. Insights on organic living and traditional food wisdom.`;
     const image = blog.thumbnail || `${SITE_URL}/opengraph-image`;
 
     return {
