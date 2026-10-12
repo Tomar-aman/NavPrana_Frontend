@@ -14,7 +14,9 @@ const PrivateRoute = ({ children }) => {
     const token = getAuthToken();
 
     if (!token) {
-      router.replace("/signin");
+      // Come back here after signing in, e.g. from a link in an order email.
+      const here = window.location.pathname + window.location.search;
+      router.replace(`/signin?next=${encodeURIComponent(here)}`);
     } else {
       setAuthorized(true);
     }
