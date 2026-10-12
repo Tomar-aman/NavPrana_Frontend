@@ -27,7 +27,8 @@ import { trackViewContent, trackAddToCart } from "@/lib/meta-pixel";
 import { toast } from "sonner";
 import StickyCartBar from "../../../../components/StickyCartBar";
 import { generateSlug } from "@/utils/slug";
-import { milkSource } from "@/lib/site";
+import { milkSource, milkType } from "@/lib/site";
+import ProductGuide from "./ProductGuide";
 import { familyReviews, averageRating } from "@/lib/reviews";
 import { getAmazonUrl } from "@/lib/amazon";
 import { trackEvent } from "@/lib/analytics";
@@ -587,6 +588,8 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
         </div>
 
         <ComparisonGrid milk={milkLabel} />
+
+        <ProductGuide milk={milkType(product)} />
 
         {/* Product Details Accordion Section */}
         <div className="mt-12 max-w-4xl mx-auto">

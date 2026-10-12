@@ -13,7 +13,9 @@ export async function generateMetadata({ params }) {
       };
     }
 
-    const title = `${blog.title} | NavPrana Blog`;
+    // `meta_title` is the editorially written search title from the Django
+    // admin; it was never read, so editing it there changed nothing.
+    const title = blog.meta_title?.trim() || `${blog.title} | NavPrana Blog`;
     // `excerpt` is the blog-card copy; use the editorially written SEO
     // description for search and social snippets when the CMS provides one.
     const description = blog.meta_description || blog.excerpt || `Read about ${blog.title} on the NavPrana Organics blog. Insights on organic living and traditional food wisdom.`;
@@ -59,23 +61,81 @@ export async function generateMetadata({ params }) {
   }
 }
 
+// Strip tags and decode the common HTML entities so JSON-LD carries plain text
+// ("&amp;" would otherwise show up literally in rich results).
+function htmlToText(html) {
+  return html
+    .replace(/<\/(p|li)>/gi, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;|&rsquo;|&lsquo;/g, "'")
+    .replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/&ndash;/g, "–")
+    .replace(/&mdash;/g, "—")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Extract FAQ pairs from blog content HTML for Answer Engines (AEO)
+function extractFaqsFromContent(htmlContent) {
+  if (!htmlContent || typeof htmlContent !== "string") return [];
+
+  // Match the FAQ section starting with <h2>...Frequently Asked Questions...</h2>
+  // Heading text is matched with (?:(?!<\/h2>)[\s\S])*? rather than .*? —
+  // CMS headings carry newlines (`<h2>\n FAQ\n</h2>`), which `.` does not match.
+  const faqSectionRegex =
+    /<h2[^>]*>(?:(?!<\/h2>)[\s\S])*?(?:Frequently Asked Questions|FAQ)[\s\S]*?<\/h2>([\s\S]*?)(?=<h2|$)/i;
+  const match = htmlContent.match(faqSectionRegex);
+  if (!match || !match[1]) return [];
+
+  const sectionHtml = match[1];
+  // The answer is everything up to the next question, so multi-paragraph
+  // answers and lists are kept whole.
+  const qaRegex = /<h3[^>]*>([\s\S]*?)<\/h3>([\s\S]*?)(?=<h3|$)/gi;
+  const faqs = [];
+  let item;
+  while ((item = qaRegex.exec(sectionHtml)) !== null) {
+    const q = htmlToText(item[1]);
+    const a = htmlToText(item[2]);
+    if (q && a) {
+      faqs.push({ question: q, answer: a });
+    }
+  }
+  return faqs;
+}
+
 // Blog Article JSON-LD
 function BlogJsonLd({ blog, slug }) {
   if (!blog) return null;
+
+  const faqs = extractFaqsFromContent(blog.content);
+
+  const authorEntity =
+    blog.author && !blog.author.startsWith("REPLACE")
+      ? {
+          "@type": "Person",
+          name: blog.author,
+          url: `${SITE_URL}/about`,
+        }
+      : {
+          "@type": "Organization",
+          name: "NavPrana Team",
+          url: SITE_URL,
+        };
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: blog.title,
-    description: blog.excerpt || "",
-    image: blog.thumbnail,
+    description: blog.meta_description || blog.excerpt || "",
+    image: blog.thumbnail || `${SITE_URL}/opengraph-image`,
     datePublished: blog.created_at,
     dateModified: blog.updated_at || blog.created_at,
-    author: {
-      "@type": "Organization",
-      name: "NavPrana Team",
-      url: SITE_URL,
-    },
+    author: authorEntity,
     publisher: {
       "@type": "Organization",
       name: "NavPrana Organics",
@@ -115,6 +175,22 @@ function BlogJsonLd({ blog, slug }) {
     ],
   };
 
+  const faqJsonLd =
+    faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: f.answer,
+            },
+          })),
+        }
+      : null;
+
   return (
     <>
       <script
@@ -125,6 +201,12 @@ function BlogJsonLd({ blog, slug }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
     </>
   );
 }

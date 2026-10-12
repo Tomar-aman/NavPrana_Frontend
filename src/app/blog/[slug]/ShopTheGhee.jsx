@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { generateSlug } from "@/utils/slug";
-import { milkType, featuredImage } from "@/lib/site";
+import { featuredImage } from "@/lib/site";
+import { orderProductsForBlog } from "./orderProducts";
+import { familyName } from "@/lib/variants";
 
 /**
  * Server component — a product block appended to every blog post.
@@ -19,29 +21,12 @@ import { milkType, featuredImage } from "@/lib/site";
 export default function ShopTheGhee({ blog, products = [] }) {
   if (!products.length) return null;
 
-  const haystack = `${blog?.title || ""} ${blog?.slug || ""} ${
-    blog?.excerpt || ""
-  }`.toLowerCase();
-
-  const mentionsCow = /\bcow\b/.test(haystack);
-  const mentionsBuffalo = /buffalo/.test(haystack);
-
-  // Lead with whichever milk the post is actually about. When a post names both
-  // (e.g. "cow ghee vs buffalo ghee") or neither, leave the catalogue order.
-  let ordered = products;
-  if (mentionsCow !== mentionsBuffalo) {
-    const want = mentionsCow ? "cow" : "buffalo";
-    ordered = [
-      ...products.filter((p) => milkType(p) === want),
-      ...products.filter((p) => milkType(p) !== want),
-    ];
-  }
-
-  const shown = ordered.slice(0, 4);
+  const shown = orderProductsForBlog(blog, products).slice(0, 4);
 
   return (
     <aside
       aria-labelledby="shop-the-ghee"
+      data-cta-placement="shop_the_ghee"
       className="max-w-3xl mx-auto px-4 pb-14"
     >
       <div className="border-t border-gray-100 pt-8">
@@ -79,11 +64,11 @@ export default function ShopTheGhee({ blog, products = [] }) {
                       href={`/products/${slug}`}
                       className="hover:text-primary transition before:absolute before:inset-0 before:content-['']"
                     >
-                      {product.name}
+                      {familyName(product)}
                     </Link>
                   </h3>
                   <span className="text-sm font-bold text-foreground">
-                    ₹{product.price}
+                    From ₹{Math.round(Number(product.price))}
                   </span>
                   <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-primary">
                     View details

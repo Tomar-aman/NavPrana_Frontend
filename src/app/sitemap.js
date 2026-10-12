@@ -1,5 +1,6 @@
 import { generateSlug } from "@/utils/slug";
 import { SITE_URL, getProducts, getBlogList } from "@/lib/site";
+import { primaryVariants } from "@/lib/variants";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,9 @@ async function fetchProductPages() {
   // had drifted from the real catalogue and 404'd — a sitemap full of 404s is
   // worse than a shorter sitemap, so an empty list is the correct fallback.
   const products = await getProducts({ revalidate: 86400 });
-  return products.map((product) => ({
+  // Only the canonical size of each ghee — the other sizes name it as their
+  // canonical, and listing them too would send Google conflicting signals.
+  return primaryVariants(products).map((product) => ({
     url: `${SITE_URL}/products/${generateSlug(product.name)}`,
     lastModified: new Date(product.updated_at || Date.now()),
     changeFrequency: "weekly",

@@ -5,16 +5,17 @@ export const metadata = {
   // No `keywords` field — Google has ignored <meta name="keywords">
   // since 2009. Target terms belong in visible headings and body copy.
   openGraph: {
-    title: "About NavPrana Organics — Best Organic Bilona Ghee Brand in India",
+    title: "About NavPrana Organics — Vedic Bilona Ghee from Chambal Valley",
     description:
-      "Discover the story of NavPrana Organics. Pure desi A2 bilona ghee from Chambal valley. Best bilona ghee in India — traditional Bilona method, grass-fed, FSSAI certified.",
+      "The story of NavPrana Organics: pure A2 desi cow ghee and buffalo bilona ghee hand-churned in Morena, Chambal valley. Grass-fed, FSSAI certified.",
     url: "/about",
+    type: "website",
   },
   twitter: {
     card: "summary",
-    title: "About NavPrana Organics — Best Bilona Ghee Brand in India",
+    title: "About NavPrana Organics — Vedic Bilona Ghee from Chambal Valley",
     description:
-      "India's best organic bilona ghee brand. Pure desi buffalo A2 ghee from Chambal valley, traditional Bilona method.",
+      "Pure A2 desi cow ghee and buffalo bilona ghee from the Chambal valley, Madhya Pradesh. Traditional bilona method, grass-fed, zero additives.",
   },
   alternates: {
     canonical: "/about",
@@ -24,3 +25,4 @@ export const metadata = {
 export default function AboutLayout({ children }) {
   return children;
 }
+

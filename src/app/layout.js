@@ -132,8 +132,8 @@ const organizationJsonLd = {
   sameAs: [
     "https://www.instagram.com/navprana/",
     "https://www.facebook.com/navprana",
-    // "https://twitter.com/navprana",
-    // "https://www.youtube.com/@navprana",
+    "https://www.amazon.in/dp/B0H6VF8R7S",
+    "https://www.amazon.in/dp/B0H4VFYGJ7",
   ],
   knowsAbout: [
     "Bilona Ghee",
@@ -143,7 +143,10 @@ const organizationJsonLd = {
     "Organic Ghee",
     "Pure Desi Ghee",
     "Traditional Bilona Method",
+    "Vedic Bilona Method",
     "Grass-fed Ghee",
+    "Ayurvedic Ghee",
+    "Danedar Ghee",
     "Organic Food India",
     "Chambal Valley Products",
   ],

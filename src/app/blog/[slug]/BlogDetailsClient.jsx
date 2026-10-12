@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock, Leaf } from "lucide-react";
 import BlogAnalytics from "./BlogAnalytics";
+import { InlineProductCard, StickyShopBar } from "./BlogProductCta";
 
-const BlogDetailsClient = ({ blog }) => {
+const BlogDetailsClient = ({ blog, featuredProduct = null }) => {
   // The CMS content convention starts with an <h1>, while this page already
   // renders the post title as its accessible page-level <h1> above. Remove
   // only a leading content H1 so published articles expose a single H1.
@@ -13,6 +14,14 @@ const BlogDetailsClient = ({ blog }) => {
     /^\s*<h1\b[^>]*>[\s\S]*?<\/h1>/i,
     "",
   );
+
+  // Split the article just before its second <h2> — after the intro and first
+  // section — so the product card lands while the reader is still engaged.
+  // Posts with fewer than two sections get no inline card.
+  const h2Positions = [...articleContent.matchAll(/<h2\b/gi)].map((m) => m.index);
+  const splitAt = featuredProduct && h2Positions.length >= 2 ? h2Positions[1] : -1;
+  const contentBefore = splitAt > -1 ? articleContent.slice(0, splitAt) : articleContent;
+  const contentAfter = splitAt > -1 ? articleContent.slice(splitAt) : "";
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-IN", {
@@ -86,10 +95,21 @@ const BlogDetailsClient = ({ blog }) => {
         )}
 
         {/* Blog Content */}
-        <article
-          className="blog-content"
-          dangerouslySetInnerHTML={{ __html: articleContent }}
-        />
+        <article>
+          <div
+            className="blog-content"
+            dangerouslySetInnerHTML={{ __html: contentBefore }}
+          />
+          {contentAfter && (
+            <>
+              <InlineProductCard product={featuredProduct} />
+              <div
+                className="blog-content"
+                dangerouslySetInnerHTML={{ __html: contentAfter }}
+              />
+            </>
+          )}
+        </article>
 
         {/* Footer */}
         <div className="mt-12 pt-8 border-t border-gray-100">
@@ -109,6 +129,7 @@ const BlogDetailsClient = ({ blog }) => {
           </div>
         </div>
       </main>
+      <StickyShopBar product={featuredProduct} />
     </div>
   );
 };

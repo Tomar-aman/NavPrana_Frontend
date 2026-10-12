@@ -5,6 +5,7 @@ import {
   trackBlogView,
   trackBlogScroll,
   trackBlogRead,
+  trackBlogProductClick,
 } from "@/lib/analytics";
 
 const SCROLL_MILESTONES = [25, 50, 75, 100];
@@ -99,14 +100,36 @@ const BlogAnalytics = ({ blog }) => {
       }
     };
 
+    // --- blog → product clicks ---------------------------------------------
+    // One delegated listener covers every product link on the page: links
+    // inside the CMS article body (which this code can't attach handlers to),
+    // the in-article card, the sticky bar and the ShopTheGhee block. The
+    // nearest [data-cta-placement] ancestor says which one was used.
+    const onClick = (e) => {
+      const link = e.target.closest?.("a[href]");
+      if (!link) return;
+      const url = new URL(link.href, window.location.origin);
+      if (url.origin !== window.location.origin) return;
+      if (!url.pathname.startsWith("/products")) return;
+      trackBlogProductClick({
+        ...meta,
+        linkUrl: url.pathname,
+        placement:
+          link.closest("[data-cta-placement]")?.dataset.ctaPlacement ||
+          "article_link",
+      });
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVisibilityChange);
+    document.addEventListener("click", onClick);
     window.addEventListener("pagehide", flush);
 
     onScroll(); // record the initial position, incl. short unscrollable posts
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("click", onClick);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", flush);
       flush(); // client-side navigation away from this post

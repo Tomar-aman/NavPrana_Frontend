@@ -116,4 +116,32 @@ export const trackBlogRead = ({
   });
 };
 
+/**
+ * blog_product_click — a reader followed a link from a blog post into the
+ * catalogue. This is the event that answers "is blog traffic reaching the
+ * product pages?" — mark it as a key event in GA4 Admin to see it in reports.
+ *
+ * @param {Object} meta
+ * @param {string} meta.slug      - the blog post the click came from
+ * @param {string} meta.title
+ * @param {string} meta.category
+ * @param {string} meta.linkUrl   - the product / catalogue path clicked
+ * @param {string} meta.placement - inline_card | sticky_bar | shop_the_ghee | article_link
+ */
+export const trackBlogProductClick = ({
+  slug,
+  title,
+  category,
+  linkUrl,
+  placement,
+} = {}) => {
+  trackEvent("blog_product_click", {
+    blog_slug: slug,
+    blog_title: title,
+    blog_category: category,
+    link_url: linkUrl,
+    cta_placement: placement,
+  });
+};
+
 export { GA_ID };

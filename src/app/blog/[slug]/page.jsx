@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { API_BASE, getProducts, getBlogList } from "@/lib/site";
 import BlogDetailsClient from "./BlogDetailsClient";
 import ShopTheGhee from "./ShopTheGhee";
+import { orderProductsForBlog } from "./orderProducts";
+import { primaryVariants } from "@/lib/variants";
 
 
 // Allow new blog slugs not known at build time to be rendered on-demand
@@ -37,10 +39,15 @@ const Page = async ({ params }) => {
     notFound();
   }
 
+  // One card per ghee, linking its canonical page — the size picker on the
+  // product page covers the other jar sizes.
+  const familyProducts = primaryVariants(products || []);
+  const featuredProduct = orderProductsForBlog(blog, familyProducts)[0] || null;
+
   return (
     <>
-      <BlogDetailsClient blog={blog} />
-      <ShopTheGhee blog={blog} products={products} />
+      <BlogDetailsClient blog={blog} featuredProduct={featuredProduct} />
+      <ShopTheGhee blog={blog} products={familyProducts} />
     </>
   );
 };

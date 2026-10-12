@@ -8,6 +8,8 @@ import {
   clampDescription,
 } from "@/lib/site";
 import { familyReviews, averageRating, reviewerName } from "@/lib/reviews";
+import { familyMembers } from "@/lib/variants";
+import { PRODUCT_GUIDE } from "./productGuide";
 
 async function getProductBySlug(slug) {
   const products = await getProducts();
@@ -37,19 +39,44 @@ export async function generateMetadata({ params }) {
 
   const isCow = milkType(product) === "cow";
   const kind = isCow ? "A2 desi cow" : "A2 buffalo";
-  const displayPrice = Math.round(Number(product.price)) || product.price;
+  const price = (p) => Math.round(Number(p.price)) || p.price;
+  const displayPrice = price(product);
   const seoPackSize = String(product.size || "").replace(/\bLtr\b/i, "litre");
   const packSize = seoPackSize ? ` ${seoPackSize}` : "";
-  const searchTitle = isCow
-    ? `Bilona Cow Ghee${packSize} | A2 Desi — ₹${displayPrice}`
-    : `A2 Buffalo Bilona Ghee${packSize} — ₹${displayPrice}`;
 
-  // Lead with the product and price so the snippet matches the purchase intent
-  // visible in Search Console queries such as "bilona cow ghee" and "1 litre
-  // ghee price". Keep the longer catalogue copy for social cards below.
-  const description = clampDescription(
-    `${isCow ? "Buy Bilona Cow Ghee" : "Buy A2 Buffalo Bilona Ghee"}${packSize} at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ₹999.`,
-  );
+  // All sizes of this ghee share one canonical URL (see src/lib/variants.js).
+  // The canonical page is titled for the ghee as a whole, so it can rank for
+  // "bilona cow ghee" whichever jar size the searcher ends up buying.
+  const members = familyMembers(product, product.catalogue || []);
+  const canonicalSlug = generateSlug(members[0].name);
+  const isCanonical = canonicalSlug === slug;
+  const sizeList = members
+    .map((p) => String(p.size || "").replace(/\s+/g, "").replace(/ltr$/i, "L"))
+    .filter(Boolean)
+    .join(" & ");
+
+  let searchTitle;
+  let description;
+  if (isCanonical && members.length > 1) {
+    const from = Math.min(...members.map((p) => Number(p.price) || Infinity));
+    searchTitle = isCow
+      ? `Bilona Cow Ghee — A2 Desi, ${sizeList} from ₹${from}`
+      : `A2 Buffalo Bilona Ghee — ${sizeList} from ₹${from}`;
+    description = clampDescription(
+      `Buy ${isCow ? "A2 desi cow bilona ghee" : "A2 buffalo bilona ghee"}, hand-churned from curd in the Chambal valley. ` +
+        members.map((p) => `${p.size} ₹${price(p)}`).join(", ") +
+        ". FSSAI certified. Free shipping above ₹999.",
+    );
+  } else {
+    // Lead with the product and price so the snippet matches the purchase
+    // intent visible in Search Console queries such as "bilona cow ghee".
+    searchTitle = isCow
+      ? `Bilona Cow Ghee${packSize} | A2 Desi — ₹${displayPrice}`
+      : `A2 Buffalo Bilona Ghee${packSize} — ₹${displayPrice}`;
+    description = clampDescription(
+      `${isCow ? "Buy Bilona Cow Ghee" : "Buy A2 Buffalo Bilona Ghee"}${packSize} at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ₹999.`,
+    );
+  }
 
   // Longer copy is fine for social cards, which have no 155-char limit.
   const socialDescription = clampDescription(
@@ -66,7 +93,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `Buy ${searchTitle} | NavPrana Organics`,
       description: socialDescription,
-      url: `/products/${slug}`,
+      url: `/products/${canonicalSlug}`,
       images: [
         {
           url: image,
@@ -87,7 +114,7 @@ export async function generateMetadata({ params }) {
       images: [image],
     },
     alternates: {
-      canonical: `/products/${slug}`,
+      canonical: `/products/${canonicalSlug}`,
     },
   };
 }
@@ -259,6 +286,18 @@ function ProductJsonLd({ product, slug }) {
     ],
   };
 
+  // Mirrors the visible FAQ rendered by ./ProductGuide.jsx.
+  const guide = PRODUCT_GUIDE[milkType(product)];
+  const faqJsonLd = guide && {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: guide.faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <>
       <script
@@ -269,6 +308,12 @@ function ProductJsonLd({ product, slug }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
     </>
   );
 }

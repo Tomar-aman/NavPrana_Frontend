@@ -1,18 +1,19 @@
 export const metadata = {
-  title: "Health Benefits of Bilona Ghee",
-  description: "Discover the incredible health benefits of pure desi bilona ghee — heart health, brain function, energy, immune support, skin care, and digestive health. Learn why NavPrana's A2 bilona ghee is the best organic ghee in India. Grass-fed buffalo ghee, traditional Bilona method.",
-  // No `keywords` field — Google has ignored <meta name="keywords">
-  // since 2009. Target terms belong in visible headings and body copy.
+  title: "Health Benefits of A2 Bilona Ghee",
+  description:
+    "Discover the health benefits of pure A2 desi cow and buffalo bilona ghee for digestion, heart health, immunity, and brain function. Grass-fed, FSSAI certified.",
   openGraph: {
-    title: "Health Benefits of Pure Desi Bilona Ghee | NavPrana Organics — Best Ghee in India",
+    title: "Health Benefits of Pure A2 Bilona Ghee | NavPrana Organics",
     description:
-      "Discover the powerful health benefits of traditional A2 bilona ghee — from heart health to brain function. Best organic ghee in India.",
+      "Discover the science-backed health benefits of traditional A2 bilona ghee — digestion, brain function, energy, and heart health.",
     url: "/health-benefits",
+    type: "website",
   },
   twitter: {
-    card: "summary",
-    title: "Health Benefits of Pure Desi Bilona Ghee | NavPrana Organics",
-    description: "Discover the incredible health benefits of A2 bilona ghee — superfood for digestion, immunity, brain health. Best organic ghee in India.",
+    card: "summary_large_image",
+    title: "Health Benefits of Pure A2 Bilona Ghee | NavPrana Organics",
+    description:
+      "Discover the health benefits of A2 bilona ghee — superfood for digestion, immunity, and sustained energy.",
   },
   alternates: {
     canonical: "/health-benefits",
@@ -22,3 +23,4 @@ export const metadata = {
 export default function HealthBenefitsLayout({ children }) {
   return children;
 }
+
