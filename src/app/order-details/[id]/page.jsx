@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   Home,
   ExternalLink,
+  RotateCcw,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -77,6 +78,12 @@ const STATUS_CONFIG = {
     color: "bg-red-50",
     iconColor: "text-red-500",
     message: "This order was cancelled.",
+  },
+  Returned: {
+    icon: RotateCcw,
+    color: "bg-amber-50",
+    iconColor: "text-amber-600",
+    message: "This order was returned to us.",
   },
 };
 

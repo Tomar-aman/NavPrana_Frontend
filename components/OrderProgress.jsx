@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Package, Clock, Truck, CheckCircle2, XCircle } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle2, XCircle, RotateCcw } from "lucide-react";
 
 /**
  * Supported status values:
- * "Placed" | "Processing" | "Shipped" | "Delivered" | "Cancelled" | "Failed"
+ * "Placed" | "Processing" | "Shipped" | "Delivered" | "Returned" | "Cancelled" | "Failed"
  */
 const OrderProgress = ({ status }) => {
 
@@ -18,8 +18,12 @@ const OrderProgress = ({ status }) => {
 
   const isCancelled = status === "Cancelled";
   const isFailed = status === "Failed";
+  // A returned order went all the way to the customer first.
+  const isReturned = status === "Returned";
 
-  const currentIndex = steps.findIndex((s) => s.key === status);
+  const currentIndex = isReturned
+    ? steps.length - 1
+    : steps.findIndex((s) => s.key === status);
 
   // 🔒 Fallback for safety
   const safeIndex = currentIndex === -1 ? 0 : currentIndex;
@@ -86,6 +90,18 @@ const OrderProgress = ({ status }) => {
         >
           <XCircle size={20} />
           {isCancelled ? "Order Cancelled" : "Payment Failed"}
+        </motion.div>
+      )}
+
+      {/* RETURNED STATE */}
+      {isReturned && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-6 flex items-center justify-center gap-2 text-amber-600 font-medium"
+        >
+          <RotateCcw size={20} />
+          Order Returned
         </motion.div>
       )}
     </div>
