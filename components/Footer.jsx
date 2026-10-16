@@ -43,6 +43,7 @@ const Footer = ({ products = [] }) => {
   const quickLinks = [
     { label: "Home", path: "/" },
     { label: "All Products", path: "/products" },
+    { label: "Bilona Ghee", path: "/bilona-ghee" },
     { label: "A2 Desi Cow Ghee", path: "/a2-desi-cow-ghee" },
     { label: "Ghee Benefits", path: "/health-benefits" },
     { label: "Blog", path: "/blog" },
@@ -83,7 +84,7 @@ const Footer = ({ products = [] }) => {
               />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed max-w-xs">
-              India's best organic bilona ghee brand — bringing you 100% pure desi ghee
+              Pure A2 bilona ghee from the Chambal valley — 100% pure desi ghee made
               using traditional Bilona methods passed down through generations. Buy ghee online from NavPrana.
             </p>
 

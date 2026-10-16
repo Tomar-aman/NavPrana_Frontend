@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CheckCircle2, Leaf, Award, Truck, ArrowRight } from "lucide-react";
 import { SITE_URL, getProducts, milkType, featuredImage } from "@/lib/site";
 import { generateSlug } from "@/utils/slug";
+import { fetchPricingServer } from "@/lib/pricing";
 
 /*
  * =============================================================================
@@ -129,7 +130,7 @@ export async function generateMetadata() {
 }
 
 export default async function Page() {
-  const all = await getProducts();
+  const [all, pricing] = await Promise.all([getProducts(), fetchPricingServer()]);
   const products = cowProducts(all);
 
   const faqJsonLd = {
@@ -204,7 +205,7 @@ export default async function Page() {
               {[
                 { icon: Leaf, label: "Grass-fed, indigenous breeds" },
                 { icon: Award, label: "FSSAI certified" },
-                { icon: Truck, label: "Free shipping above ₹999" },
+                { icon: Truck, label: `Free shipping above ₹${Math.round(pricing.free_shipping_threshold)}` },
               ].map((item) => (
                 <span
                   key={item.label}
@@ -390,6 +391,10 @@ export default async function Page() {
               Want the buffalo one instead?{" "}
               <Link href="/products" className="text-primary font-medium hover:underline">
                 See the full range
+              </Link>
+              , or read{" "}
+              <Link href="/bilona-ghee" className="text-primary font-medium hover:underline">
+                how to choose pure bilona ghee
               </Link>
               .
             </p>

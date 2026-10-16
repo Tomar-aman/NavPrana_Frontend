@@ -116,7 +116,7 @@ const Page = () => {
       icon: Sprout,
       title: "Beyond Just Ghee",
       description:
-        "Starting with Ghee, we are on a mission to bring a complete range of pure, organic food staples to your table.",
+        "Starting with Ghee, we are on a mission to bring a complete range of pure, traditionally made food staples to your table.",
       color: "bg-purple-50",
       iconColor: "text-purple-500",
     },
@@ -192,14 +192,14 @@ const Page = () => {
               While we are launching with our premium{" "}
               <strong>pure desi Buffalo A2 Bilona Ghee</strong> as our first offering, NavPrana is
               more than just a dairy brand. We are building a portfolio of
-              organic food products — the best bilona ghee in India and beyond — that bring the raw, unadulterated power of
-              nature straight to your kitchen. Buy organic ghee online from NavPrana Organics.
+              traditionally made food products — starting with bilona ghee — that bring the raw, unadulterated power of
+              nature straight to your kitchen. Buy pure bilona ghee online from NavPrana Organics.
             </p>
           </div>
           <div className="relative h-64 md:h-full min-h-[300px] rounded-2xl overflow-hidden border border-gray-100">
             <Image
               src={traditionalCowImage}
-              alt="Buffaloes in Chambal Valley — Source of NavPrana's pure desi A2 bilona ghee, best organic buffalo ghee in India"
+              alt="Buffaloes in Chambal Valley — Source of NavPrana's pure A2 buffalo bilona ghee"
               fill
               className="object-cover"
             />

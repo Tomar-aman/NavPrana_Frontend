@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Ghee FAQ — Purity, Method & Delivery",
-  description: "Find answers to common questions about buying bilona ghee online, pure desi ghee pricing, A2 bilona ghee quality, organic ghee benefits, shipping, and more. NavPrana Organics — best bilona ghee in India.",
+  description: "Find answers to common questions about buying bilona ghee online, pure desi ghee pricing, A2 bilona ghee quality, ghee benefits, shipping, and more. NavPrana Organics — best bilona ghee in India.",
   // No `keywords` field — Google has ignored <meta name="keywords">
   // since 2009. Target terms belong in visible headings and body copy.
   openGraph: {

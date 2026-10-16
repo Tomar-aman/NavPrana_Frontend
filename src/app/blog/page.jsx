@@ -26,8 +26,8 @@ async function getBlogListingData() {
 }
 
 export async function generateMetadata() {
-  const title = "Ghee & Organic Living Blog";
-  const description = "Discover the benefits of organic living. Read our blog for health tips, traditional food preparation methods, and the science behind pure organic ingredients like Bilona Ghee.";
+  const title = "Ghee & Traditional Food Blog";
+  const description = "Read our blog for ghee guides, traditional food preparation methods, and how bilona ghee is made and used.";
 
   return {
     title,
@@ -52,8 +52,8 @@ const Page = async () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: "NavPrana Organic Blog",
-    description: "Articles on organic living and healthy food habits.",
+    name: "NavPrana Blog",
+    description: "Articles on ghee, traditional food and healthy food habits.",
     url: `${BASE_URL}/blog`,
     publisher: {
       "@type": "Organization",

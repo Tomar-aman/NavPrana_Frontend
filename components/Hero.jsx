@@ -14,15 +14,15 @@ const Hero = () => {
   const slides = [
     {
       image: salesImage,
-      alt: "NavPrana Organics - Limited Time Offer - Buy 100% Organic Bilona Ghee Online",
+      alt: "NavPrana Organics - Limited Time Offer - Buy 100% Pure Bilona Ghee Online",
     },
     {
       image: pineappleImage,
-      alt: "NavPrana Organics Pure Desi Bilona Ghee — Best Organic Buffalo Ghee in India",
+      alt: "NavPrana Organics Pure Desi Bilona Ghee — A2 Buffalo Bilona Ghee",
     },
     {
       image: cowImage,
-      alt: "NavPrana Organics Pure Desi A2 Cow Bilona Ghee — Best Organic Cow Ghee in India",
+      alt: "NavPrana Organics Pure Desi A2 Cow Bilona Ghee — Hand-Churned A2 Cow Ghee",
     }
   ];
 

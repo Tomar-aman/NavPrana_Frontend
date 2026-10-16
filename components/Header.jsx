@@ -26,6 +26,7 @@ import LogoImage from "@/assets/logo-ghee.svg";
 import { logout } from "@/redux/features/authSlice";
 import { getProfile } from "@/redux/features/profileSlice";
 import { getCart } from "@/redux/features/cartSlice";
+import { usePricing } from "@/hooks/usePricing";
 
 const NAV_LINKS = [
   { label: "Home", path: "/", icon: Home },
@@ -36,6 +37,7 @@ const NAV_LINKS = [
 ];
 
 const Header = () => {
+  const { pricing } = usePricing();
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
@@ -136,7 +138,7 @@ const Header = () => {
                 on every page converts better than a brain-health claim anyway.
                 Keep anything added here factual. */}
             <div className="animate-marquee whitespace-nowrap text-white text-xs font-medium tracking-wide">
-              <span className="mx-8">🚚 Free shipping above ₹999</span>
+              <span className="mx-8">🚚 Free shipping above ₹{Math.round(pricing.free_shipping_threshold)}</span>
               <span className="mx-8">🧈 Hand-churned bilona method</span>
               <span className="mx-8">🌾 Grass-fed, open grazing</span>
               <span className="mx-8">✅ FSSAI certified</span>

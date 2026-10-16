@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "Read the NavPrana Organics privacy policy. Learn how we collect, use, and protect your personal information when you shop for organic desi ghee on our website.",
+    "Read the NavPrana Organics privacy policy. Learn how we collect, use, and protect your personal information when you shop for desi ghee on our website.",
   openGraph: {
     title: "Privacy Policy | NavPrana Organics",
     description:

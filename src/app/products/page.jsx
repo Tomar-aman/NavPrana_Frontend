@@ -2,6 +2,7 @@ import ProductsClient from "./ProductsClient";
 import BuyingGuide from "./BuyingGuide";
 import { generateSlug } from "@/utils/slug";
 import { SITE_URL, getProducts } from "@/lib/site";
+import { fetchPricingServer } from "@/lib/pricing";
 
 /**
  * Metadata is generated rather than static so the price and the milk types it
@@ -10,7 +11,7 @@ import { SITE_URL, getProducts } from "@/lib/site";
  * cow SKUs, and the price was wrong.
  */
 export async function generateMetadata() {
-  const products = await getProducts();
+  const [products, pricing] = await Promise.all([getProducts(), fetchPricingServer()]);
   const prices = products
     .map((p) => Number(p.price))
     .filter((n) => Number.isFinite(n) && n > 0);
@@ -20,7 +21,7 @@ export async function generateMetadata() {
   const title = "Buy A2 Bilona Ghee Online: Cow & Buffalo";
   const description =
     `Shop A2 desi cow ghee and A2 buffalo bilona ghee in 500 ml and 1 litre jars.${priceClause}` +
-    " Compare sizes and order online. Free shipping on orders above ₹999.";
+    ` Compare sizes and order online. Free shipping on orders above ₹${Math.round(Number(pricing.free_shipping_threshold))}.`;
 
   return {
     title,

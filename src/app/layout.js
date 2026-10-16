@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { fetchPricingServer } from "@/lib/pricing";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -27,7 +28,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+// Generated rather than static so the free-shipping figure follows the
+// threshold set in the Django admin instead of drifting from it.
+export async function generateMetadata() {
+  const pricing = await fetchPricingServer();
+  const freeAbove = `₹${Math.round(Number(pricing.free_shipping_threshold))}`;
+  return {
   metadataBase: new URL(SITE_URL),
   title: {
     default: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana Organics",
@@ -38,7 +44,7 @@ export const metadata = {
     template: "%s | NavPrana Organics",
   },
   description:
-    "Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online from NavPrana Organics. Hand-churned the traditional bilona way in the Chambal valley, Madhya Pradesh. Grass-fed, FSSAI certified, nothing added. Free shipping above ₹999.",
+    `Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online from NavPrana Organics. Hand-churned the traditional bilona way in the Chambal valley, Madhya Pradesh. Grass-fed, FSSAI certified, nothing added. Free shipping above ${freeAbove}.`,
   // NOTE: no `keywords` field, deliberately.
   //
   // Google has ignored <meta name="keywords"> since 2009, so the ~110 terms
@@ -68,13 +74,13 @@ export const metadata = {
     siteName: "NavPrana Organics",
     title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana",
     description:
-      "A2 desi cow ghee and A2 buffalo bilona ghee, hand-churned the traditional bilona way in the Chambal valley. Grass-fed, FSSAI certified. Free shipping above ₹999.",
+      `A2 desi cow ghee and A2 buffalo bilona ghee, hand-churned the traditional bilona way in the Chambal valley. Grass-fed, FSSAI certified. Free shipping above ${freeAbove}.`,
   },
   twitter: {
     card: "summary_large_image",
     title: "Buy Pure A2 Desi Cow & Buffalo Bilona Ghee Online | NavPrana",
     description:
-      "A2 desi cow ghee and A2 buffalo bilona ghee from the Chambal valley. Bilona method, FSSAI certified. Free shipping above ₹999.",
+      `A2 desi cow ghee and A2 buffalo bilona ghee from the Chambal valley. Bilona method, FSSAI certified. Free shipping above ${freeAbove}.`,
     creator: "@navprana",
   },
   icons: {
@@ -101,7 +107,8 @@ export const metadata = {
         },
       }
     : {}),
-};
+  };
+}
 
 // JSON-LD Structured Data
 const organizationJsonLd = {
@@ -111,7 +118,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/opengraph-image`,
   description:
-    "NavPrana Organics is India's best organic bilona ghee brand, bringing traditionally prepared, chemical-free pure desi ghee and food products to Indian households. Our flagship products are 100% pure A2 Cow and Buffalo Bilona Ghee from the Chambal valley of Madhya Pradesh — grass-fed, FSSAI certified, and made using the traditional Bilona method.",
+    "NavPrana Organics is a bilona ghee brand bringing traditionally prepared, chemical-free pure desi ghee and food products to Indian households. Our flagship products are 100% pure A2 Cow and Buffalo Bilona Ghee from the Chambal valley of Madhya Pradesh — grass-fed, FSSAI certified, and made using the traditional Bilona method.",
   foundingDate: "2025",
   address: {
     "@type": "PostalAddress",
@@ -140,14 +147,12 @@ const organizationJsonLd = {
     "A2 Bilona Ghee",
     "A2 Desi Cow Ghee",
     "Buffalo Ghee",
-    "Organic Ghee",
     "Pure Desi Ghee",
     "Traditional Bilona Method",
     "Vedic Bilona Method",
     "Grass-fed Ghee",
     "Ayurvedic Ghee",
     "Danedar Ghee",
-    "Organic Food India",
     "Chambal Valley Products",
   ],
   // NOTE: do NOT add makesOffer / hasOfferCatalog with nested Product objects

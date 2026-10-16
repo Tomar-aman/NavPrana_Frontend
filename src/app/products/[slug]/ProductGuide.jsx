@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { PRODUCT_GUIDE } from "./productGuide";
+import { PRODUCT_GUIDE, fillFaq } from "./productGuide";
 
 /**
  * Cow- or buffalo-specific content for the product page: how it is made,
@@ -8,7 +8,7 @@ import { PRODUCT_GUIDE } from "./productGuide";
  * accordion) so the text is visible on load. The same FAQ is emitted as
  * FAQPage JSON-LD by ./layout.js.
  */
-export default function ProductGuide({ milk }) {
+export default function ProductGuide({ milk, freeShippingThreshold }) {
   const guide = PRODUCT_GUIDE[milk];
   if (!guide) return null;
 
@@ -55,7 +55,7 @@ export default function ProductGuide({ milk }) {
                 +
               </span>
             </summary>
-            <p className="mt-3 text-sm text-gray-600 leading-relaxed">{f.a}</p>
+            <p className="mt-3 text-sm text-gray-600 leading-relaxed">{fillFaq(f.a, freeShippingThreshold)}</p>
           </details>
         ))}
       </div>

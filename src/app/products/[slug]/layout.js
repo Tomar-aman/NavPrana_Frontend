@@ -9,7 +9,8 @@ import {
 } from "@/lib/site";
 import { familyReviews, averageRating, reviewerName } from "@/lib/reviews";
 import { familyMembers } from "@/lib/variants";
-import { PRODUCT_GUIDE } from "./productGuide";
+import { PRODUCT_GUIDE, fillFaq } from "./productGuide";
+import { fetchPricingServer } from "@/lib/pricing";
 
 async function getProductBySlug(slug) {
   const products = await getProducts();
@@ -36,6 +37,8 @@ export async function generateMetadata({ params }) {
   }
 
   const image = featuredImage(product, `${SITE_URL}/opengraph-image`);
+  const pricing = await fetchPricingServer();
+  const freeAbove = `₹${Math.round(Number(pricing.free_shipping_threshold))}`;
 
   const isCow = milkType(product) === "cow";
   const kind = isCow ? "A2 desi cow" : "A2 buffalo";
@@ -65,7 +68,7 @@ export async function generateMetadata({ params }) {
     description = clampDescription(
       `Buy ${isCow ? "A2 desi cow bilona ghee" : "A2 buffalo bilona ghee"}, hand-churned from curd in the Chambal valley. ` +
         members.map((p) => `${p.size} ₹${price(p)}`).join(", ") +
-        ". FSSAI certified. Free shipping above ₹999.",
+        `. FSSAI certified. Free shipping above ${freeAbove}.`,
     );
   } else {
     // Lead with the product and price so the snippet matches the purchase
@@ -74,7 +77,7 @@ export async function generateMetadata({ params }) {
       ? `Bilona Cow Ghee${packSize} | A2 Desi — ₹${displayPrice}`
       : `A2 Buffalo Bilona Ghee${packSize} — ₹${displayPrice}`;
     description = clampDescription(
-      `${isCow ? "Buy Bilona Cow Ghee" : "Buy A2 Buffalo Bilona Ghee"}${packSize} at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ₹999.`,
+      `${isCow ? "Buy Bilona Cow Ghee" : "Buy A2 Buffalo Bilona Ghee"}${packSize} at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ${freeAbove}.`,
     );
   }
 
@@ -120,8 +123,15 @@ export async function generateMetadata({ params }) {
 }
 
 // Product JSON-LD structured data
-function ProductJsonLd({ product, slug }) {
+function ProductJsonLd({ product, slug, pricing }) {
   if (!product) return null;
+
+  // Mirrors calculateShipping(): one jar on its own is the cheapest order
+  // Google can assume, so quote the fee only if that jar is under the threshold.
+  const shippingCost =
+    Number(product.price) > Number(pricing.free_shipping_threshold)
+      ? 0
+      : Number(pricing.shipping_fee);
 
   const reviews = familyReviews(product, product.catalogue || []);
   const rating = averageRating(reviews);
@@ -161,7 +171,7 @@ function ProductJsonLd({ product, slug }) {
         "@type": "OfferShippingDetails",
         shippingRate: {
           "@type": "MonetaryAmount",
-          value: "0",
+          value: String(shippingCost),
           currency: "INR",
         },
         shippingDestination: {
@@ -223,7 +233,7 @@ function ProductJsonLd({ product, slug }) {
       {
         "@type": "PropertyValue",
         name: "Diet",
-        value: "Grass-fed, Organic",
+        value: "Grass-fed",
       },
     ],
   };
@@ -294,7 +304,10 @@ function ProductJsonLd({ product, slug }) {
     mainEntity: guide.faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: fillFaq(f.a, pricing.free_shipping_threshold),
+      },
     })),
   };
 
@@ -320,11 +333,14 @@ function ProductJsonLd({ product, slug }) {
 
 export default async function ProductLayout({ children, params }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, pricing] = await Promise.all([
+    getProductBySlug(slug),
+    fetchPricingServer(),
+  ]);
 
   return (
     <>
-      <ProductJsonLd product={product} slug={slug} />
+      <ProductJsonLd product={product} slug={slug} pricing={pricing} />
       {children}
     </>
   );

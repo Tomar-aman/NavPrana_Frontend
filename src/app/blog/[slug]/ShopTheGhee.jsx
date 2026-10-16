@@ -85,6 +85,12 @@ export default function ShopTheGhee({ blog, products = [] }) {
             See all ghee
           </Link>
           <Link
+            href="/bilona-ghee"
+            className="text-primary font-medium hover:underline"
+          >
+            Buy pure bilona ghee
+          </Link>
+          <Link
             href="/a2-desi-cow-ghee"
             className="text-primary font-medium hover:underline"
           >

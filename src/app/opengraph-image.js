@@ -97,7 +97,7 @@ export default async function Image() {
             display: "flex",
           }}
         >
-          Traditional Bilona Method • 100% Organic • Farm Fresh
+          Traditional Bilona Method • 100% Natural • Farm Fresh
         </div>
 
         {/* Bottom badge */}

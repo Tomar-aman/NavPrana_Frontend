@@ -96,8 +96,7 @@ const Page = ({ initialFaqs = [] }) => {
               <span className="text-gradient">Questions</span>
             </h1>
             <p className="text-muted-foreground max-w-lg mx-auto text-sm">
-              Everything you need to know about NavPrana — our organic food
-              products, health benefits, ordering, and more.
+              Everything you need to know about NavPrana — our bilona ghee, health benefits, ordering, and more.
             </p>
           </div>
 

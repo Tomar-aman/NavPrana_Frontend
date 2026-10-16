@@ -19,7 +19,7 @@ export const metadata = {
   openGraph: {
     title: "Shipping Policy | NavPrana Organics",
     description:
-      "Fast and secure delivery of organic desi ghee across India. Temperature-controlled packaging ensures freshness.",
+      "Fast and secure delivery of pure desi ghee across India. Temperature-controlled packaging ensures freshness.",
     url: "/shipping-policy",
   },
   alternates: {

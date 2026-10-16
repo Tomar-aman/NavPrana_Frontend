@@ -92,7 +92,7 @@ const Products = ({ initialProducts = [] }) => {
     { icon: Star, title: "Verified Reviews", desc: "From real customers" },
     { icon: Heart, title: "Bilona Method", desc: "Traditional hand-churned" },
     { icon: Award, title: "FSSAI Certified", desc: "Government approved" },
-    { icon: Leaf, title: "100% Organic", desc: "Grass-fed cow & buffalo" },
+    { icon: Leaf, title: "100% Natural", desc: "Grass-fed cow & buffalo" },
   ];
 
   return (

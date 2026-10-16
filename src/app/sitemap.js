@@ -18,6 +18,7 @@ export const dynamic = "force-dynamic";
 const staticPages = [
   { url: SITE_URL, lastModified: "2026-08-22", changeFrequency: "weekly", priority: 1.0 },
   { url: `${SITE_URL}/products`, lastModified: "2026-08-22", changeFrequency: "weekly", priority: 0.95 },
+  { url: `${SITE_URL}/bilona-ghee`, lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.9 },
   { url: `${SITE_URL}/a2-desi-cow-ghee`, lastModified: "2026-08-22", changeFrequency: "monthly", priority: 0.9 },
   { url: `${SITE_URL}/health-benefits`, lastModified: "2026-08-22", changeFrequency: "monthly", priority: 0.85 },
   { url: `${SITE_URL}/about`, lastModified: "2026-08-22", changeFrequency: "monthly", priority: 0.8 },

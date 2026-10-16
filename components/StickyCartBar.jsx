@@ -41,10 +41,11 @@ const StickyCartBar = ({ product, isInCart, onAddToCart, onGoToCart, onBuyNow })
               {product.name}
             </p>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-primary font-bold text-lg">₹{product.price}</span>
+              <span className="text-primary font-bold text-lg">₹{Math.round(Number(product.price))}</span>
+              {/* MRP is dropped on the narrowest phones, where it ran under the cart button. */}
               {product.max_price && (
-                <span className="line-through text-muted-foreground text-sm">
-                  ₹{product.max_price}
+                <span className="hidden min-[380px]:inline line-through text-muted-foreground text-sm">
+                  ₹{Math.round(Number(product.max_price))}
                 </span>
               )}
             </div>

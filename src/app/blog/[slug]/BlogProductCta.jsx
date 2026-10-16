@@ -7,6 +7,7 @@ import { ArrowRight, X } from "lucide-react";
 import { generateSlug } from "@/utils/slug";
 import { featuredImage } from "@/lib/site";
 import { familyName } from "@/lib/variants";
+import { usePricing } from "@/hooks/usePricing";
 
 /**
  * In-article product card, placed a couple of sections into the post.
@@ -69,6 +70,7 @@ const DISMISS_KEY = "navprana_blog_shopbar_dismissed";
  * into view (no point showing both), and dismissible for the session.
  */
 export function StickyShopBar({ product }) {
+  const { pricing } = usePricing();
   const [pastThreshold, setPastThreshold] = useState(false);
   const [shopBlockVisible, setShopBlockVisible] = useState(false);
   const [dismissed, setDismissed] = useState(true);
@@ -129,7 +131,7 @@ export function StickyShopBar({ product }) {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold truncate">{familyName(product)}</p>
           <p className="text-xs text-muted-foreground">
-            From ₹{Math.round(Number(product.price))} · Free shipping above ₹999
+            From ₹{Math.round(Number(product.price))} · Free shipping above ₹{Math.round(pricing.free_shipping_threshold)}
           </p>
         </div>
         <Link

@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Terms of Service",
   description:
-    "Read the NavPrana Organics terms of service. Understand the terms and conditions for using our website and purchasing our organic desi ghee products.",
+    "Read the NavPrana Organics terms of service. Understand the terms and conditions for using our website and purchasing our desi ghee products.",
   openGraph: {
     title: "Terms of Service | NavPrana Organics",
     description:

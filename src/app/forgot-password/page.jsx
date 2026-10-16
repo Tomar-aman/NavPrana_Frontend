@@ -144,7 +144,7 @@ export default function Page() {
         {/* center copy */}
         <div className="relative z-10 space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 text-white/90 text-xs font-medium">
-            <Sparkles size={13} /> Pure • Organic • Trusted
+            <Sparkles size={13} /> Pure • Natural • Trusted
           </div>
           <h2 className="text-4xl font-bold text-white leading-snug">
             Secure your<br />account in<br />seconds.

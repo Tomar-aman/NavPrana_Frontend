@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { X, Gift, Sparkles, ArrowRight } from "lucide-react";
 
 const SignupOfferPopup = () => {
   const [isVisible, setIsVisible] = useState(false);
   const { isAuthenticated } = useSelector((state) => state.auth);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     // Don't show if user is logged in
@@ -18,13 +19,25 @@ const SignupOfferPopup = () => {
     const dismissed = sessionStorage.getItem("signup_popup_dismissed");
     if (dismissed) return;
 
+    // On phones, never cover the page a visitor landed on. Google demotes
+    // pages that show a full-screen popup straight after arriving from search
+    // ("intrusive interstitials"), so on mobile wait for a second page view.
+    try {
+      const seen = JSON.parse(sessionStorage.getItem("np_pages_seen") || "[]");
+      if (!seen.includes(pathname)) seen.push(pathname);
+      sessionStorage.setItem("np_pages_seen", JSON.stringify(seen));
+      if (window.matchMedia("(max-width: 767px)").matches && seen.length < 2) return;
+    } catch {
+      // Storage blocked: fall through to the timed popup.
+    }
+
     // Show popup after 5 seconds of browsing
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [isAuthenticated]);
+  }, [isAuthenticated, pathname]);
 
   const handleDismiss = () => {
     setIsVisible(false);
@@ -50,7 +63,8 @@ const SignupOfferPopup = () => {
         {/* Close button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/80 hover:bg-white text-gray-500 hover:text-gray-700 transition cursor-pointer"
+          aria-label="Close offer"
+          className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/80 hover:bg-white text-gray-500 hover:text-gray-700 transition cursor-pointer"
         >
           <X size={18} />
         </button>
@@ -81,7 +95,7 @@ const SignupOfferPopup = () => {
 
           <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
             Sign up today and receive an <strong className="text-primary">exclusive coupon code</strong> for
-            your first order of our premium organic desi ghee.
+            your first order of our pure bilona desi ghee.
           </p>
 
           {/* Discount highlight */}

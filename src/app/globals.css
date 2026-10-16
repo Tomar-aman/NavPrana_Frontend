@@ -1,6 +1,17 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* iOS Safari zooms the page when a form field under 16px is focused, which
+   throws the checkout layout sideways. Unlayered, so it beats the text-sm
+   utilities on the inputs. */
+@media (max-width: 767px) {
+    input:not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    select {
+        font-size: 16px;
+    }
+}
+
 /* Blog Content Styles */
 .blog-content {
     line-height: 1.8;

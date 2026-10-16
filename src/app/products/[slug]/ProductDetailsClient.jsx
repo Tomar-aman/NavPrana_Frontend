@@ -33,6 +33,7 @@ import { familyReviews, averageRating } from "@/lib/reviews";
 import { getAmazonUrl } from "@/lib/amazon";
 import { trackEvent } from "@/lib/analytics";
 import Link from "next/link";
+import { usePricing } from "@/hooks/usePricing";
 
 // Added: Image Magnifier Component for premium feel
 const ImageMagnifier = ({ src, alt }) => {
@@ -191,6 +192,12 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
   // Same helper the Product JSON-LD uses, so the page and the schema can never
   // disagree about which milk this SKU is made from.
   const milkLabel = milkSource(product);
+  const { pricing } = usePricing();
+  // Descriptive alt text: the admin leaves alt_text blank on product images,
+  // and the bare product name tells image search nothing about the jar.
+  const imageAlt = (img, i) =>
+    img?.alt_text ||
+    `${product.name} — pure ${milkType(product) === "cow" ? "A2 desi cow" : "A2 buffalo"} bilona ghee by NavPrana${i ? `, view ${i + 1}` : ""}`;
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -311,7 +318,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
   const mainImage = images[selectedImage]?.image || "/placeholder.png";
 
   const trustBadges = [
-    { icon: Truck, label: "Free Shipping", desc: "On orders above ₹999", color: "bg-blue-50", iconColor: "text-blue-500" },
+    { icon: Truck, label: "Free Shipping", desc: `On orders above ₹${Math.round(pricing.free_shipping_threshold)}`, color: "bg-blue-50", iconColor: "text-blue-500" },
     { icon: Shield, label: "Quality Assured", desc: "Lab tested pure ghee", color: "bg-green-50", iconColor: "text-green-600" },
     { icon: RotateCcw, label: "Easy Returns", desc: "Hassle-free process", color: "bg-amber-50", iconColor: "text-amber-500" },
   ];
@@ -345,9 +352,9 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
           </ol>
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           {/* IMAGE SECTION */}
-          <div className="flex flex-col-reverse md:flex-row gap-4">
+          <div className="flex flex-col-reverse md:flex-row gap-4 min-w-0">
              {/* Thumbnails (Vertical on desktop, horizontal on mobile) */}
              <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0 hide-scrollbar w-full md:w-20 shrink-0">
               {images.map((img, i) => (
@@ -361,7 +368,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                 >
                   <Image
                     src={img.image}
-                    alt={product.name}
+                    alt={imageAlt(img, i)}
                     fill
                     sizes="(max-width: 640px) 20vw, 80px"
                     className="object-cover"
@@ -371,7 +378,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
             </div>
 
             <div className="relative aspect-square md:aspect-[4/5] w-full bg-gray-50 rounded-2xl overflow-hidden flex-1 group">
-              <ImageMagnifier src={mainImage} alt={product.name} />
+              <ImageMagnifier src={mainImage} alt={imageAlt(images[selectedImage], selectedImage)} />
               {product.discount_precent && (
                 <span className="absolute top-4 left-4 bg-red-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-black shadow-lg z-10 tracking-wider uppercase">
                   Save {parseInt(product.discount_precent)}%
@@ -386,7 +393,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
               {/* Badges */}
               <div className="flex flex-wrap gap-2.5">
                 <span className="flex items-center gap-1.5 text-[11px] font-bold text-green-700 bg-green-50 px-3 py-1.5 rounded-full border border-green-200 uppercase tracking-wide">
-                  <Leaf size={14} /> 100% Natural Organic
+                  <Leaf size={14} /> 100% Natural, Nothing Added
                 </span>
                 <span className="flex items-center gap-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 uppercase tracking-wide">
                   <Award size={14} /> FSSAI Certified
@@ -589,7 +596,7 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
 
         <ComparisonGrid milk={milkLabel} />
 
-        <ProductGuide milk={milkType(product)} />
+        <ProductGuide milk={milkType(product)} freeShippingThreshold={pricing.free_shipping_threshold} />
 
         {/* Product Details Accordion Section */}
         <div className="mt-12 max-w-4xl mx-auto">

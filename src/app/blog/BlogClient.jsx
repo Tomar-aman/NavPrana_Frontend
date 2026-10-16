@@ -39,11 +39,11 @@ const BlogClient = ({ initialBlogs, initialCategories }) => {
             <Leaf size={13} /> NavPrana Blog
           </span>
           <h1 className="text-3xl md:text-5xl font-bold mb-4">
-            Organic Living &{" "}
+            Traditional Food &{" "}
             <span className="text-gradient">Food Wisdom</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our articles on organic food, traditional preparation
+            Explore our articles on ghee, traditional preparation
             methods, clean eating, and how pure ingredients can transform
             your family&apos;s health.
           </p>
@@ -191,7 +191,7 @@ const BlogClient = ({ initialBlogs, initialCategories }) => {
             Stay Connected with NavPrana
           </h2>
           <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
-            Get the latest articles on organic food, health tips, new product
+            Get the latest articles on ghee, health tips, new product
             launches, and exclusive offers delivered to your inbox.
           </p>
           <form
@@ -216,14 +216,14 @@ const BlogClient = ({ initialBlogs, initialCategories }) => {
                 setSubscribing(false);
               }
             }}
-            className="flex gap-2 max-w-sm mx-auto"
+            className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto"
           >
             <input
               type="email"
               placeholder="Your email address"
               value={subscribeEmail}
               onChange={(e) => setSubscribeEmail(e.target.value)}
-              className="flex-1 border border-gray-200 px-4 py-2.5 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition"
+              className="flex-1 min-w-0 border border-gray-200 px-4 py-2.5 rounded-xl text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition"
               required
             />
             <button

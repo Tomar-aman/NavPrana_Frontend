@@ -2,7 +2,7 @@
 
 > Pure A2 Desi Cow Ghee and A2 Buffalo Bilona Ghee crafted using the traditional Vedic Bilona method in Morena, Chambal Valley, Madhya Pradesh. 100% pure, grass-fed, FSSAI certified, zero additives or preservatives.
 
-NavPrana Organics (https://navprana.com) is an authentic Indian organic dairy and food wisdom brand. We preserve ancient Vedic food preparation practices, primarily focusing on hand-churned Bilona Ghee made from the milk of indigenous grass-fed cattle and buffaloes in the pristine Chambal Valley region.
+NavPrana Organics (https://navprana.com) is an Indian bilona ghee and traditional food brand. We preserve ancient Vedic food preparation practices, primarily focusing on hand-churned Bilona Ghee made from the milk of indigenous grass-fed cattle and buffaloes in the pristine Chambal Valley region.
 
 ## Core Products & Direct URLs
 
@@ -23,6 +23,7 @@ NavPrana Organics (https://navprana.com) is an authentic Indian organic dairy an
   - Packaging: Food-grade glass jars
 
 - **Full Product Catalog**: https://navprana.com/products
+- **Bilona Ghee Guide (buy + how to choose)**: https://navprana.com/bilona-ghee
 - **A2 Desi Cow Ghee Guide**: https://navprana.com/a2-desi-cow-ghee
 - **Health Benefits Guide**: https://navprana.com/health-benefits
 - **Frequently Asked Questions**: https://navprana.com/faq
@@ -38,7 +39,7 @@ NavPrana Organics (https://navprana.com) is an authentic Indian organic dairy an
 
 ## Ordering & Customer Policies
 
-- **Free Shipping**: Available pan-India on all orders above ₹999.
+- **Free Shipping**: Available pan-India on all orders above ₹599.
 - **Delivery Time**: 2 to 7 business days across India depending on location, with courier tracking. Details: https://navprana.com/shipping-policy
 - **Payment Methods Accepted**: UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, Net Banking, and Cash on Delivery (COD).
 - **Returns**: 7-day return window from the delivery date. Details: https://navprana.com/terms-of-service

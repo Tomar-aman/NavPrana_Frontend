@@ -23,8 +23,17 @@ const SHARED_STORAGE = {
 
 const SHARED_DELIVERY_FAQ = {
   q: "How long does delivery take?",
-  a: "Orders are packed within one to two working days. Metro addresses usually receive them in three to four days and the rest of India in five to seven, with a tracking link sent by email and SMS. Shipping is free on orders above ₹999.",
+  a: "Orders are packed within one to two working days. Metro addresses usually receive them in three to four days and the rest of India in five to seven, with a tracking link sent by email and SMS. Shipping is free on orders above {freeShippingAbove}.",
 };
+
+/**
+ * The free-shipping threshold is set in the Django admin, so FAQ copy carries a
+ * {freeShippingAbove} placeholder rather than a hardcoded figure — a hardcoded
+ * ₹999 here drifted out of step with the real threshold (₹599).
+ */
+export function fillFaq(text, threshold) {
+  return text.replace("{freeShippingAbove}", `₹${Math.round(Number(threshold))}`);
+}
 
 export const PRODUCT_GUIDE = {
   cow: {
@@ -45,6 +54,7 @@ export const PRODUCT_GUIDE = {
     ],
     links: [
       { href: "/a2-desi-cow-ghee", label: "What makes A2 desi cow ghee different" },
+      { href: "/bilona-ghee", label: "How to choose pure bilona ghee" },
       { href: "/blog/what-is-bilona-ghee-method-explained", label: "The bilona method, step by step" },
       { href: "/blog/best-ghee-for-babies-how-to-choose", label: "Choosing ghee for babies" },
       { href: "/blog/cow-ghee-vs-buffalo-ghee-which-is-better", label: "Cow ghee vs buffalo ghee" },
@@ -91,6 +101,7 @@ export const PRODUCT_GUIDE = {
       SHARED_STORAGE,
     ],
     links: [
+      { href: "/bilona-ghee", label: "How to choose pure bilona ghee" },
       { href: "/blog/why-is-buffalo-ghee-white", label: "Why buffalo ghee is white" },
       { href: "/blog/why-buffalo-a2-bilona-ghee-is-expensive", label: "Why bilona ghee costs more" },
       { href: "/blog/identify-pure-a2-buffalo-bilona-ghee", label: "How to identify pure buffalo ghee" },
