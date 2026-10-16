@@ -341,6 +341,47 @@ const Page = () => {
           </div>
         </section>
 
+        {/* Our name — visible, on this page only. Helps people (and search
+            engines) connect common misspellings to the brand. Do not copy this
+            list into the footer or other pages: repeated keyword lists read as
+            spam to Google. */}
+        <section aria-labelledby="our-name" className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 mb-10">
+          <h2 id="our-name" className="text-xl font-bold mb-3">
+            How to spell NavPrana
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+            Our name is <strong className="text-foreground">NavPrana</strong>{" "}
+            (नवप्रणा) — <em>Nav</em> means new and <em>Prana</em> means life
+            force. It is often written as two words, Nav Prana, and our website
+            is <strong className="text-foreground">navprana.com</strong>.
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+            If you were looking for us under a slightly different spelling,
+            you are in the right place. People also search for us as:
+          </p>
+          <ul className="flex flex-wrap gap-2" aria-label="Other spellings of NavPrana">
+            {[
+              "Nav Prana",
+              "Navparana",
+              "Naprana",
+              "Navarana",
+              "Navpran",
+              "Navprna",
+              "Navpraana",
+              "Nabprana",
+              "नवप्राण",
+              "नवप्रणा घी",
+            ].map((spelling) => (
+              <li
+                key={spelling}
+                className="px-3 py-1 rounded-lg bg-gray-100 text-gray-700 text-xs font-medium"
+              >
+                {spelling}
+              </li>
+            ))}
+          </ul>
+        </section>
+
         {/* CTA */}
         <section className="text-center bg-primary/5 rounded-2xl border border-gray-100 p-6 md:p-8">
           <h2 className="text-xl font-bold mb-2">

@@ -1,37 +1,89 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { preload } from "react-dom";
 import Image from "next/image";
 import pineappleImage from "@/assets/hero_3.png";
 import cowImage from "@/assets/img_3.png";
 import salesImage from "@/assets/hero_4.png";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+// Festive banner videos, played in this order ahead of the images while a
+// festival is on. Each poster is the clip's first frame, so the banner is
+// filled before the video arrives (and on any browser that cannot play WebM).
+const FESTIVE_VIDEOS = [
+  {
+    video: "/videos/navprana-diwali-light.webm",
+    poster: "/videos/navprana-diwali-light-poster.webp",
+    alt: "NavPrana Diwali special — up to 30% off A2 bilona cow ghee ₹799 and buffalo ghee ₹699",
+  },
+  {
+    video: "/videos/navprana-diwali-gifting.webm",
+    poster: "/videos/navprana-diwali-gifting-poster.webp",
+    alt: "NavPrana Diwali gifting — A2 desi cow bilona ghee ₹799 and A2 buffalo bilona ghee ₹699",
+  },
+];
+const SLIDE_MS = 5000;
+const VIDEO_LOOPS = 2; // the clips are 4s; let each play through twice before moving on
 
-  const slides = [
+const Hero = ({ festiveVideo = false }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [videoMs, setVideoMs] = useState({}); // slide index -> how long to hold it
+  const videoRefs = useRef({});
+
+  // The first poster is the first thing painted in the banner, so it is the
+  // homepage LCP while the videos lead — fetch it early.
+  if (festiveVideo) preload(FESTIVE_VIDEOS[0].poster, { as: "image", fetchPriority: "high" });
+
+  // `festive: false` keeps a slide out of the banner during a festival, when
+  // the videos already carry the same offer. Nothing is removed for good: they
+  // all come back as soon as the festival window closes.
+  const imageSlides = [
     {
       image: salesImage,
       alt: "NavPrana Organics - Limited Time Offer - Buy 100% Pure Bilona Ghee Online",
+      festive: false, // same 20%/30% offer the Diwali videos show
     },
     {
       image: pineappleImage,
-      alt: "NavPrana Organics Pure Desi Bilona Ghee — A2 Buffalo Bilona Ghee",
+      alt: "NavPrana Organics Pure Desi A2 Cow Bilona Ghee — the way it should be",
     },
     {
       image: cowImage,
       alt: "NavPrana Organics Pure Desi A2 Cow Bilona Ghee — Hand-Churned A2 Cow Ghee",
+      festive: false, // keeps the festive rotation short
     }
   ];
+  const slides = festiveVideo
+    ? [...FESTIVE_VIDEOS, ...imageSlides.filter((s) => s.festive !== false)]
+    : imageSlides;
+
+  // One timeout per slide rather than a fixed interval, so a video slide can
+  // stay up for the length of its clip instead of being cut at 5 seconds.
+  const onVideoSlide = Boolean(slides[currentSlide]?.video);
+  const slideCount = slides.length;
+  const holdMs = onVideoSlide ? videoMs[currentSlide] || 8000 : SLIDE_MS;
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // Change image every 5 seconds
-    return () => clearInterval(timer);
-  }, [slides.length]);
+    const timer = setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideCount);
+    }, holdMs);
+    return () => clearTimeout(timer);
+  }, [currentSlide, slideCount, holdMs]);
+
+  // Restart the current clip each time its slide comes round; pause the rest.
+  useEffect(() => {
+    for (const [index, v] of Object.entries(videoRefs.current)) {
+      if (!v) continue;
+      if (Number(index) === currentSlide) {
+        v.currentTime = 0;
+        v.play().catch(() => {}); // blocked autoplay just leaves the poster up
+      } else {
+        v.pause();
+      }
+    }
+  }, [currentSlide]);
 
   return (
     <section id="home" className="w-full mt-20">
@@ -50,17 +102,41 @@ const Hero = () => {
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${currentSlide === index ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
           >
-            <Image
-              src={slide.image}
-              alt={slide.alt}
-              fill
-              /* Without `sizes`, next/image assumes 100vw and serves the largest
-                 srcset candidate. This is the homepage LCP element. */
-              sizes="100vw"
-              priority={index === 0}
-              loading={index === 0 ? undefined : "lazy"}
-              className="object-cover object-center"
-            />
+            {slide.video ? (
+              <video
+                ref={(el) => {
+                  videoRefs.current[index] = el;
+                }}
+                src={slide.video}
+                poster={slide.poster}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                aria-label={slide.alt}
+                onLoadedMetadata={(e) => {
+                  const d = e.currentTarget.duration;
+                  if (Number.isFinite(d) && d > 0) {
+                    const ms = Math.max(SLIDE_MS, d * 1000 * VIDEO_LOOPS);
+                    setVideoMs((prev) => (prev[index] === ms ? prev : { ...prev, [index]: ms }));
+                  }
+                }}
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            ) : (
+              <Image
+                src={slide.image}
+                alt={slide.alt}
+                fill
+                /* Without `sizes`, next/image assumes 100vw and serves the largest
+                   srcset candidate. This is the homepage LCP element. */
+                sizes="100vw"
+                priority={index === 0}
+                loading={index === 0 ? undefined : "lazy"}
+                className="object-cover object-center"
+              />
+            )}
           </div>
         ))}
 
@@ -105,13 +181,15 @@ const Hero = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 pt-5 pb-8 sm:pt-6 sm:pb-10">
-        <div className="max-w-2xl">
-          {/* NOTE: this h1 must stay VISIBLE. It was previously sr-only,
-              together with a keyword-stuffed paragraph — hidden text and
-              keyword stuffing are both named in Google's spam policies, and
-              it left the homepage with no visible heading at all. Below the
-              banner is still visible; behind it was not. */}
+      {/* Visually hidden by request: the banner artwork already says this,
+          and the block left a large gap under it. Kept in the page for search
+          engines and screen readers (sr-only, not display:none).
+          NOTE: keep it exactly this — one honest heading and one sentence that
+          match what the banner shows. Adding keywords or extra copy here turns
+          it into hidden-text keyword stuffing, which Google's spam policies
+          name explicitly. */}
+      <div className="sr-only">
+        <div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 leading-[1.15] tracking-tight">
             Pure A2 Desi Cow &amp; Buffalo Bilona Ghee
           </h1>
@@ -119,16 +197,8 @@ const Hero = () => {
             Hand-churned the traditional bilona way in the Chambal valley of
             Madhya Pradesh. Grass-fed, FSSAI certified, nothing added.
           </p>
-          {/* White on white now that this is off the darkened photo, so it
-              takes the brand colour instead. */}
-          <Link
-            href="/products"
-            aria-label="Shop pure desi bilona ghee online"
-            className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition shadow-sm"
-          >
-            Shop Now
-            <ArrowRight size={16} />
-          </Link>
+          {/* No Shop Now link here: an invisible link would still take keyboard
+              focus. The banner itself links to /products. */}
         </div>
       </div>
     </section>

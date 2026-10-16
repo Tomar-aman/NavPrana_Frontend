@@ -135,7 +135,9 @@ const organizationJsonLd = {
     email: "support@navprana.com",
     availableLanguage: ["English", "Hindi"],
   },
-  alternateName: ["NavPrana", "NavPrana Organics", "NavPrana Ghee"],
+  // Real names only. Google reads these as what the brand is called, so a
+  // spaced "Nav Prana" belongs here; misspellings do not.
+  alternateName: ["NavPrana", "Nav Prana", "नवप्रणा", "NavPrana Ghee", "Nav Prana Ghee"],
   sameAs: [
     "https://www.instagram.com/navprana/",
     "https://www.facebook.com/navprana",
@@ -205,7 +207,9 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "NavPrana Organics",
-  alternateName: "NavPrana — Best Bilona Ghee in India",
+  // Google uses WebSite name/alternateName as the site name shown in results.
+  // It must be a name, not a slogan.
+  alternateName: ["NavPrana", "Nav Prana"],
   url: SITE_URL,
   description:
     "Buy pure A2 desi cow ghee and A2 buffalo bilona ghee online. Traditional bilona method, grass-fed, FSSAI certified, from the Chambal valley of Madhya Pradesh.",

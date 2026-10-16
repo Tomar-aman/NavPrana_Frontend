@@ -7,6 +7,8 @@ import BilonaProcess from "../../components/home/BilonaProcess";
 import BlogPreviewAndProof from "../../components/home/BlogPreviewAndProof";
 import { getProducts, getBlogList } from "@/lib/site";
 import { fetchPricingServer } from "@/lib/pricing";
+import { activeFestival } from "@/lib/festival";
+import DiwaliSection from "../../components/festive/DiwaliSection";
 
 // Generated so the free-shipping figure follows the admin threshold.
 export async function generateMetadata() {
@@ -42,6 +44,9 @@ const Page = async () => {
   // HTML. Previously <Products /> loaded the catalogue through a Redux
   // useEffect, so the homepage server-rendered zero product content.
   const [products, blogs] = await Promise.all([getProducts(), getBlogList()]);
+  // Re-evaluated on every hourly revalidation, so the section appears and
+  // disappears on its own as the festival window opens and closes.
+  const festival = activeFestival();
 
   return (
     <div className="min-h-screen">
@@ -49,7 +54,10 @@ const Page = async () => {
         {/* Order follows the question a visitor asks next:
             what do you sell → which one is for me → why does it cost this →
             what does it do for me → can I trust you → tell me more. */}
-        <Hero />
+        <Hero festiveVideo={festival?.name === "Diwali"} />
+        {festival?.name === "Diwali" && (
+          <DiwaliSection products={products} festival={festival} />
+        )}
         <Products initialProducts={products} />
         <MilkChooser products={products} />
         <BilonaProcess />

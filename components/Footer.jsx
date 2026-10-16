@@ -73,7 +73,7 @@ const Footer = ({ products = [] }) => {
       <div className="container mx-auto px-4 py-10 md:py-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-6 md:gap-8">
           {/* Brand Section — 4 cols */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <Link href="/">
               <Image
                 className="w-40 h-15 -mt-2"
@@ -118,12 +118,13 @@ const Footer = ({ products = [] }) => {
             </div>
           </div>
 
-          {/* Quick Links — 2 cols */}
-          <div className="lg:col-span-2">
+          {/* Quick Links — 3 cols, links in two columns so nine of them do
+              not stretch the footer */}
+          <div className="lg:col-span-3">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">
               Quick Links
             </h4>
-            <div className="space-y-2.5">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
               {quickLinks.map((link, idx) => (
                 <Link
                   key={idx}

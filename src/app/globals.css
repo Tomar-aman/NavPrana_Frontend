@@ -164,3 +164,100 @@
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
+/* ---------------------------------------------------------------------------
+   Festive (components/festive/*). Transform/opacity only, so the animations
+   run on the compositor and do not cost layout. Everything stops for visitors
+   who ask their device for reduced motion.
+   ------------------------------------------------------------------------- */
+
+/* diya flame + glow */
+@keyframes np-flicker {
+    0%, 100% { transform: scaleY(1) translateY(0); opacity: 1; }
+    50% { transform: scaleY(0.9) translateY(1px); opacity: 0.85; }
+}
+.np-flame {
+    transform-origin: 32px 24px;
+    animation: np-flicker 1.6s ease-in-out infinite;
+}
+.np-diya-glow { position: relative; display: inline-block; }
+.np-diya-glow::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 20%;
+    width: 44px; height: 44px;
+    margin: -22px 0 0 -22px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.55), rgba(251, 191, 36, 0) 70%);
+    animation: np-glow 2.4s ease-in-out infinite;
+    animation-delay: var(--glow-delay, 0s);
+}
+@keyframes np-glow {
+    0%, 100% { transform: scale(0.85); opacity: 0.7; }
+    50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* fairy lights under the toran */
+.np-bulb {
+    width: 6px; height: 8px;
+    border-radius: 50% 50% 45% 45%;
+    background: var(--bulb);
+    box-shadow: 0 0 6px 1px var(--bulb);
+    animation: np-twinkle 1.6s ease-in-out infinite alternate;
+}
+@keyframes np-twinkle {
+    from { opacity: 0.25; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* twinkling stars in the Diwali section */
+.np-star {
+    width: 3px; height: 3px;
+    border-radius: 9999px;
+    background: #f59e0b;
+    box-shadow: 0 0 6px 2px rgba(245, 158, 11, 0.45);
+    animation: np-twinkle 2.2s ease-in-out infinite alternate;
+}
+
+/* rising sky lanterns */
+.np-lantern {
+    animation-name: np-rise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
+}
+@keyframes np-rise {
+    0% { transform: translate(0, 0) rotate(-4deg); opacity: 0; }
+    10% { opacity: 0.85; }
+    50% { transform: translate(14px, -600px) rotate(4deg); }
+    85% { opacity: 0.75; }
+    100% { transform: translate(-6px, -1200px) rotate(-3deg); opacity: 0; }
+}
+
+/* firework sparks: each ray flies outward and fades */
+.np-spark {
+    position: absolute;
+    left: -2px; top: -2px;
+    width: 4px; height: 4px;
+    border-radius: 9999px;
+    background: var(--spark);
+    box-shadow: 0 0 6px 2px var(--spark);
+    opacity: 0;
+    animation: np-burst 4.5s ease-out infinite;
+}
+@keyframes np-burst {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    4% { opacity: 1; }
+    22% { transform: translateY(-46px) scale(0.6); opacity: 0; }
+    100% { transform: translateY(-46px) scale(0.6); opacity: 0; }
+}
+
+/* slowly turning rangoli */
+.np-rangoli { animation: np-spin 90s linear infinite; }
+@keyframes np-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .np-flame, .np-bulb, .np-star, .np-rangoli, .np-diya-glow::before { animation: none; }
+    .np-bulb { opacity: 1; }
+    .np-lantern, .np-spark { display: none; }
+}

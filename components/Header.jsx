@@ -27,6 +27,8 @@ import { logout } from "@/redux/features/authSlice";
 import { getProfile } from "@/redux/features/profileSlice";
 import { getCart } from "@/redux/features/cartSlice";
 import { usePricing } from "@/hooks/usePricing";
+import { activeFestival } from "@/lib/festival";
+import Toran from "./festive/Toran";
 
 const NAV_LINKS = [
   { label: "Home", path: "/", icon: Home },
@@ -38,6 +40,10 @@ const NAV_LINKS = [
 
 const Header = () => {
   const { pricing } = usePricing();
+  // Read on the client after mount: the header is statically rendered, and a
+  // build made before the festival starts must not hydrate into a mismatch.
+  const [festival, setFestival] = useState(null);
+  useEffect(() => setFestival(activeFestival()), []);
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
@@ -138,6 +144,12 @@ const Header = () => {
                 on every page converts better than a brain-health claim anyway.
                 Keep anything added here factual. */}
             <div className="animate-marquee whitespace-nowrap text-white text-xs font-medium tracking-wide">
+              {festival?.name === "Diwali" && (
+                <>
+                  <span className="mx-8">🪔 Shubh Deepavali from NavPrana</span>
+                  <span className="mx-8">🪔 Order by {festival.orderBy} for delivery before Diwali</span>
+                </>
+              )}
               <span className="mx-8">🚚 Free shipping above ₹{Math.round(pricing.free_shipping_threshold)}</span>
               <span className="mx-8">🧈 Hand-churned bilona method</span>
               <span className="mx-8">🌾 Grass-fed, open grazing</span>
@@ -391,6 +403,7 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      {festival && <Toran />}
     </motion.header>
   );
 };
