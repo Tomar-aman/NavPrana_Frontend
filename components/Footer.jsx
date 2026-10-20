@@ -42,9 +42,9 @@ const Footer = ({ products = [] }) => {
 
   const quickLinks = [
     { label: "Home", path: "/" },
-    { label: "All Products", path: "/products" },
-    { label: "Bilona Ghee", path: "/bilona-ghee" },
-    { label: "A2 Desi Cow Ghee", path: "/a2-desi-cow-ghee" },
+    { label: "Buy Ghee Online", path: "/products" },
+    { label: "Buy Bilona Ghee", path: "/bilona-ghee" },
+    { label: "Buy A2 Desi Cow Ghee", path: "/a2-desi-cow-ghee" },
     { label: "Ghee Benefits", path: "/health-benefits" },
     { label: "Blog", path: "/blog" },
     { label: "About Us", path: "/about" },

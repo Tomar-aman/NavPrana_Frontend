@@ -24,7 +24,7 @@ Three things decide whether a post ranks and converts, in this order:
 | `read_time` | string | e.g. `"6 min"` — ~200 words/min. |
 | `is_featured` | bool | `true` only for high-priority conversion posts. |
 | `meta_title` | string | ≤60 chars, ends with `\| NavPrana`. |
-| `meta_description` | string | ≤160 chars, includes primary keyword + hook (e.g. "Free shipping ₹999+"). **Single line, no `\n`.** There is no `description` field in the API; this and `excerpt` are the description fields. |
+| `meta_description` | string | ≤160 chars, includes primary keyword + hook (e.g. "Free shipping above ₹599"; the threshold is set in Django admin → Pricing Settings, check it before publishing). **Single line, no `\n`.** There is no `description` field in the API; this and `excerpt` are the description fields. |
 | `image_prompt` | string | AI image-generation prompt for the thumbnail — stored in the draft JSON so the image can be (re)generated anytime. Not a DB field. Must carry the brand palette + jar block; see image rules. |
 | `keywords` | object | **Draft-JSON only. Never rendered as a `<meta name="keywords">` tag** (see below). Planning field: `primary`, `secondary[]`, `hinglish[]`. |
 | `sources` | list | Draft-JSON only (not a DB field). Every external URL cited in the post, with what it backs up. See sourcing rules. |
@@ -42,7 +42,7 @@ Three things decide whether a post ranks and converts, in this order:
 6. **One honest limitation** — a "this won't work if…" / "what ghee cannot do" passage. Non-negotiable; see why below.
 7. **Purity/Bilona section** — always tie back to why the Bilona method matters (brand differentiator)
 8. **FAQ `<h2>`** — 3–5 `<h3>` questions with direct-answer-first paragraphs (AEO)
-9. **CTA `<h2>`** — closing section with product links + "Free shipping above ₹999"
+9. **CTA `<h2>`** — closing section with product links + the free-shipping line (₹599 as of Oct 2026; confirm in Pricing Settings)
 10. **Disclaimer `<p><em>`** — required on any post giving dosage, pregnancy, baby or medical-adjacent guidance
 
 ---
@@ -529,6 +529,9 @@ Traffic
 14. How to Store Ghee / Why It Turns Grainy (draft — `blog-10-how-to-store-ghee.json`)
 15. Ghee for Skin and Hair (draft — `blog-11-ghee-for-skin-and-hair.json`)
 16. What Is Bilona Ghee? (draft — `blog-12-what-is-bilona-ghee.json`) — **hub page, link every purity section to it**
+17. Healthy Diwali Gift Ideas 2026 (draft — `blog-27-healthy-diwali-gift-ideas.json`) — seasonal, publish before Diwali
+18. Ghee Diya for Diwali (draft — `blog-28-ghee-diya-for-diwali.json`) — seasonal, publish before Diwali
+19. Best Ghee for Elderly and Old Age (50+) (draft — `blog-29-best-ghee-for-elderly.json`) — sibling of `best-ghee-for-babies-how-to-choose`; owns "best ghee for elderly", "best ghee for 50 plus" and "aged ghee". Needs a doctor/BAMS reviewer before publishing
 
 **Retrofit needed:** drafts 1–6 were written before this voice and sourcing standard existed.
 They are structurally sound but they all need: em-dash reduction, external citations added,

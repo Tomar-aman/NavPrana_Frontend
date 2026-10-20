@@ -63,10 +63,10 @@ export async function generateMetadata({ params }) {
   if (isCanonical && members.length > 1) {
     const from = Math.min(...members.map((p) => Number(p.price) || Infinity));
     searchTitle = isCow
-      ? `Bilona Cow Ghee — A2 Desi, ${sizeList} from ₹${from}`
-      : `A2 Buffalo Bilona Ghee — ${sizeList} from ₹${from}`;
+      ? `Buy A2 Cow Bilona Ghee (${sizeList}) from ₹${from}`
+      : `Buy A2 Buffalo Bilona Ghee (${sizeList}) from ₹${from}`;
     description = clampDescription(
-      `Buy ${isCow ? "A2 desi cow bilona ghee" : "A2 buffalo bilona ghee"}, hand-churned from curd in the Chambal valley. ` +
+      `Buy pure ${isCow ? "A2 desi cow bilona ghee" : "A2 buffalo bilona ghee"} online, hand-churned from curd in the Chambal valley. ` +
         members.map((p) => `${p.size} ₹${price(p)}`).join(", ") +
         `. FSSAI certified. Free shipping above ${freeAbove}.`,
     );
@@ -74,10 +74,10 @@ export async function generateMetadata({ params }) {
     // Lead with the product and price so the snippet matches the purchase
     // intent visible in Search Console queries such as "bilona cow ghee".
     searchTitle = isCow
-      ? `Bilona Cow Ghee${packSize} | A2 Desi — ₹${displayPrice}`
-      : `A2 Buffalo Bilona Ghee${packSize} — ₹${displayPrice}`;
+      ? `Buy A2 Cow Bilona Ghee${packSize} — ₹${displayPrice}`
+      : `Buy A2 Buffalo Bilona Ghee${packSize} — ₹${displayPrice}`;
     description = clampDescription(
-      `${isCow ? "Buy Bilona Cow Ghee" : "Buy A2 Buffalo Bilona Ghee"}${packSize} at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ${freeAbove}.`,
+      `Buy pure ${isCow ? "Bilona Cow Ghee" : "A2 Buffalo Bilona Ghee"}${packSize} online at ₹${displayPrice}. Traditional Bilona method, FSSAI certified. Free shipping on orders above ${freeAbove}.`,
     );
   }
 

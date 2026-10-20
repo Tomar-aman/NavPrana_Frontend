@@ -108,17 +108,19 @@ function cowProducts(products) {
 }
 
 export async function generateMetadata() {
-  const products = cowProducts(await getProducts());
+  const [allProducts, pricing] = await Promise.all([getProducts(), fetchPricingServer()]);
+  const products = cowProducts(allProducts);
   const prices = products
     .map((p) => Number(p.price))
     .filter((n) => Number.isFinite(n) && n > 0);
   const from = prices.length ? Math.min(...prices) : null;
+  const freeAbove = `₹${Math.round(Number(pricing.free_shipping_threshold))}`;
 
-  const title = "A2 Desi Cow Ghee — Pure Bilona Cow Ghee";
+  const title = "Buy A2 Desi Cow Ghee Online — Pure Vedic Bilona";
   const description =
-    `Buy A2 desi cow ghee made the traditional bilona way from ${BREED_LINE} in the Chambal valley.` +
-    (from ? ` 500 ml and 1 litre, from ₹${from}.` : "") +
-    " Grass-fed, FSSAI certified, nothing added.";
+    `Buy 100% pure A2 desi cow ghee online, hand-churned using the traditional Vedic bilona method in the Chambal valley.` +
+    (from ? ` 500 ml & 1 litre from ₹${from}.` : "") +
+    ` Lab tested, FSSAI certified. Free shipping above ${freeAbove}.`;
 
   return {
     title,
@@ -157,6 +159,34 @@ export default async function Page() {
     ],
   };
 
+  const itemListJsonLd = products.length > 0 && {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Pure A2 Desi Cow Bilona Ghee Collection",
+    description:
+      "Buy pure A2 desi cow ghee made the traditional bilona way. FSSAI certified, grass-fed.",
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: product.name,
+        url: `${SITE_URL}/products/${generateSlug(product.name)}`,
+        image: featuredImage(product),
+        offers: {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: "INR",
+          availability:
+            Number(product.available_quantity ?? product.max_quantity ?? 1) > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+        },
+      },
+    })),
+  };
+
   return (
     <>
       <script
@@ -167,6 +197,12 @@ export default async function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {itemListJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+        />
+      )}
 
       <div className="min-h-screen bg-background mt-20">
         <main className="container mx-auto px-4 md:px-15 py-10 max-w-4xl">

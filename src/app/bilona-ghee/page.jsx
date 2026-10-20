@@ -106,13 +106,15 @@ function priceFrom(products) {
 }
 
 export async function generateMetadata() {
-  const from = priceFrom(await getProducts());
+  const [products, pricing] = await Promise.all([getProducts(), fetchPricingServer()]);
+  const from = priceFrom(products);
+  const freeAbove = `₹${Math.round(Number(pricing.free_shipping_threshold))}`;
 
-  const title = "Pure Bilona Ghee — Hand-Churned A2 Cow & Buffalo Ghee";
+  const title = "Buy Pure Bilona Ghee Online — Hand-Churned A2 Ghee";
   const description =
-    "Buy pure bilona ghee, made from curd and hand-churned in the Chambal valley. A2 desi cow and buffalo," +
+    "Buy pure bilona ghee online, hand-churned from cultured curd in the Chambal valley. A2 desi cow and buffalo ghee" +
     (from ? ` from ₹${from}.` : ".") +
-    " FSSAI certified, lab tested, nothing added.";
+    ` 100% natural, FSSAI certified, lab tested. Free shipping above ${freeAbove}.`;
 
   return {
     title,
@@ -157,12 +159,28 @@ export default async function Page() {
   const itemListJsonLd = products.length > 0 && {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "NavPrana bilona ghee",
-    itemListElement: products.map((p, i) => ({
+    name: "Pure A2 Bilona Ghee Collection — Cow & Buffalo",
+    description:
+      "Buy pure bilona ghee hand-churned from cultured curd. Grass-fed, FSSAI certified.",
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => ({
       "@type": "ListItem",
-      position: i + 1,
-      url: `${SITE_URL}/products/${generateSlug(p.name)}`,
-      name: p.name,
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: product.name,
+        url: `${SITE_URL}/products/${generateSlug(product.name)}`,
+        image: featuredImage(product),
+        offers: {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: "INR",
+          availability:
+            Number(product.available_quantity ?? product.max_quantity ?? 1) > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+        },
+      },
     })),
   };
 
