@@ -1,6 +1,7 @@
 import { generateSlug } from "@/utils/slug";
 import { SITE_URL, getProducts, getBlogList } from "@/lib/site";
 import { primaryVariants } from "@/lib/variants";
+import { BLOG_REDIRECTS } from "@/lib/blog-redirects.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ async function fetchProductPages() {
 async function fetchBlogPages() {
   const blogs = await getBlogList();
   return blogs
-    .filter((blog) => blog.slug)
+    .filter((blog) => blog.slug && !BLOG_REDIRECTS[blog.slug])
     .map((blog) => ({
       url: `${SITE_URL}/blog/${blog.slug}`,
       lastModified: new Date(blog.updated_at || blog.created_at || Date.now()),

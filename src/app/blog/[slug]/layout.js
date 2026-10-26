@@ -1,18 +1,26 @@
+import { notFound } from "next/navigation";
 import { getBlogBySlug } from "@/services/blog/get-blogs";
 
 import { SITE_URL } from "@/lib/site";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
+
+  // A missing slug must be a real 404. The page's own notFound() fires after
+  // the root loading.js has started streaming, so the response had already
+  // gone out as 200 and Google saw a soft-404 "Blog" page. Metadata resolves
+  // before the stream for crawlers, so calling notFound() here sets the status.
+  let blog;
   try {
-    const blog = await getBlogBySlug(slug);
+    blog = await getBlogBySlug(slug);
+  } catch (error) {
+    if (error?.response?.status === 404) notFound();
+    console.error("Error generating metadata for blog:", error);
+    return { title: "Blog | NavPrana Organics" };
+  }
+  if (!blog) notFound();
 
-    if (!blog) {
-      return {
-        title: "Blog Post Not Found | NavPrana Organics",
-      };
-    }
-
+  try {
     // `meta_title` is the editorially written search title from the Django
     // admin; it was never read, so editing it there changed nothing.
     const title = blog.meta_title?.trim() || `${blog.title} | NavPrana Blog`;

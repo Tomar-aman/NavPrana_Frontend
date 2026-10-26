@@ -1,3 +1,5 @@
+import { BLOG_REDIRECTS } from "./src/lib/blog-redirects.mjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
@@ -39,6 +41,13 @@ const nextConfig = {
         pathname: "/media/**",
       },
     ],
+  },
+  async redirects() {
+    return Object.entries(BLOG_REDIRECTS).map(([from, to]) => ({
+      source: `/blog/${from}`,
+      destination: `/blog/${to}`,
+      permanent: true,
+    }));
   },
   async headers() {
     return [

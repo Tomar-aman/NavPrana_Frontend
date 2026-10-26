@@ -532,6 +532,10 @@ Traffic
 17. Healthy Diwali Gift Ideas 2026 (draft — `blog-27-healthy-diwali-gift-ideas.json`) — seasonal, publish before Diwali
 18. Ghee Diya for Diwali (draft — `blog-28-ghee-diya-for-diwali.json`) — seasonal, publish before Diwali
 19. Best Ghee for Elderly and Old Age (50+) (draft — `blog-29-best-ghee-for-elderly.json`) — sibling of `best-ghee-for-babies-how-to-choose`; owns "best ghee for elderly", "best ghee for 50 plus" and "aged ghee". Needs a doctor/BAMS reviewer before publishing
+20. Does Ghee Cause Cough? (draft — `blog-30-does-ghee-cause-cough.json`) — owns "does ghee cause cough"; Search Console sends these searches to `ghee-in-winter-benefits` today, so link that post to this one. Needs a doctor/BAMS reviewer
+21. Gond Ke Laddoo Recipe (draft — `blog-31-gond-ke-laddoo-recipe.json`) — seasonal, publish by early November
+22. A2 Ghee Price in India (draft — `blog-32-a2-ghee-price-in-india.json`) — commercial; "bilona ghee price" stays with the `/bilona-ghee` landing page, not this post
+23. Ghee with Warm Water at Night (draft — `blog-33-ghee-with-warm-water-at-night.json`) — owns the night version; the morning/empty-stomach version stays with `blog-3`. Link blog-3 and blog-6 back to it
 
 **Retrofit needed:** drafts 1–6 were written before this voice and sourcing standard existed.
 They are structurally sound but they all need: em-dash reduction, external citations added,
