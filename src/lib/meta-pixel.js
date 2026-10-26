@@ -7,6 +7,8 @@
  * Usage:  import { trackAddToCart } from '@/lib/meta-pixel';
  */
 
+import { trackEvent } from "@/lib/analytics";
+
 // Set NEXT_PUBLIC_META_PIXEL_ID to point the site at a different Meta account
 // without touching code. NEXT_PUBLIC_* values are baked in at build time, so a
 // rebuild is required after changing it. The literal is the current pixel and
@@ -218,6 +220,20 @@ export const buildContents = (items = []) =>
     .filter(Boolean);
 
 /**
+ * GA4 mirror of the funnel events below. GA4 had no ecommerce events at all,
+ * so there was no way to see which pages lead to a sale. Each Meta event here
+ * also sends the matching GA4 recommended event, so every existing call site
+ * reports to both without being touched.
+ */
+const ga4Items = (contents = [], name) =>
+  contents.map((c) => ({
+    item_id: String(c.id),
+    ...(name ? { item_name: name } : {}),
+    quantity: Number(c.quantity) || 1,
+    ...(c.item_price ? { price: Number(c.item_price) } : {}),
+  }));
+
+/**
  * PageView — fired automatically from the layout script, but exposed
  * here so SPA route-changes can re-fire it if needed.
  */
@@ -246,6 +262,11 @@ export const trackViewContent = (product) => {
     value: Number(product.price),
     currency: "INR",
   });
+  trackEvent("view_item", {
+    currency: "INR",
+    value: Number(product.price),
+    items: ga4Items([{ id: product.id, quantity: 1, item_price: product.price }], product.name),
+  });
 };
 
 /**
@@ -267,6 +288,11 @@ export const trackAddToCart = (product, quantity = 1) => {
     currency: "INR",
     num_items: quantity,
   });
+  trackEvent("add_to_cart", {
+    currency: "INR",
+    value: Number(product.price) * quantity,
+    items: ga4Items([{ id: product.id, quantity, item_price: product.price }], product.name),
+  });
 };
 
 /**
@@ -285,6 +311,11 @@ export const trackInitiateCheckout = (items = [], total = 0) => {
     value: Number(total),
     currency: "INR",
   });
+  trackEvent("begin_checkout", {
+    currency: "INR",
+    value: Number(total),
+    items: ga4Items(contents),
+  });
 };
 
 /**
@@ -298,6 +329,11 @@ export const trackAddPaymentInfo = (paymentMethod, value = 0) => {
     content_category: paymentMethod,
     value: Number(value) || 0,
     currency: "INR",
+  });
+  trackEvent("add_payment_info", {
+    currency: "INR",
+    value: Number(value) || 0,
+    payment_type: paymentMethod,
   });
 };
 
@@ -350,6 +386,13 @@ export const trackPurchase = ({
   } else {
     fbq("track", "Purchase", params);
   }
+
+  trackEvent("purchase", {
+    transaction_id: String(orderId || eventId || ""),
+    currency,
+    value: Number(value) || 0,
+    items: ga4Items(contents.length ? contents : ids.map((id) => ({ id, quantity: 1 }))),
+  });
 };
 
 /* ------------------------------------------------------------------ */

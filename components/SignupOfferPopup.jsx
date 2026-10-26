@@ -15,6 +15,14 @@ const SignupOfferPopup = () => {
     // Don't show if user is logged in
     if (isAuthenticated) return;
 
+    // Never interrupt someone who is already buying or signing in: its CTA
+    // sent shoppers from /checkout to /signup, away from the order.
+    const BUYING = ["/cart", "/checkout", "/payment", "/payment-status", "/cod-success", "/order", "/order-details", "/signin", "/signup", "/auth", "/forgot-password"];
+    if (BUYING.some((p) => pathname === p || pathname?.startsWith(p + "/"))) {
+      setIsVisible(false);
+      return;
+    }
+
     // Don't show if user already dismissed it in this session
     const dismissed = sessionStorage.getItem("signup_popup_dismissed");
     if (dismissed) return;

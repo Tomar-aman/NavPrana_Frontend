@@ -13,7 +13,6 @@ import {
   Award,
   ChevronDown,
   Star,
-  Clock,
   CheckCircle2,
   Image as ImageIcon,
   Send,
@@ -33,6 +32,8 @@ import { familyReviews, averageRating } from "@/lib/reviews";
 import { getAmazonUrl } from "@/lib/amazon";
 import { trackEvent } from "@/lib/analytics";
 import Link from "next/link";
+import { whatsappUrl, trackWhatsAppClick } from "@/lib/whatsapp";
+import { WhatsAppIcon } from "../../../../components/WhatsAppButton";
 import { usePricing } from "@/hooks/usePricing";
 
 // Added: Image Magnifier Component for premium feel
@@ -211,23 +212,15 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
 
   // Delivery estimation logic
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 45, seconds: 0 });
-
+  // NOTE: there used to be an "Order within 02h:45m" countdown here that
+  // restarted at 2h45m every time it hit zero. A timer with no real deadline
+  // is "false urgency", listed in India's 2023 Dark Patterns guidelines, and
+  // shoppers who notice the reset stop trusting the rest of the page.
   useEffect(() => {
     const date = new Date();
     date.setDate(date.getDate() + 5);
     const options = { weekday: 'short', month: 'short', day: 'numeric' };
     setDeliveryDate(date.toLocaleDateString('en-IN', options));
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return { hours: 2, minutes: 45, seconds: 0 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
   }, []);
 
   // 📊 Meta Pixel — ViewContent on product view
@@ -258,6 +251,8 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
           addToCart({ product: product.id, quantity, productDetail: product }),
         ).unwrap();
         dispatch(getCart());
+        // 📊 Same AddToCart as the Add to Cart button; Buy Now used to skip it.
+        trackAddToCart(product, quantity);
       }
       router.push("/checkout");
     } catch (error) {
@@ -468,20 +463,8 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                  </div>
               </div>
 
-              {/* Urgency & Delivery Estimate */}
+              {/* Delivery Estimate */}
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                 <div className="flex-1 flex items-center gap-3 p-4 bg-orange-50 border border-orange-100 rounded-2xl">
-                    <div className="p-2 bg-white rounded-full shadow-sm">
-                      <Clock className="text-orange-500" size={20} />
-                    </div>
-                    <div>
-                       <div className="text-xs font-bold text-orange-800 uppercase tracking-wide">Order within</div>
-                       <div className="text-sm font-bold text-orange-900">
-                         {String(timeLeft.hours).padStart(2, '0')}h : {String(timeLeft.minutes).padStart(2, '0')}m : {String(timeLeft.seconds).padStart(2, '0')}s
-                       </div>
-                    </div>
-                 </div>
-
                  <div className="flex-1 flex items-center gap-3 p-4 bg-blue-50 border border-blue-100 rounded-2xl">
                     <div className="p-2 bg-white rounded-full shadow-sm">
                       <Truck className="text-blue-500" size={20} />
@@ -564,6 +547,20 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                 <ExternalLink size={16} className="opacity-60" />
               </a>
             )}
+
+            {/* Ghee is a considered buy: people want to ask about the cow,
+                the smell, the grain, delivery to their pin code. A chat
+                started here already names the product they are looking at. */}
+            <a
+              href={whatsappUrl(`Hi NavPrana, I have a question about ${product.name} (₹${Math.round(Number(product.price))}).`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackWhatsAppClick("product_page", { product_id: String(product.id) })}
+              className="mt-3 w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl border-2 border-[#25D366] bg-[#25D366]/10 text-[#128C7E] text-base font-bold hover:bg-[#25D366]/20 transition active:scale-[0.98]"
+            >
+              <WhatsAppIcon className="h-5 w-5 shrink-0" />
+              Questions? Ask us on WhatsApp
+            </a>
 
             <StickyCartBar
               product={product}
