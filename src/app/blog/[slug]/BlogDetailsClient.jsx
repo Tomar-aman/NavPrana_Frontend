@@ -21,7 +21,20 @@ const BlogDetailsClient = ({ blog, featuredProduct = null }) => {
   const h2Positions = [...articleContent.matchAll(/<h2\b/gi)].map((m) => m.index);
   const splitAt = featuredProduct && h2Positions.length >= 2 ? h2Positions[1] : -1;
   const contentBefore = splitAt > -1 ? articleContent.slice(0, splitAt) : articleContent;
-  const contentAfter = splitAt > -1 ? articleContent.slice(splitAt) : "";
+  const rest = splitAt > -1 ? articleContent.slice(splitAt) : "";
+
+  // Long posts get a second card just before the FAQ (or the last section),
+  // where only readers who made it through the whole article arrive: the
+  // most interested people on the page, who otherwise saw one card 1,000
+  // words earlier.
+  const restH2 = [...rest.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)];
+  const faqH2 = restH2.find((m) => /frequently asked|faq/i.test(m[1]));
+  const endAt =
+    h2Positions.length >= 4 && restH2.length >= 3
+      ? (faqH2 || restH2[restH2.length - 1]).index
+      : -1;
+  const contentAfter = endAt > 0 ? rest.slice(0, endAt) : rest;
+  const contentEnd = endAt > 0 ? rest.slice(endAt) : "";
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-IN", {
@@ -102,10 +115,19 @@ const BlogDetailsClient = ({ blog, featuredProduct = null }) => {
           />
           {contentAfter && (
             <>
-              <InlineProductCard product={featuredProduct} />
+              <InlineProductCard product={featuredProduct} blog={blog} />
               <div
                 className="blog-content"
                 dangerouslySetInnerHTML={{ __html: contentAfter }}
+              />
+            </>
+          )}
+          {contentEnd && (
+            <>
+              <InlineProductCard product={featuredProduct} blog={blog} placement="inline_card_end" />
+              <div
+                className="blog-content"
+                dangerouslySetInnerHTML={{ __html: contentEnd }}
               />
             </>
           )}
@@ -129,7 +151,7 @@ const BlogDetailsClient = ({ blog, featuredProduct = null }) => {
           </div>
         </div>
       </main>
-      <StickyShopBar product={featuredProduct} />
+      <StickyShopBar product={featuredProduct} blog={blog} />
     </div>
   );
 };

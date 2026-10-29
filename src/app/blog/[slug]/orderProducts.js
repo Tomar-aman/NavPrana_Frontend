@@ -1,4 +1,5 @@
 import { milkType } from "@/lib/site";
+import { blogCtaCopy } from "./ctaCopy";
 
 /**
  * Products ordered by relevance to a blog post: a post about cow ghee leads
@@ -16,9 +17,15 @@ export function orderProductsForBlog(blog, products = []) {
   const mentionsCow = /\bcow\b/.test(haystack);
   const mentionsBuffalo = /buffalo/.test(haystack);
 
-  if (mentionsCow === mentionsBuffalo) return products;
+  // A post that names neither (or both) milks used to fall back to catalogue
+  // order, so a "ghee in milk at night" reader could be shown buffalo ghee.
+  // Use the post's topic instead: sweets lead with buffalo, the rest with cow.
+  const want =
+    mentionsCow !== mentionsBuffalo
+      ? mentionsCow ? "cow" : "buffalo"
+      : blogCtaCopy(blog).milk;
+  if (!want) return products;
 
-  const want = mentionsCow ? "cow" : "buffalo";
   return [
     ...products.filter((p) => milkType(p) === want),
     ...products.filter((p) => milkType(p) !== want),

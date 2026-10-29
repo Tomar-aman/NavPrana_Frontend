@@ -8,6 +8,7 @@ import { generateSlug } from "@/utils/slug";
 import { featuredImage } from "@/lib/site";
 import { familyName } from "@/lib/variants";
 import { usePricing } from "@/hooks/usePricing";
+import { blogCtaCopy, savings } from "./ctaCopy";
 
 /**
  * In-article product card, placed a couple of sections into the post.
@@ -16,14 +17,16 @@ import { usePricing } from "@/hooks/usePricing";
  * scrolling, so blog traffic was rarely seeing a product at all. This puts
  * one relevant product in front of them while they are still reading.
  */
-export function InlineProductCard({ product }) {
+export function InlineProductCard({ product, blog, placement = "inline_card" }) {
   if (!product) return null;
   const href = `/products/${generateSlug(product.name)}`;
   const image = featuredImage(product);
+  const copy = blogCtaCopy(blog);
+  const save = savings(product);
 
   return (
     <aside
-      data-cta-placement="inline_card"
+      data-cta-placement={placement}
       aria-label="Featured product"
       className="my-8 flex items-center gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-4"
     >
@@ -39,22 +42,28 @@ export function InlineProductCard({ product }) {
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-primary mb-1">
-          Made the way this article describes
+        <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-1">
+          {copy.eyebrow}
         </p>
         <p className="text-sm font-semibold leading-snug">{familyName(product)}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Hand-churned bilona · Grass-fed · FSSAI certified
-        </p>
-        <div className="mt-2 flex items-center gap-3">
+        <p className="text-xs text-muted-foreground mt-0.5">{copy.line}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="text-sm font-bold">
-            From ₹{Math.round(Number(product.price))}
+            ₹{Math.round(Number(product.price))}
           </span>
+          {save && (
+            <>
+              <span className="text-xs text-muted-foreground line-through">₹{save.mrp}</span>
+              <span className="text-[11px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">
+                {copy.ui.save} {save.pct}%
+              </span>
+            </>
+          )}
           <Link
             href={href}
             className="ml-auto inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary/90 transition"
           >
-            Shop now <ArrowRight size={12} />
+            {copy.ui.shop} <ArrowRight size={12} />
           </Link>
         </div>
       </div>
@@ -69,7 +78,7 @@ const DISMISS_KEY = "navprana_blog_shopbar_dismissed";
  * the way through the post. Hidden again when the ShopTheGhee block scrolls
  * into view (no point showing both), and dismissible for the session.
  */
-export function StickyShopBar({ product }) {
+export function StickyShopBar({ product, blog }) {
   const { pricing } = usePricing();
   const [pastThreshold, setPastThreshold] = useState(false);
   const [shopBlockVisible, setShopBlockVisible] = useState(false);
@@ -129,9 +138,17 @@ export function StickyShopBar({ product }) {
     >
       <div className="max-w-3xl mx-auto px-4 py-2.5 flex items-center gap-3">
         <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold text-primary truncate">{blogCtaCopy(blog).eyebrow}</p>
           <p className="text-sm font-semibold truncate">{familyName(product)}</p>
           <p className="text-xs text-muted-foreground">
-            From ₹{Math.round(Number(product.price))} · Free shipping above ₹{Math.round(pricing.free_shipping_threshold)}
+            ₹{Math.round(Number(product.price))}
+            {savings(product) && (
+              <>
+                {" "}<span className="line-through">₹{savings(product).mrp}</span>{" "}
+                <span className="font-bold text-red-600">{blogCtaCopy(blog).ui.save} {savings(product).pct}%</span>
+              </>
+            )}
+            {" "}· Free shipping above ₹{Math.round(pricing.free_shipping_threshold)}
           </p>
         </div>
         <Link
@@ -139,7 +156,7 @@ export function StickyShopBar({ product }) {
           tabIndex={visible ? 0 : -1}
           className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition"
         >
-          Shop now <ArrowRight size={14} />
+          {blogCtaCopy(blog).ui.shop} <ArrowRight size={14} />
         </Link>
         <button
           type="button"
