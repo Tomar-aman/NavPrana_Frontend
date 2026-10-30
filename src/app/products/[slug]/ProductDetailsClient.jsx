@@ -315,7 +315,9 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
   const trustBadges = [
     { icon: Truck, label: "Free Shipping", desc: `On orders above ₹${Math.round(pricing.free_shipping_threshold)}`, color: "bg-blue-50", iconColor: "text-blue-500" },
     { icon: Shield, label: "Quality Assured", desc: "Lab tested pure ghee", color: "bg-green-50", iconColor: "text-green-600" },
-    { icon: RotateCcw, label: "Easy Returns", desc: "Hassle-free process", color: "bg-amber-50", iconColor: "text-amber-500" },
+    // Links to the full terms: first-time buyers look for the return policy
+    // before they trust a new ghee brand with an order.
+    { icon: RotateCcw, label: "7-Day Returns", desc: "Damaged jar? Free replacement or refund", color: "bg-amber-50", iconColor: "text-amber-500", href: "/refund-policy" },
   ];
 
   return (
@@ -574,8 +576,10 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
 
         {/* Trust Badges Full Width */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          {trustBadges.map((badge, idx) => (
-            <div key={idx} className="flex items-center gap-5 p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          {trustBadges.map((badge, idx) => {
+            const Badge = badge.href ? Link : "div";
+            return (
+            <Badge key={idx} {...(badge.href ? { href: badge.href } : {})} className="flex items-center gap-5 p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
               <div className={`w-16 h-16 ${badge.color} rounded-2xl flex items-center justify-center shrink-0 shadow-sm`}>
                 <badge.icon size={28} className={badge.iconColor} />
               </div>
@@ -586,9 +590,13 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                 <div className="text-sm font-medium text-gray-500">
                   {badge.desc}
                 </div>
+                {badge.href && (
+                  <div className="text-sm font-semibold text-primary mt-1">Read return policy →</div>
+                )}
               </div>
-            </div>
-          ))}
+            </Badge>
+            );
+          })}
         </div>
 
         <ComparisonGrid milk={milkLabel} />

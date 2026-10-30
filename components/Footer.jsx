@@ -65,6 +65,7 @@ const Footer = ({ products = [] }) => {
     { label: "Privacy Policy", path: "/privacy-policy" },
     { label: "Terms of Service", path: "/terms-of-service" },
     { label: "Shipping Policy", path: "/shipping-policy" },
+    { label: "Return & Refund Policy", path: "/refund-policy" },
   ];
 
   return (

@@ -15,10 +15,12 @@ const SignupOfferPopup = () => {
     // Don't show if user is logged in
     if (isAuthenticated) return;
 
-    // Never interrupt someone who is already buying or signing in: its CTA
-    // sent shoppers from /checkout to /signup, away from the order.
-    const BUYING = ["/cart", "/checkout", "/payment", "/payment-status", "/cod-success", "/order", "/order-details", "/signin", "/signup", "/auth", "/forgot-password"];
-    if (BUYING.some((p) => pathname === p || pathname?.startsWith(p + "/"))) {
+    // Only on the homepage and the blog. Everywhere else someone is looking
+    // at a product or buying one, and a sign-up wall there stops cold ad
+    // traffic before it reaches Add to Cart (it used to block product pages
+    // and once sent shoppers from /checkout to /signup, away from the order).
+    const SHOW_ON = ["/", "/blog"];
+    if (!SHOW_ON.some((p) => pathname === p || (p !== "/" && pathname?.startsWith(p + "/")))) {
       setIsVisible(false);
       return;
     }

@@ -27,6 +27,7 @@ const staticPages = [
   { url: `${SITE_URL}/faq`, lastModified: "2026-08-22", changeFrequency: "monthly", priority: 0.75 },
   { url: `${SITE_URL}/contact`, lastModified: "2026-02-11", changeFrequency: "yearly", priority: 0.7 },
   { url: `${SITE_URL}/shipping-policy`, lastModified: "2026-02-11", changeFrequency: "yearly", priority: 0.4 },
+  { url: `${SITE_URL}/refund-policy`, lastModified: "2026-10-30", changeFrequency: "yearly", priority: 0.4 },
   { url: `${SITE_URL}/privacy-policy`, lastModified: "2026-02-11", changeFrequency: "yearly", priority: 0.3 },
   { url: `${SITE_URL}/terms-of-service`, lastModified: "2026-02-11", changeFrequency: "yearly", priority: 0.3 },
 ];

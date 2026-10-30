@@ -200,6 +200,7 @@ function ProductJsonLd({ product, slug, pricing }) {
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 7,
         returnMethod: "https://schema.org/ReturnByMail",
+        merchantReturnLink: `${SITE_URL}/refund-policy`,
       },
     },
     category: "Food & Beverages > Dairy > Ghee",

@@ -242,7 +242,7 @@ const Page = () => {
                     <strong>Email:</strong> legal@navpranaorganics.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +91 98765 43210
+                    <strong>Phone:</strong> +91 7509531811
                   </p>
                   <p>
                     <strong>Address:</strong> Village Khemka, Tehsil Bari,
