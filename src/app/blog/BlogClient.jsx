@@ -218,8 +218,14 @@ const BlogClient = ({ initialBlogs, initialCategories }) => {
             }}
             className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto"
           >
+            <label htmlFor="blog-newsletter-email" className="sr-only">
+              Email address
+            </label>
             <input
+              id="blog-newsletter-email"
+              name="email"
               type="email"
+              autoComplete="email"
               placeholder="Your email address"
               value={subscribeEmail}
               onChange={(e) => setSubscribeEmail(e.target.value)}
@@ -229,6 +235,7 @@ const BlogClient = ({ initialBlogs, initialCategories }) => {
             <button
               type="submit"
               disabled={subscribing}
+              aria-label="Subscribe to the NavPrana newsletter"
               className="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {subscribing ? "..." : "Subscribe"}

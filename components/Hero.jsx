@@ -17,11 +17,15 @@ const FESTIVE_VIDEOS = [
     video: "/videos/navprana-diwali-light.webm",
     poster: "/videos/navprana-diwali-light-poster.webp",
     alt: "NavPrana Diwali special — up to 30% off A2 bilona cow ghee ₹799 and buffalo ghee ₹699",
+    href: "/products",
+    cta: "Shop the Diwali offer on bilona ghee",
   },
   {
     video: "/videos/navprana-diwali-gifting.webm",
     poster: "/videos/navprana-diwali-gifting-poster.webp",
     alt: "NavPrana Diwali gifting — A2 desi cow bilona ghee ₹799 and A2 buffalo bilona ghee ₹699",
+    href: "/products",
+    cta: "Shop Diwali ghee gifts",
   },
 ];
 const SLIDE_MS = 5000;
@@ -43,15 +47,21 @@ const Hero = ({ festiveVideo = false }) => {
     {
       image: salesImage,
       alt: "NavPrana Organics - Limited Time Offer - Buy 100% Pure Bilona Ghee Online",
+      href: "/products",
+      cta: "Shop the limited-time bilona ghee offer",
       festive: false, // same 20%/30% offer the Diwali videos show
     },
     {
       image: pineappleImage,
       alt: "NavPrana Organics Pure Desi A2 Cow Bilona Ghee — the way it should be",
+      href: "/a2-desi-cow-ghee",
+      cta: "Shop A2 desi cow bilona ghee",
     },
     {
       image: cowImage,
       alt: "NavPrana Organics Pure Desi A2 Cow Bilona Ghee — Hand-Churned A2 Cow Ghee",
+      href: "/a2-desi-cow-ghee",
+      cta: "Shop hand-churned A2 cow ghee",
       festive: false, // keeps the festive rotation short
     }
   ];
@@ -142,12 +152,15 @@ const Hero = ({ festiveVideo = false }) => {
 
         {/* The artwork has a Shop Now button painted into it, which people aim
             at — the whole banner has to answer that tap. Sits under the arrows
-            and dots so their own clicks still reach them. */}
+            and dots so their own clicks still reach them. It follows the slide
+            on show, and carries real text so crawlers and screen readers get
+            a named link rather than an empty one. */}
         <Link
-          href="/products"
-          aria-label="Shop pure desi bilona ghee online"
+          href={slides[currentSlide]?.href || "/products"}
           className="absolute inset-0 z-20"
-        />
+        >
+          <span className="sr-only">{slides[currentSlide]?.cta || "Shop pure desi bilona ghee online"}</span>
+        </Link>
 
         {/* Navigation Arrows (Visible on hover on desktop) */}
         <button

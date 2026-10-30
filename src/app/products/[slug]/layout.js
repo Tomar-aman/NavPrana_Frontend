@@ -94,7 +94,7 @@ export async function generateMetadata({ params }) {
     // previous list here was buffalo-only, so the two cow SKUs advertised
     // "buy buffalo ghee online" to anyone reading their source.
     openGraph: {
-      title: `Buy ${searchTitle} | NavPrana Organics`,
+      title: `${searchTitle} | NavPrana Organics`,
       description: socialDescription,
       url: `/products/${canonicalSlug}`,
       images: [
@@ -112,7 +112,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `Buy ${searchTitle} | NavPrana Organics`,
+      title: `${searchTitle} | NavPrana Organics`,
       description: socialDescription,
       images: [image],
     },

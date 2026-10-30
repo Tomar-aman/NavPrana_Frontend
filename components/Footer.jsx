@@ -214,8 +214,14 @@ const Footer = ({ products = [] }) => {
                   }}
                   className="flex gap-2 max-w-sm mx-auto"
                 >
+                  <label htmlFor="footer-newsletter-email" className="sr-only">
+                    Email address
+                  </label>
                   <input
+                    id="footer-newsletter-email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     placeholder="Your email address"
                     className="w-full pl-4 pr-12 py-3 rounded-xl bg-white/10 border border-white/10 text-sm text-white placeholder:text-white/40 outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 transition"
                     value={subscribeEmail}
@@ -224,6 +230,7 @@ const Footer = ({ products = [] }) => {
                   <button
                     type="submit"
                     disabled={subscribing}
+                    aria-label="Subscribe to the NavPrana newsletter"
                     className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary flex items-center justify-center hover:bg-primary/90 transition cursor-pointer disabled:opacity-50"
                   >
                     <ArrowRight size={14} className="text-white" />

@@ -25,8 +25,9 @@ export default function WhatsAppButton() {
 
   const raised = HAS_BOTTOM_BAR.some((p) => pathname.startsWith(p));
   // The page link tells whoever answers which product or article the
-  // customer was looking at, without them having to explain.
-  const message = `Hi NavPrana, I have a question about your ghee. (${SITE_URL}${pathname})`;
+  // customer was looking at, without them having to explain. It goes on its
+  // own line so WhatsApp links it cleanly (in brackets the ")" got glued on).
+  const message = `Hi NavPrana, I have a question about your ghee.\n\nPage: ${SITE_URL}${pathname}`;
 
   return (
     <a
