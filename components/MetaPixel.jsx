@@ -12,6 +12,39 @@ import {
 } from "@/lib/meta-pixel";
 
 /**
+ * Only our own Purchase may reach Meta. It is sent from the order success
+ * screen with eventID "purchase_<order id>" (see firePendingPurchase). A second
+ * Purchase with no eventID was seen firing on the Place Order tap, before any
+ * order existed. That one came from Meta's inferredEvents plugin and is turned
+ * off with autoConfig below (plugins do not go through window.fbq). This guard
+ * covers the other route: any tag that later calls fbq("track", "Purchase")
+ * without our id (GTM, a plugin) is dropped so it cannot double-count orders.
+ *
+ * A Proxy rather than a wrapper function: fbevents.js keeps its state
+ * (callMethod, queue, loaded…) as properties on window.fbq, and the Proxy
+ * passes those through to the real function untouched.
+ */
+const guardPurchase = () => {
+  const fbq = window.fbq;
+  if (!fbq || fbq.__purchaseGuard) return;
+
+  const isOurs = (options) =>
+    String(options?.eventID || "").startsWith("purchase_");
+
+  window.fbq = new Proxy(fbq, {
+    get: (target, key) => (key === "__purchaseGuard" ? true : target[key]),
+    apply(target, thisArg, args) {
+      const [method] = args;
+      const blocked =
+        (method === "track" && args[1] === "Purchase" && !isOurs(args[3])) ||
+        (method === "trackSingle" && args[2] === "Purchase" && !isOurs(args[4]));
+      if (blocked) return undefined;
+      return Reflect.apply(target, thisArg, args);
+    },
+  });
+};
+
+/**
  * MetaPixel — Client component that:
  *  1. Injects the fbevents.js SDK once on mount.
  *  2. Attaches the signed-in customer's details (advanced matching) so Meta can
@@ -26,7 +59,11 @@ const MetaPixel = () => {
   /* ——— Inject the SDK once ——— */
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.fbq) return; // already loaded
+    if (window.fbq) {
+      // Already loaded (e.g. by a GTM tag) — still guard it.
+      guardPurchase();
+      return;
+    }
 
     /* eslint-disable */
     !(function (f, b, e, v, n, t, s) {
@@ -53,6 +90,14 @@ const MetaPixel = () => {
       "https://connect.facebook.net/en_US/fbevents.js"
     );
     /* eslint-enable */
+    guardPurchase();
+
+    // Turn off Meta's automatic configuration before init. Its inferredEvents
+    // plugin reads button text, so a tap on "Place Order" was reported as a
+    // Purchase before any order existed — on top of our real one from the
+    // success screen. The Events Manager toggle did not stop it; this does.
+    // (It also ends the SubscribedButtonClick noise.) Must come before init.
+    window.fbq("set", "autoConfig", false, PIXEL_ID);
 
     // If the profile already resolved before the SDK stub existed, its details
     // were cached in the module and would otherwise be lost on this init.
