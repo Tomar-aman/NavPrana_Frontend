@@ -350,15 +350,21 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-          {/* IMAGE SECTION */}
-          <div className="flex flex-col-reverse md:flex-row gap-4 min-w-0">
-             {/* Thumbnails (Vertical on desktop, horizontal on mobile) */}
-             <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0 hide-scrollbar w-full md:w-20 shrink-0">
+          {/* IMAGE SECTION — self-start: as a grid item it otherwise stretches
+              to the much taller info column, and the square photo with it. */}
+          <div className="flex flex-col-reverse md:flex-row gap-4 min-w-0 self-start">
+             {/* Thumbnails (Vertical on desktop, horizontal on mobile). On
+                 desktop the strip is taken out of flow so it scrolls inside the
+                 main image's height: in flow, seven thumbnails made the row
+                 taller than the image is wide, the row stretched the image box
+                 to match, and the square photo was cropped into a tall strip. */}
+             <div className="relative w-full md:w-20 shrink-0">
+             <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-x-visible md:overflow-y-auto pb-2 md:pb-0 md:p-1 hide-scrollbar md:absolute md:inset-0">
               {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`relative aspect-square w-16 md:w-full rounded-xl overflow-hidden border-2 transition-all ${selectedImage === i
+                  className={`relative aspect-square w-16 md:w-full shrink-0 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === i
                     ? "border-primary ring-2 ring-primary/20 shadow-md"
                     : "border-gray-100 hover:border-primary/50 opacity-70 hover:opacity-100"
                     }`}
@@ -373,8 +379,9 @@ const ProductDetailsClient = ({ product, catalogue = [] }) => {
                 </button>
               ))}
             </div>
+            </div>
 
-            <div className="relative aspect-square md:aspect-[4/5] w-full bg-gray-50 rounded-2xl overflow-hidden flex-1 group">
+            <div className="relative aspect-square w-full bg-gray-50 rounded-2xl overflow-hidden flex-1 group">
               <ImageMagnifier src={mainImage} alt={imageAlt(images[selectedImage], selectedImage)} />
               {product.discount_precent && (
                 <span className="absolute top-4 left-4 bg-red-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-black shadow-lg z-10 tracking-wider uppercase">

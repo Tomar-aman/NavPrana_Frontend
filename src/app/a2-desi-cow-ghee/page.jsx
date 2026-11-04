@@ -270,7 +270,7 @@ export default async function Page() {
                       className="group relative bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
                     >
                       {image && (
-                        <div className="relative w-full h-52 bg-gray-50">
+                        <div className="relative w-full aspect-square bg-gray-50">
                           <Image
                             src={image}
                             alt={`${product.name} — pure A2 desi cow bilona ghee`}

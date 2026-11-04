@@ -15,7 +15,7 @@ import { generateSlug } from "@/utils/slug";
  * signal that the card belongs in one place.
  *
  * The two call sites differed only in scale, so that is the only prop:
- *   size="lg"  homepage  — taller image, roomier padding, larger title
+ *   size="lg"  homepage  — roomier padding, larger title
  *   size="sm"  /products — the denser grid
  *
  * Link behaviour worth preserving: the title is the anchor, and its `before`
@@ -25,9 +25,11 @@ import { generateSlug } from "@/utils/slug";
  * <button> inside an <a> (which is invalid HTML).
  */
 
+// The product photos are square, so the image box is too — a fixed height on
+// a wider card cropped the jar's lid and base.
 const SIZES = {
   lg: {
-    image: "h-60 md:h-64",
+    image: "aspect-square",
     body: "p-5",
     title: "text-lg",
     rating: { box: "px-2 py-0.5", icon: 12, text: "text-xs" },
@@ -36,7 +38,7 @@ const SIZES = {
     cta: "text-sm",
   },
   sm: {
-    image: "h-56 md:h-60",
+    image: "aspect-square",
     body: "p-4",
     title: "text-base",
     rating: { box: "px-2 py-0.5", icon: 11, text: "text-[11px]" },
